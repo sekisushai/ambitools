@@ -1,0 +1,142 @@
+declare name        "NFC Filters Library";
+declare version     "1.0";
+declare author      "Pierre Lecomte";
+declare license     "GPL";
+declare copyright   "(c) Pierre Lecomte 2014";
+
+import("music.lib");
+import("math.lib");
+
+// r1 = rayon de la source 
+// r2 = rayon des haut-parleurs
+
+
+c = 340;
+w(r) = 0.5*c/(r*SR);
+
+// BIQUAD ORDRE 1 AVEC SOMME DES ECHANTILLONS PASSE : MARCHE !
+
+TF(b0,b1,a1) = sub~sum1(a1): sum2(b0,b1)
+	with {
+		sum1(k1,x) 	= x:(+~_:*(k1));
+		sum2(k0,k1,x)  =x<:*(k0),_,_:_,+~_,_:_,-*(k1):+;
+		sub(x,y)		= y-x;
+	};
+
+// BIQUAD ORDRE 2 AVEC SOMME DES ECHANTILLONS PASSE : MARCHE !!!
+
+TFFF(b0,b1,b2,a1,a2) = sub~sum1(a1,a2): sum2(b0,b1,b2)
+	with {
+		sum1(k1,k2,x) 	= x:(+~_<:((_':+~_),*(k1)):*(k2),_:+);
+		sum2(k0,k1,k2,x)  =x<:*(k0),+~_,_:_,(-<:*(k1),(_':+~_)*(k2):+):+;
+		sub(x,y)		= y-x;
+	};
+	
+	
+// BIQUAD ORDRE 2 TOUT POLES
+	
+TFINV(a1,a2) = sub~sum1(a1,a2)
+	with {
+		sum1(k1,k2,x) 	= x:(+~_<:((_':+~_),*(k1)):*(k2),_:+);
+		sub(x,y)		= y-x;
+	};
+
+// ORDRE 0
+ORDRE0 = _;
+
+// ORDRE 1
+
+x11a=1;
+
+b1 = x11a*w;
+g1 = (1+b1);
+d1(r) = 2*b1(r)/g1(r);
+
+
+ORDRE1(r1,r2) = _*(g1(r1)/g1(r2)):TFFF(1,d1(r1),0,d1(r2),0);
+ORDRE1INV(r2) = _*(1/g1(r2)):TFINV(d1(r2),0);
+
+//ORDRE 2
+x21a=3;
+x22a=3;
+
+b221 = x21a*w;
+b222 = x22a*w^2;
+
+g22(r) = 1 + b221(r) +b222(r);
+
+d221(r) = (2*b221(r)+4*b222(r))/g22(r);
+d222(r) = 4*b222(r)/g22(r);
+
+
+ORDRE2(r1,r2) = _*(g22(r1)/g22(r2)):TFFF(1,d221(r1),d222(r1),d221(r2),d222(r2));
+ORDRE2INV(r2) = _*(1/g22(r2)):TFINV(d221(r2),d222(r2));
+
+
+//ORDRE 3
+x31a=3.67781464537392;
+x32a=6.45943269348338;
+x31b=2.32218535462609;
+
+b321 = x31a*w;
+b322 = x32a*w^2;
+g32(r) = 1 + b321(r) +b322(r);
+d321(r) = (2*b321(r)+4*b322(r))/g32(r);
+d322(r) = 4*b322(r)/g32(r);
+
+b31 = x31b*w;
+g31 = (1+b31);
+d31(r) = 2*b31(r)/g31(r);
+
+ORDRE3(r1,r2) = _*(g32(r1)/g32(r2)):TFFF(1,d321(r1),d322(r1),d321(r2),d322(r2)):_*(g31(r1)/g31(r2)):TFFF(1,d31(r1),0,d31(r2),0);
+ORDRE3INV(r2) = _*(1/g32(r2)):TFINV(d321(r2),d322(r2)):_*(1/g31(r2)):TFINV(d31(r2),0);
+
+//ORDRE 4
+x41a=4.20757879435927;
+x42a=11.4878004768713;
+x41b=5.79242120564073;
+x42b=9.14013089027790;
+
+b421a = x41a*w;
+b422a = x42a*w^2;
+g42a(r) = 1 + b421a(r) +b422a(r);
+d421a(r) = (2*b421a(r)+4*b422a(r))/g42a(r);
+d422a(r) = 4*b422a(r)/g42a(r);
+
+b421b = x41b*w;
+b422b = x42b*w^2;
+g42b(r) = 1 + b421b(r) +b422b(r);
+d421b(r) = (2*b421b(r)+4*b422b(r))/g42b(r);
+d422b(r) = 4*b422b(r)/g42b(r);
+
+ORDRE4(r1,r2) = _*(g42a(r1)/g42a(r2)):TFFF(1,d421a(r1),d422a(r1),d421a(r2),d422a(r2)):_*(g42b(r1)/g42b(r2)):TFFF(1,d421b(r1),d422b(r1),d421b(r2),d422b(r2));
+ORDRE4INV(r2) = _*(1/g42a(r2)):TFINV(d421a(r2),d422a(r2)):_*(1/g42b(r2)):TFINV(d421b(r2),d422b(r2));
+
+
+//ORDRE 5
+x51a=4.64934860636332;
+x52a=18.1563153134523;
+
+x51b=6.70391279830706;
+x52b=14.2724805132801;
+
+x51c=3.64673859532959;
+
+b521a = x51a*w;
+b522a = x52a*w^2;
+g52a(r) = 1 + b521a(r) +b522a(r);
+d521a(r) = (2*b521a(r)+4*b522a(r))/g52a(r);
+d522a(r) = 4*b522a(r)/g52a(r);
+
+b521b = x51b*w;
+b522b = x52b*w^2;
+g52b(r) = 1 + b521b(r) +b522b(r);
+d521b(r) = (2*b521b(r)+4*b522b(r))/g52b(r);
+d522b(r) = 4*b522b(r)/g52b(r);
+
+b51 = x51c*w;
+g51 = (1+b51);
+d51(r) = 2*b51(r)/g51(r);
+
+ORDRE5(r1,r2) = _*(g52a(r1)/g52a(r2)):TFFF(1,d521a(r1),d522a(r1),d521a(r2),d522a(r2)):_*(g52b(r1)/g52b(r2)):TFFF(1,d521b(r1),d522b(r1),d521b(r2),d522b(r2)):_*(g51(r1)/g51(r2)):TFFF(1,d51(r1),0,d51(r2),0);
+ORDRE5INV(r2) = _*(1/g52a(r2)):TFINV(d521a(r2),d522a(r2)):_*(1/g52b(r2)):TFINV(d521b(r2),d522b(r2)):_*(1/g51(r2)):TFINV(d51(r2),0);
