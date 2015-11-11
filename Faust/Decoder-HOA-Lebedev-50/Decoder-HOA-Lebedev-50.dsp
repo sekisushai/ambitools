@@ -21,7 +21,7 @@ gain(c) = R(c) with {
 smooth(c)       = *(1-c) : +~*(c);
 vmeter(x)		= attach(x, envelop(x) : vbargraph("[unit:dB]", -100, 10));
 envelop			= abs : max(db2linear(-100)) : linear2db : min(10)  : max ~ -(80.0/SR);
-vol             = hslider("Volume Amplifier (dB)", 0, -10, 10, 0.1) : db2linear : smooth(0.999);
+vol             = hslider("Volume Amplifier (dB)", 0, -10, 60, 0.1) : db2linear : smooth(0.999);
 
 id(x,delta) =  vgroup("%2a",vmeter) with{
 a = x+1+delta;};
