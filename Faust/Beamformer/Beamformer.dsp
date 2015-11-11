@@ -14,14 +14,14 @@ import("music.lib");
 smooth(c)       = *(1-c) : +~*(c);
 vol             = hslider("Volume Amplifier (dB)", 0, -10, 60, 0.1) : db2linear : smooth(0.999);
 
-C0=vol*0.2216*(1)^0.5;
-C1=vol*0.3837*(1/3)^0.5;
-C2=vol*0.4954*(1/5)^0.5;
-C3=vol*0.5862*(1/7)^0.5;
-
 t=hslider("theta", 0, 0, 360, 0.1)*PI/180;
 d=hslider("delta", 0, -90, 90, 0.1)*PI/180;
 on=checkbox("On");
+
+C0=vol*0.2216*(1)^0.5*on;
+C1=vol*0.3837*(1/3)^0.5*on;
+C2=vol*0.4954*(1/5)^0.5*on;
+C3=vol*0.5862*(1/7)^0.5*on;
 
 process=par(i,16,_)<:(par(i,16,(1-on)*_),
 (
