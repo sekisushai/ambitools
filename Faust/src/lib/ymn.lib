@@ -1,0 +1,86 @@
+declare name        "N3D spherical harmonics up to order 5";
+declare version     "1.0";
+declare author      "Pierre Lecomte";
+declare license     "GPL";
+declare copyright   "(c) Pierre Lecomte 2014";
+
+//N3D spherical harmonics [1] up to order 5
+// ACN numbering [2], i.e ACN=m^2+n+sigma*1 when spherical harmonics with 3 subscripts, ACN=m^2+n when 2 subscripts are used
+// Spherical coordinates as in [3]
+//[1] Daniel, J. (2000). Représentation de champs acoustiques, application à la transmission et à la reproduction de scènes sonores complexes dans un contexte multimédia. Université Paris 6, Paris, France. Retrieved from http://pcfarina.eng.unipr.it/Public/phd-thesis/jd-these-original-version.pdf
+//[2] Nachbar, C., Zotter, F., Deleflie, E., & Sontacchi, A. (2011). Ambix - A suggested ambisonics format. In Ambisonics Symposium, Lexington.
+//[3] Lecomte, P., Gauthier, P.-A., Langrenne, C., Garcia, A., & Berry, A. (2015). On the use of a Lebedev grid for Ambisonics. In Audio Engineering Society Convention 139. New York.
+
+import("math.lib");
+
+//ORDER 0
+y0(theta,delta) = 1;//y001
+LegendreP0(x) = 1;
+
+//ORDER 1
+y1(theta,delta) = sqrt(3)*cos(delta)*sin(theta);//y11m1
+y2(theta,delta) = sqrt(3)*sin(delta);//y101
+y3(theta,delta) = sqrt(3)*cos(delta)*cos(theta);//y111
+LegendreP1(x) = 3*x;
+
+//ORDRE 2
+y4(theta,delta) = sqrt(15)*cos(delta)^2*cos(theta)*sin(theta);//y22m1
+y5(theta,delta) = sqrt(15)*cos(delta)*sin(delta)*sin(theta);//y21m1
+y6(theta,delta) = 0.5*sqrt(5)*(-1+3*sin(delta)^2);//y201
+y7(theta,delta) = sqrt(15)*cos(delta)*cos(theta)*sin(delta);//y211
+y8(theta,delta) = 0.5*sqrt(15)*cos(delta)^2*cos(2*theta);//y221
+LegendreP2(x) = 2.5*(-1 + 3*x^2);
+
+//ORDRE 3
+y9(theta,delta) = 0.5*sqrt(17.5)*(cos(delta)^2)^(1.5)*sin(3*theta);//y33m1
+y10(theta,delta) = sqrt(105)*cos(delta)^2*cos(theta)*sin(delta)*sin(theta);//y32m1
+y11(theta,delta) = 0.125*sqrt(10.5)*(cos(delta)-5*cos(3*delta))*sin(theta);//y31m1
+y12(theta,delta) = -0.25*sqrt(7)*(1+5*cos(2*delta))*sin(delta);//y301
+y13(theta,delta) = 0.125*sqrt(10.5)*(cos(delta)-5*cos(3*delta))*cos(theta);//y311
+y14(theta,delta) = 0.5*sqrt(105)*cos(delta)^2*cos(2*theta)*sin(delta);//y321
+y15(theta,delta) = 0.5*sqrt(17.5)*(cos(delta)^2)^(1.5)*cos(3*theta);//y331
+LegendreP3(x) = 3.5*(-3*x + 5*x^3);
+
+//ORDRE 4
+y16(theta,delta) = 0.375*sqrt(35)*cos(delta)^4*sin(4*theta);//y44m1
+y17(theta,delta) = 1.5*sqrt(17.5)*(cos(delta)^2)^(1.5)*sin(delta)*sin(3*theta);//y43m1
+y18(theta,delta) = -0.375*sqrt(5)*cos(delta)^2*(-5+7*cos(2*delta))*sin(2*theta);//y42m1
+y19(theta,delta) = 1.5*sqrt(2.5)*cos(delta)*sin(delta)*(-3+7*sin(delta)^2)*sin(theta);//y41m1
+y20(theta,delta) = 0.375*(3-30*sin(delta)^2+35*sin(delta)^4);//y401
+y21(theta,delta) = 1.5*sqrt(2.5)*cos(delta)*cos(theta)*sin(delta)*(-3+7*sin(delta)^2);//y411
+y22(theta,delta) = -0.375*sqrt(5)*cos(delta)^2*(-5+7*cos(2*delta))*cos(2*theta);//y421
+y23(theta,delta) = 1.5*sqrt(17.5)*(cos(delta)^2)^(1.5)*cos(3*theta)*sin(delta);//y431
+y24(theta,delta) = 0.375*sqrt(35)*cos(delta)^4*cos(4*theta);//y441
+LegendreP4(x) = 1.125*(3-30*x^2+35*x^4);
+
+//ORDRE 5
+y25(theta,delta) = 0.375*sqrt(38.5)*(cos(delta)^2)^(2.5)*sin(5*theta);//y55m1
+y26(theta,delta) = 0.375*sqrt(385)*cos(delta)^4*sin(delta)*sin(4*theta);//y54m1
+y27(theta,delta) = 0.0625*sqrt(192.5)*(cos(delta)^2)^(1.5)*(7-9*cos(2*delta))*sin(3*theta);//y53m1
+y28(theta,delta) = 0.0625*sqrt(1155)*cos(delta)^2*(5*sin(delta)-3*sin(3*delta))*sin(2*theta);//y52m1
+y29(theta,delta) = 0.125*sqrt(165)*cos(delta)*(1-14*sin(delta)^2+21*sin(delta)^4)*sin(theta);//y51m1
+y30(theta,delta) = 0.015625*sqrt(11)*(29+28*cos(2*delta)+63*cos(4*delta))*sin(delta);//y501
+y31(theta,delta) = 0.125*sqrt(165)*cos(delta)*cos(theta)*(1-14*sin(delta)^2+21*sin(delta)^4);//y511
+y32(theta,delta) = 0.0625*sqrt(1155)*cos(delta)^2*cos(2*theta)*(5*sin(delta)-3*sin(3*delta));//y521
+y33(theta,delta) = 0.0625*sqrt(192.5)*(cos(delta)^2)^(1.5)*(7-9*cos(2*delta))*cos(3*theta);//y531
+y34(theta,delta) = 0.375*sqrt(385)*cos(delta)^4*cos(4*theta)*sin(delta);//y541
+y35(theta,delta) = 0.375*sqrt(38.5)*(cos(delta)^2)^(2.5)*cos(5*theta);//y551
+LegendreP5(x)=1.375*(15*x-70*x^3+63*x^5);
+
+//BUS WITH GAIN
+buswg(c) = R(c) with {
+  R((c,cl)) = R(c),R(cl);
+  R(1)      = _;
+  //R(0)      = !;
+  R(0)      = !:0; // if you need to preserve the number of outputs
+  R(float(0)) = R(0);
+  R(float(1)) = R(1);
+  R(c)      = *(c);
+};
+
+
+//VECTOR OF SPHERICAL HARMONICS UP TO 5 ORDER : SIGNAL MULTIPLIED BY SPHERICAL HARMONICS
+ytot(t,d)=buswg((y0(t,d),y1(t,d),y2(t,d),y3(t,d),y4(t,d),y5(t,d),y6(t,d),y7(t,d),y8(t,d),y9(t,d),y10(t,d),y11(t,d),y12(t,d),y13(t,d),y14(t,d),y15(t,d),y16(t,d),y17(t,d),y18(t,d),y19(t,d),y20(t,d),y21(t,d),y22(t,d),y23(t,d),y24(t,d),y25(t,d),y26(t,d),y27(t,d),y28(t,d),y29(t,d),y30(t,d),y31(t,d),y32(t,d),y33(t,d),y34(t,d),y35(t,d)));
+
+// GAMMA ANGLE BETWEEN VIRTUAL SOURCE (T1,D1) AND SPEAKER (T2,D2)
+angle(t1,d1,t2,d2) = cos(d1)*cos(d2)*cos(t1-t2)+sin(d1)*sin(d2);
