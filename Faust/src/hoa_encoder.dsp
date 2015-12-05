@@ -21,7 +21,7 @@ envelop			= abs : max(db2linear(-100)) : linear2db : min(10)  : max ~ -(80.0/SR)
 id(x,delta) =  vgroup("%2a",vmeter) with{
 a = x+1+delta;};
 
-meterm(m) = par(i,2*m+1,hgroup("%m",id(i,0)));
+meterm(m) = par(i,2*m+1,hgroup("%m",id(i,m*m-1)));
 
 theta=vslider("Source Theta", 0, 0, 360, 0.1)*PI/180;
 delta=vslider("Source Delta", 0, -90, 90, 0.1)*PI/180;

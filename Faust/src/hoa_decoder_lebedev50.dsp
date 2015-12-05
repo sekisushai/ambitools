@@ -15,7 +15,7 @@ import("lib/lebedev.lib");
 //[1] Lecomte, P., Gauthier, P.-A., Langrenne, C., Garcia, A., & Berry, A. (2015). On the use of a Lebedev grid for Ambisonics. In Audio Engineering Society Convention 139. New York.
 //[2] Lecomte, P., & Gauthier, P.-A. (2015). Real-Time 3D Ambisonics using Faust, Processing, Pure Data, And OSC. In 15th International Conference on Digital Audio Effects (DAFx-15). Trondheim, Norway.
 
-nf=vgroup("NFC",checkbox("NEAR FIELD COMPENSATION"));
+nf=vgroup("NFC",checkbox("Yes"));
 // Spherical restitution speaker layout radius r2 is needeed to stabilize near-field filters, see [1]
 r2 = nentry("Speakers Radius", 1.07, 0.5, 10, 0.01);
 
@@ -24,7 +24,7 @@ envelop			= abs : max(db2linear(-100)) : linear2db : min(10)  : max ~ -(80.0/SR)
 
 // Volume controler : CAUTION with maximal value (60 dB!) it's to compensate the attenuation of the microphone radial filters.
 smooth(c)       = *(1-c) : +~*(c);
-vol             = hslider("Gain[style:knob][unit:dB]", 0, -10, 60, 0.1) : db2linear : smooth(0.999);
+vol             = vgroup("Inputs Gain",hslider("[unit:dB]", 0, -10, 60, 0.1) : db2linear : smooth(0.999));
 
 id(x,delta) =  vgroup("%2a",vmeter) with{
 a = x+1+delta;};
@@ -32,14 +32,14 @@ a = x+1+delta;};
 idmute(x,delta) =  vgroup("%2a",_*(1-checkbox("Mute")):vmeter) with{
 a = x+1+delta;};
 
-meterm(m) = par(i,2*m+1,hgroup("%m",_*(1-checkbox("Mute")):idmute(i,0)));
+meterm(m) = par(i,2*m+1,hgroup("%m",_*(1-checkbox("Mute")):idmute(i,m*m-1)));
 
-matrix(n,m) = vgroup("B-Format",bus(36):(hgroup("0-3",meterm(0),meterm(1),meterm(2),meterm(3)),hgroup("4-5",meterm(4),meterm(5))))<:par(i,m,buswg(row(i)):>_);
+matrix(n,m) = vgroup("B-Format",bus(n):(hgroup("0-3",meterm(0),meterm(1),meterm(2),meterm(3)),hgroup("4-5",meterm(4),meterm(5))))<:par(i,m,buswg(row(i)):>_);
 
 // When near-field compensation is activated, multiplication by 4*PI*r2 to have the correct gain, see [2]
-selecteur=vgroup("Parameters",bus(36)<:((par(i,36,*(nf*vol*4*PI*r2)):(_,par(i,3,nfc1(r2)),par(i,5,nfc2(r2)),par(i,7,nfc3(r2)),par(i,9,nfc4(r2)),par(i,11,nfc5(r2)))),par(i,36,*((1-nf)*vol))):>bus(36));
+selecteur=hgroup("Parameters",bus(36)<:((par(i,36,*(nf*vol*4*PI*r2)):(_,par(i,3,nfc1(r2)),par(i,5,nfc2(r2)),par(i,7,nfc3(r2)),par(i,9,nfc4(r2)),par(i,11,nfc5(r2)))),par(i,36,*((1-nf)*vol))):>bus(36));
 
-process=hgroup("",selecteur:matrix(36,50)):(hgroup("Outputs 1-25",par(i,25,id(i,0))),hgroup("Outputs 26-50",par(i,25,id(i,0))));
+process=vgroup("",selecteur:matrix(36,50)):(hgroup("Outputs 1-25",par(i,25,id(i,0))),hgroup("Outputs 26-50",par(i,25,id(i,25))));
 
 //Analytic decoder matrix Wlebedev.YLebedev [1]
 //Vector of weighted spherical harmonics : spherical harmonics times the speaker weight for weighet quadrature rules [1]

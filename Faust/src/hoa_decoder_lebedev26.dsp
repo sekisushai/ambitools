@@ -32,14 +32,14 @@ a = x+1+delta;};
 idmute(x,delta) =  vgroup("%2a",_*(1-checkbox("Mute")):vmeter) with{
 a = x+1+delta;};
 
-meterm(m) = par(i,2*m+1,hgroup("%m",_*(1-checkbox("Mute")):idmute(i,0)));
+meterm(m) = par(i,2*m+1,hgroup("%m",_*(1-checkbox("Mute")):idmute(i,m*m-1)));
 
 matrix(n,m) = vgroup("B-Format",bus(16):hgroup("0-3",meterm(0),meterm(1),meterm(2),meterm(3)))<:par(i,m,buswg(row(i)):>_);
 
 // When near-field compensation is activated, multiplication by 4*PI*r2 to have the correct gain, see [2]
 selecteur=vgroup("Parameters",bus(16)<:((par(i,16,*(nf*vol*4*PI*r2)):(_,par(i,3,nfc1(r2)),par(i,5,nfc2(r2)),par(i,7,nfc3(r2)))),par(i,16,*((1-nf)*vol))):>bus(16));
 
-process=hgroup("",selecteur:matrix(16,26)):(hgroup("Outputs 1-26",par(i,13,id(i,0))),hgroup("Outputs 26-50",par(i,13,id(i,0))));
+process=hgroup("",selecteur:matrix(16,26)):(hgroup("Outputs 1-26",par(i,13,id(i,0))),hgroup("Outputs 26-50",par(i,13,id(i,13))));
 
 //Analytic decoder matrix Wlebedev.YLebedev [1]
 //Vector of weighted spherical harmonics : spherical harmonics times the speaker weight for weighet quadrature rules [1]
