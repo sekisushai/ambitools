@@ -37,6 +37,8 @@ meterm(m) = par(i,2*m+1,hgroup("%m",id(i,m*m-1)));
 
 process= vgroup("",hgroup("Inputs 1-25",par(i,25,id(i,0))),hgroup("Inputs 26-50",par(i,25,id(i,25))))<:par(i,36,buswg(row(i)):>_):par(i,36,*(vol)):vgroup("B-Format",bus(36):(hgroup("0-3",meterm(0),meterm(1),meterm(2),meterm(3)),hgroup("4-5",meterm(4),meterm(5))));
 
+wy5(t,d,g)=(y0(t,d)*g,y1(t,d)*g,y2(t,d)*g,y3(t,d)*g,y4(t,d)*g,y5(t,d)*g,y6(t,d)*g,y7(t,d)*g,y8(t,d)*g,y9(t,d)*g,y10(t,d)*g,y11(t,d)*g,y12(t,d)*g,y13(t,d)*g,y14(t,d)*g,y15(t,d)*g,y16(t,d)*g,y17(t,d)*g,y18(t,d)*g,y19(t,d)*g,y20(t,d)*g,y21(t,d)*g,y22(t,d)*g,y23(t,d)*g,y24(t,d)*g,y25(t,d)*g,y26(t,d)*g,y27(t,d)*g,y28(t,d)*g,y29(t,d)*g,y30(t,d)*g,y31(t,d)*g,y32(t,d)*g,y33(t,d)*g,y34(t,d)*g,y35(t,d)*g);
+
 row(0)=par(i,50,y0(azimuth(i),elevation(i))*(weight5(i)));
 row(1)=par(i,50,y1(azimuth(i),elevation(i))*(weight5(i)));
 row(2)=par(i,50,y2(azimuth(i),elevation(i))*(weight5(i)));
