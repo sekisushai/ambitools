@@ -1,0 +1,38 @@
+#N canvas 565 55 731 572 12;
+#X obj 252 57 inlet;
+#X obj 252 305 line~;
+#X obj 252 373 outlet~;
+#X obj 252 109 bng 15 250 50 0 empty empty empty 0 -6 0 8 -262144 -1
+-1;
+#X obj 61 308 outlet;
+#X msg 329 255 1 \$1;
+#X msg 252 247 0 \$1;
+#X text 5 328 The control is delayed;
+#X text 299 57 < The input is a control signal;
+#X obj 252 205 float \$1;
+#X obj 329 205 float \$1;
+#X text 320 374 < The fade out fade in;
+#X text 10 8 Delayed control signal with fade out + fade in. The FO
+\, FI time is \$1 ms.;
+#X msg 61 269 1;
+#X obj 61 140 f;
+#X obj 61 212 t b f;
+#X msg 61 244 set \$1;
+#X obj 329 155 delay \$1;
+#X obj 61 175 pipe f \$1;
+#X connect 0 0 3 0;
+#X connect 0 0 14 0;
+#X connect 1 0 2 0;
+#X connect 3 0 9 0;
+#X connect 3 0 17 0;
+#X connect 5 0 1 0;
+#X connect 6 0 1 0;
+#X connect 9 0 6 0;
+#X connect 10 0 5 0;
+#X connect 13 0 4 0;
+#X connect 14 0 18 0;
+#X connect 15 0 13 0;
+#X connect 15 1 16 0;
+#X connect 16 0 13 0;
+#X connect 17 0 10 0;
+#X connect 18 0 15 0;

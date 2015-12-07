@@ -1,0 +1,100 @@
+#N canvas 327 190 1436 856 10;
+#X obj 162 92 phasor~;
+#X obj 162 159 *~ 0.2;
+#X obj 162 189 min~;
+#X obj 207 127 *~ -1;
+#X obj 240 155 +~ 1;
+#X obj 239 189 min~;
+#X obj 162 229 min~;
+#X obj 162 249 *~ 6;
+#X obj 162 269 -~ 0.5;
+#X obj 162 289 *~ 2;
+#X obj 110 328 min~ 0;
+#X obj 161 491 max~ 0;
+#X obj 62 344 *~;
+#X obj 62 364 wrap~;
+#X obj 62 384 cos~;
+#X obj 62 404 *~;
+#X obj 62 424 *~ 0.5;
+#X obj 62 444 +~;
+#X obj 161 511 *~;
+#X obj 161 531 *~;
+#X obj 161 551 *~ 2;
+#X obj 147 579 +~;
+#X obj 163 39 inlet~;
+#X obj 61 37 inlet~;
+#X obj 147 675 outlet~;
+#X obj 147 653 *~ 0.06;
+#N canvas 0 22 450 278 (subpatch) 0;
+#X array oscfly 256 float 1;
+#A 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X coords 0 1 255 -1 400 280 1 0 0;
+#X restore 559 555 graph;
+#X obj 561 459 metro 100;
+#X obj 561 414 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X obj 561 498 tabwrite~ oscfly;
+#X text 212 90 < Fundamental wave form: saw [0 \, 1];
+#X text 273 153 < Reversed saw [0 \, 1];
+#X text 272 189 < Tri and half-tri [0 \, 1];
+#X text 194 248 < Scale up;
+#X text 207 268 < Bipolar [-1 \, 1];
+#X text 195 290 < Scale up [-1 \, 1];
+#X text 195 230 < Half-tri [0 \, 1];
+#X text 203 489 < Positive part of the waveform;
+#X text 152 325 < Negative part of the waveform;
+#X text 185 531 < x^3 curve;
+#X text 193 550 < Scale;
+#X text 172 578 < Combine negative and positive parts of the waveform
+;
+#X text 86 346 < Large scaling;
+#X text 96 363 < Wrap [0 \, 1];
+#X text 97 382 < Turn into oscillations \, hi then lo freq [-1 \, 1]
+;
+#X text 98 402 < Gain env;
+#X text 108 424 < Scale down;
+#X text 95 444 < DC env;
+#X obj 147 627 hip~ 700;
+#X connect 0 0 1 0;
+#X connect 0 0 3 0;
+#X connect 0 0 5 0;
+#X connect 1 0 2 0;
+#X connect 2 0 6 0;
+#X connect 3 0 4 0;
+#X connect 4 0 2 1;
+#X connect 4 0 5 1;
+#X connect 5 0 6 1;
+#X connect 6 0 7 0;
+#X connect 7 0 8 0;
+#X connect 8 0 9 0;
+#X connect 9 0 10 0;
+#X connect 9 0 11 0;
+#X connect 10 0 12 1;
+#X connect 10 0 15 1;
+#X connect 10 0 17 1;
+#X connect 11 0 18 0;
+#X connect 11 0 18 1;
+#X connect 12 0 13 0;
+#X connect 13 0 14 0;
+#X connect 14 0 15 0;
+#X connect 15 0 16 0;
+#X connect 16 0 17 0;
+#X connect 17 0 21 0;
+#X connect 18 0 19 0;
+#X connect 18 0 19 1;
+#X connect 19 0 20 0;
+#X connect 20 0 21 1;
+#X connect 21 0 48 0;
+#X connect 22 0 0 0;
+#X connect 23 0 12 0;
+#X connect 25 0 24 0;
+#X connect 27 0 29 0;
+#X connect 28 0 27 0;
+#X connect 48 0 25 0;

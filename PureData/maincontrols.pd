@@ -1,0 +1,28 @@
+#N canvas 639 83 462 312 10;
+#X obj 104 128 nbx 3 14 0 1 0 0 empty empty Gain 0 -6 0 10 -260097
+-1 -1 0 256;
+#X obj 104 202 pag_gain_curve;
+#X obj 164 127 tgl 15 0 empty empty 0/1 0 -6 0 10 -260097 -1 -1 0 1
+;
+#X obj 144 127 tgl 15 0 empty empty Go 0 -6 0 10 -260097 -1 -1 0 1
+;
+#X obj 233 179 s \$1-onoff;
+#X obj 211 203 s \$1-startstop;
+#X obj 104 222 s \$1-gain;
+#X obj 104 39 inlet;
+#X obj 144 39 inlet;
+#X obj 184 39 inlet;
+#X obj 248 253 outlet;
+#X obj 176 254 outlet;
+#X obj 105 255 outlet;
+#X connect 0 0 1 0;
+#X connect 0 0 12 0;
+#X connect 1 0 6 0;
+#X connect 2 0 4 0;
+#X connect 2 0 10 0;
+#X connect 3 0 5 0;
+#X connect 3 0 11 0;
+#X connect 7 0 0 0;
+#X connect 8 0 3 0;
+#X connect 9 0 2 0;
+#X coords 0 -1 1 1 85 45 1 100 100;

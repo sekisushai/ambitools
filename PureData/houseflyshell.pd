@@ -1,0 +1,11 @@
+#N canvas 997 165 690 664 10;
+#X obj -65 230 housefly myfly;
+#X obj -65 163 maincontrols myfly;
+#X obj -29 364 dac~ 1;
+#X obj 148 364 dac~ 2;
+#X obj 112 163 maincontrols myfly2;
+#X obj 112 230 housefly myfly2;
+#X connect 0 0 2 0;
+#X connect 0 1 2 0;
+#X connect 5 0 3 0;
+#X connect 5 1 3 0;
