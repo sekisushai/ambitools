@@ -9,9 +9,9 @@ declare copyright   "(c) Pierre Lecomte 2015";
 import("filter.lib");
 
 freq=hslider("Cutoff Frequency[unit:Hz]",50,10,1000,1);
-order = hslider("Filter order",2,1,5,1);
+//order = hslider("Filter order",2,1,5,1);
 
 // Volume controller
 vol             = hslider("Gain[style:knob][unit:dB]", 0, -20, 20, 0.1) : db2linear : smooth(0.999);
 
-process=_*(vol):lowpass(rint(order),freq):_;
+process=_*(vol):lowpass(2,freq):_;

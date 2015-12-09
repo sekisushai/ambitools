@@ -13,16 +13,16 @@ import("music.lib");
 //Lecomte, P., Gauthier, P.-A., Langrenne, C., Garcia, A., & Berry, A. (2015). On the use of a Lebedev grid for Ambisonics. In Audio Engineering Society Convention 139. New York.
 
 smooth(c)	= *(1-c) : +~*(c);
-gain01		= vgroup("Gains",vslider("Source 1 Gain", 0, -20, +20, 0.1) : db2linear : smooth(0.999)*(1-checkbox("Mute 1")));
-gain02		= vgroup("Gains",vslider("Source 2 Gain", 0, -20, +20, 0.1) : db2linear : smooth(0.999)*(1-checkbox("Mute 2")));
+gain01		= vgroup("[1]Gains",vslider("Source 1 Gain", 0, -20, +20, 0.1) : db2linear : smooth(0.999)*(1-checkbox("Mute 1")));
+gain02		= vgroup("[1]Gains",vslider("Source 2 Gain", 0, -20, +20, 0.1) : db2linear : smooth(0.999)*(1-checkbox("Mute 2")));
 
-rhp = nentry("Speaker Radius", 1, 0.5, 10, 0.01);
-r1 = vslider("Source 1 Radius", 2, 0.5, 10, 0.01);
-r2 = vslider("Source 2 Radius", 2, 0.5, 10, 0.01);
+mute = par(i,4,_*vgroup("[2]Mute Order",1-checkbox("%i")));
+
+rhp = nentry("[9]Speaker Radius", 1, 0.5, 10, 0.01);
+r1 = vslider("[3]Source 1 Radius", 2, 0.5, 10, 0.01);
+r2 = vslider("[6]Source 2 Radius", 2, 0.5, 10, 0.01);
 
 speakers = 26;
-
-mute = par(i,4,_*vgroup("Mute Order",1-checkbox("%i")));
 
 id(x,delta) =  vgroup("%2a",vmeter) with{
 a = x+1+delta;};
@@ -30,11 +30,11 @@ a = x+1+delta;};
 vmeter(x)		= attach(x, envelop(x) : vbargraph("[unit:dB]", -100, 10));
 envelop			= abs : max(db2linear(-100)) : linear2db : min(10)  : max ~ -(80.0/SR);
 
-theta1=vslider("Source 1 Theta", 0, 0, 360, 0.1)*PI/180;
-delta1=vslider("Source 1 Delta", 0, -90, 90, 0.1)*PI/180;
+theta1=vslider("[4]Source 1 Azimuth", 0, 0, 360, 0.1)*PI/180;
+delta1=vslider("[5]Source 1 Elevation", 0, -90, 90, 0.1)*PI/180;
 
-theta2=vslider("Source 2 Theta", 0, 0, 360, 0.1)*PI/180;
-delta2=vslider("Source 2 Delta", 0, -90, 90, 0.1)*PI/180;
+theta2=vslider("[7]Source 2 Azimuth", 0, 0, 360, 0.1)*PI/180;
+delta2=vslider("[8]Source 2 Elevation", 0, -90, 90, 0.1)*PI/180;
 
 source1 = _*(rhp*gain01/r1)<:par(i,speakers,_*weight3(i)<:mute:(_,nf1(r1,rhp)*LegendreP1(angle(theta1,delta1,azimuth(i),elevation(i))),nf2(r1,rhp)*LegendreP2(angle(theta1,delta1,azimuth(i),elevation(i))),nf3(r1,rhp)*LegendreP3(angle(theta1,delta1,azimuth(i),elevation(i)))):>_);
 

@@ -11,9 +11,9 @@ import("lib/nfc.lib");
 import("lib/ymn.lib");
 
 // Spherical restitution speaker layout radius r2 is needeed to stabilize near-field filters, see [1]
-r2 = nentry("Speakers Radius", 1.07, 0.5, 10, 0.01);
-spherical=vgroup("Spherical Wave Encoding",checkbox("SPHERICAL WAVE"));
-r1 = vslider("Source Radius", 2, 0.5, 10, 0.01);
+r2 = nentry("[6]Speakers Radius", 1.07, 0.5, 10, 0.01);
+spherical=vgroup("[2]Spherical Wave Encoding",checkbox("Yes"));
+r1 = vslider("[5]Source Radius", 2, 0.5, 10, 0.01);
 
 vmeter(x)		= attach(x, envelop(x) : vbargraph("[unit:dB]",-100, 10));
 envelop			= abs : max(db2linear(-100)) : linear2db : min(10)  : max ~ -(80.0/SR);
@@ -23,12 +23,12 @@ a = x+1+delta;};
 
 meterm(m) = par(i,2*m+1,hgroup("%m",id(i,m*m-1)));
 
-theta=vslider("Source Theta", 0, 0, 360, 0.1)*PI/180;
-delta=vslider("Source Delta", 0, -90, 90, 0.1)*PI/180;
+theta=vslider("[3]Source Azimuth", 0, 0, 360, 0.1)*PI/180;
+delta=vslider("[4]Source Elevation", 0, -90, 90, 0.1)*PI/180;
 
 // Volume controller
 smooth(c)       = *(1-c) : +~*(c);
-vol             = hslider("Gain[style:knob][unit:dB]", 0, -20, 20, 0.1) : db2linear : smooth(0.999);
+vol             = hslider("[1]Gain[style:knob][unit:dB]", 0, -20, 20, 0.1) : db2linear : smooth(0.999);
 
 // This gain is introduced here to have the correct gain of the virtual source, defined at its position, not at origin, see [1]
 gain=r2/r1;
