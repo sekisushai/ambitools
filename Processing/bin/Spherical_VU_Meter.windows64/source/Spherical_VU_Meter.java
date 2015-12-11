@@ -70,7 +70,7 @@ public void setup() {
   f = createFont("Arial",40,true);
   
   //KEMAR HEAD MESH
-  mesh=(TriangleMesh)new STLReader().loadBinary(sketchPath("kemar_head_5000.stl"),STLReader.TRIANGLEMESH);
+  mesh=(TriangleMesh)new STLReader().loadBinary(sketchPath("data/kemar_head_5000.stl"),STLReader.TRIANGLEMESH);
   mesh.scale(0.095f);
   mesh.rotateZ(-6*PI/7);
   gfx=new ToxiclibsSupport(this);
