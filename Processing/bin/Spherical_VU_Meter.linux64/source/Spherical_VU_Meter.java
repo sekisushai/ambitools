@@ -165,6 +165,7 @@ public void draw() {
   drawHead();
   drawSphere();
   drawSources();
+  drawAxis();
 }
 
 public void drawHead() {
@@ -246,6 +247,19 @@ public void drawSources() {
     fill(color(60,360,360));
     Source2.render();
   }
+  
+  public void drawAxis() {
+    stroke( 0, 0, 360, 250); // middle grey 
+    strokeWeight(1);
+    line(0,0,0,150,0,0);
+    line(0,0,0,0,-150,0);
+    line(0,0,0,0,0,150);
+    textSize(10);
+    fill(color(0, 0, 360));
+    text("x", 150, 0,0);
+    text("y", 0, -150,0);
+    text("z", 0, 0,150);
+}
   
 public void oscEvent(OscMessage theOscMessage) {
   String v=theOscMessage.addrPattern();
