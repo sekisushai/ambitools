@@ -8,15 +8,35 @@ declare copyright   "(c) Pierre Lecomte 2015";
 // [1] Kronlachner, M. (2014). Spatial Transformations for the Alteration of Ambisonic Recordings. Graz University Of Technology, Austria.
 
 import("math.lib");
-on=checkbox("up-down");
+ud=checkbox("up-down");
+lr=checkbox("left-right");
+fb=checkbox("front-back");
 
-//up-down switching
-updown=vgroup("HOA scene flipping",(
+//up-down switching : all spherical harmonics with order and degree as m+n odd
+updown=(
 _,
-_,(_<:if(on==1,_*-1,_)),_,
-_,(_<:if(on==1,_*-1,_)),_,(_<:if(on==1,_*-1,_)),_,
-_,(_<:if(on==1,_*-1,_)),_,(_<:if(on==1,_*-1,_)),_,(_<:if(on==1,_*-1,_)),_,
-_,(_<:if(on==1,_*-1,_)),_,(_<:if(on==1,_*-1,_)),_,(_<:if(on==1,_*-1,_)),_,(_<:if(on==1,_*-1,_)),_,
-_,(_<:if(on==1,_*-1,_)),_,(_<:if(on==1,_*-1,_)),_,(_<:if(on==1,_*-1,_)),_,(_<:if(on==1,_*-1,_)),_,(_<:if(on==1,_*-1,_)),_));
+_,(_<:if(ud==1,_*-1,_)),_,
+_,(_<:if(ud==1,_*-1,_)),_,(_<:if(ud==1,_*-1,_)),_,
+_,(_<:if(ud==1,_*-1,_)),_,(_<:if(ud==1,_*-1,_)),_,(_<:if(ud==1,_*-1,_)),_,
+_,(_<:if(ud==1,_*-1,_)),_,(_<:if(ud==1,_*-1,_)),_,(_<:if(ud==1,_*-1,_)),_,(_<:if(ud==1,_*-1,_)),_,
+_,(_<:if(ud==1,_*-1,_)),_,(_<:if(ud==1,_*-1,_)),_,(_<:if(ud==1,_*-1,_)),_,(_<:if(ud==1,_*-1,_)),_,(_<:if(ud==1,_*-1,_)),_);
 
-process=updown;
+//left-right switching : all spherical harmonics of degree n<0
+leftright=(
+_,
+(_<:if(lr==1,_*-1,_)),_,_,
+(_<:if(lr==1,_*-1,_)),(_<:if(lr==1,_*-1,_)),_,_,_,
+(_<:if(lr==1,_*-1,_)),(_<:if(lr==1,_*-1,_)),(_<:if(lr==1,_*-1,_)),_,_,_,_,
+(_<:if(lr==1,_*-1,_)),(_<:if(lr==1,_*-1,_)),(_<:if(lr==1,_*-1,_)),(_<:if(lr==1,_*-1,_)),_,_,_,_,_,
+(_<:if(lr==1,_*-1,_)),(_<:if(lr==1,_*-1,_)),(_<:if(lr==1,_*-1,_)),(_<:if(lr==1,_*-1,_)),(_<:if(lr==1,_*-1,_)),_,_,_,_,_,_);
+
+//front-back switching : all spherical harmonics of degree (n<0 & n even) and (n>0 & n odd)
+frontback=(
+_,
+_,_,(_<:if(fb==1,_*-1,_)),
+(_<:if(fb==1,_*-1,_)),_,_,(_<:if(fb==1,_*-1,_)),_,
+_,(_<:if(fb==1,_*-1,_)),_,_,(_<:if(fb==1,_*-1,_)),_,(_<:if(fb==1,_*-1,_)),
+(_<:if(fb==1,_*-1,_)),_,(_<:if(fb==1,_*-1,_)),_,_,(_<:if(fb==1,_*-1,_)),_,(_<:if(fb==1,_*-1,_)),_,
+_,(_<:if(fb==1,_*-1,_)),_,(_<:if(fb==1,_*-1,_)),_,_,(_<:if(fb==1,_*-1,_)),_,(_<:if(fb==1,_*-1,_)),_,(_<:if(fb==1,_*-1,_)));
+
+process=vgroup("HOA scene flipping",updown:leftright:frontback);
