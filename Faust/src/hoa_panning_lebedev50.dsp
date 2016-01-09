@@ -27,7 +27,7 @@ mute = par(i,6,_*vgroup("Mute Order",1-checkbox("%i")));
 id(x,delta) =  vgroup("%2a",vmeter) with{
 a = x+1+delta;};
 
-vmeter(x)		= attach(x, envelop(x) : vbargraph("[unit:dB]", -100, 10));
+vmeter(x)		= attach(x, envelop(x) : vbargraph("[osc:vmeter][unit:dB]", -100, 10));
 envelop			= abs : max(db2linear(-100)) : linear2db : min(10)  : max ~ -(80.0/SR);
 
 theta1=vslider("Source 1 Theta", 0, 0, 360, 0.1)*PI/180;
