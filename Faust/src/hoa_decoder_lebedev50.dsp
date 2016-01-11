@@ -20,13 +20,15 @@ nf=vgroup("NFC",checkbox("Yes"));
 r2 = nentry("Speakers Radius", 1.07, 0.5, 10, 0.01);
 
 vmeter(x)		= attach(x, envelop(x) : vbargraph("[unit:dB]", -100, 10));
+// vmeter2 produces an osc alias and send the value of the bargraph on this alias when -xmit 2 is used at execution time
+vmeter2(x,i) 		= x<:attach(x, envelop(x) : vbargraph("[unit:dB][osc:/output%i]", -100, 10));
 envelop			= abs : max(db2linear(-100)) : linear2db : min(10)  : max ~ -(80.0/SR);
 
 // Volume controler : CAUTION with maximal value (60 dB!) it's to compensate the attenuation of the microphone radial filters.
 smooth(c)       = *(1-c) : +~*(c);
-vol             = vgroup("Inputs Gain",vslider("[unit:dB]", 0, -10, 60, 0.1) : db2linear : smooth(0.999));
+vol             = vgroup("Inputs Gain",vslider("[unit:dB][osc:/level -10 60]", 0, -10, 60, 0.1) : db2linear : smooth(0.999));
 
-id(x,delta) =  vgroup("%2a",vmeter) with{
+id(x,delta) =  vgroup("%2a",vmeter2(_,a)) with{
 a = x+1+delta;};
 
 idmute(x,delta) =  vgroup("%2a",_*(1-checkbox("Mute")):vmeter) with{
