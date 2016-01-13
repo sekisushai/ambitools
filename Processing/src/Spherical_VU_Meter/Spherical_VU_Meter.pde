@@ -30,7 +30,7 @@ Atom Mimi[], Source1, Source2;
 float[] rayons, position1, position2, position1sph, position2sph, dB;
 float[][] positions1, positions2; // past of the Source1 position to create a blur effect
 int nb, nb2,hmin=20, hmax=120;
-float deltar = 1, r1 = 1-deltar, r2 = 8-deltar, dBmin=-70, dBmax=6; // radius min and max of the spheres and dBmin and dBmax of the VU-Meter
+float deltar = 1, r1 = 1-deltar, r2 = 8-deltar, dBmin=-70, dBmax=6; // radius min and max of the spheres and dBmin and dBmax of the VU-Meter, deltar is to have a minimum radius to render a sphere even if no signal
 Table table;
 
 void setup() {
@@ -251,11 +251,6 @@ void drawSources() {
   
 void oscEvent(OscMessage theOscMessage) {
   String v=theOscMessage.addrPattern();
-    if (v.equals("/rayons")) { // works with PureData dB_to_OSC.pd
-       for ( int i=0; i<nb; i++) {
-         rayons[i] = theOscMessage.get(i).floatValue()/10+deltar; //+deltar To HAVE A SPHERE DISPLAYED ALTHOUGH THERE IS NO SIGNAL BUT BE CAREFUL OF THE COLOR SCALE THEN
-     }
-    }
         if (v.equals("/position1")) {
        for ( int i=0; i<3; i++) {
          position1[i] = theOscMessage.get(i).floatValue()*100;
