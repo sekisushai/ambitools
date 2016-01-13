@@ -26,7 +26,8 @@ envelop			= abs : max(db2linear(-70)) : linear2db : min(6)  : max ~ -(80.0/SR);
 
 // Volume controler : CAUTION with maximal value (60 dB!) it's to compensate the attenuation of the microphone radial filters.
 smooth(c)       = *(1-c) : +~*(c);
-vol             = vgroup("Inputs Gain",vslider("[unit:dB][osc:/level -10 60]", 0, -10, 60, 0.1) : db2linear : smooth(0.999));
+volin             = vgroup("Inputs Gain",vslider("[unit:dB][osc:/levelin -10 60]", 0, -10, 60, 0.1) : db2linear : smooth(0.999));
+volout             = vgroup("Outputs Gain",vslider("[unit:dB][osc:/levelout -10 60]", 0, -10, 60, 0.1) : db2linear : smooth(0.999));
 
 id(x,delta) =  vgroup("%2a",vmeter2(_,a)) with{
 a = x+1+delta;};
@@ -36,10 +37,10 @@ a = x+1+delta;};
 
 meterm(m) = par(i,2*m+1,hgroup("%m",_*(1-checkbox("Mute")):idmute(i,m*m-1)));
 
-matrix(n,m) = bus(n):vgroup("[4]B-Format",hgroup("[5]",meterm(0),meterm(1),meterm(2),meterm(3)),hgroup("[6]",meterm(4),meterm(5)))<:par(i,m,buswg(row(i)):>_);
+matrix(n,m) = bus(n):vgroup("[4]B-Format",hgroup("[5]",meterm(0),meterm(1),meterm(2),meterm(3)),hgroup("[6]",meterm(4),meterm(5)))<:par(i,m,buswg(row(i)):>_*(volout));
 
 // When near-field compensation is activated, multiplication by 4*PI*r2 to have the correct gain, see [2]
-selecteur=hgroup("[3]Parameters",bus(36)<:((par(i,36,*(nf*vol*4*PI*r2)):(_,par(i,3,nfc1(r2)),par(i,5,nfc2(r2)),par(i,7,nfc3(r2)),par(i,9,nfc4(r2)),par(i,11,nfc5(r2)))),par(i,36,*((1-nf)*vol))):>bus(36));
+selecteur=hgroup("[3]",bus(36)<:((par(i,36,*(nf*volin*4*PI*r2)):(_,par(i,3,nfc1(r2)),par(i,5,nfc2(r2)),par(i,7,nfc3(r2)),par(i,9,nfc4(r2)),par(i,11,nfc5(r2)))),par(i,36,*((1-nf)*volin))):>bus(36));
 
 process=vgroup("[1]HOA decoder on Lebedev 50 nodes grid",hgroup("[2]",selecteur:matrix(36,50)):vgroup("[7]Outputs",hgroup("[8]",par(i,25,id(i,0))),hgroup("[9]",par(i,25,id(i,25)))));
 
