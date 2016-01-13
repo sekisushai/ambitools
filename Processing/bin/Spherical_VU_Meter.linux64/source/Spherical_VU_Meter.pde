@@ -27,20 +27,18 @@ OscP5 oscP5;
 
 PFont f;
 Atom Mimi[], Source1, Source2;
-float[] rayons, position1, position2, position1sph, position2sph;
+float[] rayons, position1, position2, position1sph, position2sph, dB;
 float[][] positions1, positions2; // past of the Source1 position to create a blur effect
-int nb, nb2;
-float deltar = 1, r1 = 1-deltar, r2 = 10-deltar; // radius min and max of the spheres
+int nb, nb2,hmin=20, hmax=120;
+float deltar = 1, r1 = 1-deltar, r2 = 8-deltar, dBmin=-70, dBmax=6; // radius min and max of the spheres and dBmin and dBmax of the VU-Meter
 Table table;
-color[] palette = new color[120]; // 120 colors palette
-
 
 void setup() {
   
   //RENDERING
   fullScreen(P3D,2);
   //surface.setResizable(true);
-  colorMode(HSB, 360);
+  colorMode(HSB, 360,100,100);
   
   //FONT
   f = createFont("Arial",40,true);
@@ -74,9 +72,11 @@ void setup() {
     Source1 = new Atom(0,0,0);
     Source2 = new Atom(0,0,0);
          
-    // RAYONS
+    // RAYONS & dB INITIAL VALUES
     rayons = new float[nb];
+    dB = new float[nb];
     for(int i=0; i<nb;i++){
+     dB[i]=dBmin;
      rayons[i] = 1;//(i+1)/5; 
      
     // Source1 POSITION INITIAL
@@ -123,12 +123,8 @@ void setup() {
   
   //OSC
   // starts oscP5, telling it to listen for incoming messages at port 5001 */
-  oscP5 = new OscP5(this,5001);
+  oscP5 = new OscP5(this,5511);
       
-  // COLOR BAR
-  for (int i=0; i<=119; i++) {
-    palette[i]= color(i,360,360);
-  }
 }
 
 void draw() {
@@ -146,44 +142,60 @@ void draw() {
 
 void drawHead() {
   noStroke();
-  fill(80,76, 205);
-  translate(1,0,-5);
+  fill(color(0,0, 80));
   gfx.mesh(mesh,true,0);
+  translate(-1,0,5);
 }
 
 void drawPalette() {
-  for (int i=0; i< 120; i++) {
-    fill(palette[i]);
-    rect(10,10+5*i,40,5);
+    textFont(f,15);
+  for (int h=hmin; h< hmax; h++) { // dB = (dBmin-dBmax)/(hmax-hmin)*h + (dBmax*hmax-dBmin*hmin)/(hmax-hmin)
+      if (h <= (dBmax*hmax - dBmin*hmin)/(dBmax - dBmin)){ // if dBmax >= dB >= 0
+        fill(color(0,100,100));
+        } 
+      else { // else if 0 >= dB > dBmin
+        fill(color(h,100,100));
+      }
+    noStroke();
+    rect(10,10+6*(h-hmin),40,6);
+    if (h%4==0){
+    text(nfp(round((dBmin-dBmax)/(hmax-hmin)*h + (dBmax*hmax-dBmin*hmin)/(hmax-hmin)),0,0),55,15+6*(h-hmin));
+    }
     }
 }
 
 void drawCoordinates() {
   textFont(f,40);       
-  fill(color(0, 360, 360));
-  text("X : " + nfp(position1[0]/100,1,2) + " m",100,50);
-  text("Y : " + nfp((-1)*position1[1]/100,1,2) + " m",100,90); // BE CAREFUL HERE Y IS REVERSED TO ACCORD THE AXIS SENS IN PROCESSING
-  text("Z : " + nfp(position1[2]/100,1,2) + " m",100,130);
+  fill(color(0, 100, 100));
+  text("X : " + nfp(position1[0]/100,1,2) + " m",110,50);
+  text("Y : " + nfp((-1)*position1[1]/100,1,2) + " m",110,90); // BE CAREFUL HERE Y IS REVERSED TO ACCORD THE AXIS SENS IN PROCESSING
+  text("Z : " + nfp(position1[2]/100,1,2) + " m",110,130);
   
-  text("R : " + nfp(position1sph[0],1,2) + " m",100,200);
-  text('\u03B8'+" : " + nfp(round(position1sph[1]),3) + " "+ '\u00B0',100,240);
-  text('\u03B4'+" : " + nfp(round(position1sph[2]),3) + " \u00B0",100,280);
+  text("R : " + nfp(position1sph[0],1,2) + " m",110,200);
+  text('\u03B8'+" : " + nfp(round(position1sph[1]),3) + " "+ '\u00B0',110,240);
+  text('\u03B4'+" : " + nfp(round(position1sph[2]),3) + " \u00B0",110,280);
   
-    fill(color(60,360, 360));
-  text("X : " + nfp(position2[0]/100,1,2) + " m",100,380);
-  text("Y : " + nfp((-1)*position2[1]/100,1,2) + " m",100,420); // BE CAREFUL HERE Y IS REVERSED TO ACCORD THE AXIS SENS IN PROCESSING
-  text("Z : " + nfp(position2[2]/100,1,2) + " m",100,460);
+  fill(color(60,100, 100));
+  text("X : " + nfp(position2[0]/100,1,2) + " m",110,380);
+  text("Y : " + nfp((-1)*position2[1]/100,1,2) + " m",110,420); // BE CAREFUL HERE Y IS REVERSED TO ACCORD THE AXIS SENS IN PROCESSING
+  text("Z : " + nfp(position2[2]/100,1,2) + " m",110,460);
   
-  text("R : " + nfp(position2sph[0],1,2) + " m",100,510);
-  text('\u03B8'+" : " + nfp(round(position2sph[1]),3) + " "+ '\u00B0',100,550);
-  text('\u03B4'+" : " + nfp(round(position2sph[2]),3) + " \u00B0",100,590);
+  text("R : " + nfp(position2sph[0],1,2) + " m",110,510);
+  text('\u03B8'+" : " + nfp(round(position2sph[1]),3) + " "+ '\u00B0',110,550);
+  text('\u03B4'+" : " + nfp(round(position2sph[2]),3) + " \u00B0",110,590);
 }
 
 public void drawSphere() {
   noStroke();
   for ( int i=0; i<nb; i++) {
-      float col = 120/(r1-r2)*(rayons[i]-r2);
-      fill(color(col, 360, 360));
+    color col = color(0,100,100); // r = (r2-r1)/(dBmax - dBmin) dB + (dBmin*r2 - dBmax*r1)/(dBmax - dBmin)
+    if (dB[i]>=0) { // if dB >=0
+      col = color(0,100,100);
+    }
+    else {
+      col = color((-dB[i]*hmax + dBmax*hmax + dB[i]*hmin - dBmin*hmin)/(dBmax - dBmin),100,100); // linear interpolation color
+    }
+      fill(col);
       Mimi[i].changeRadius(rayons[i]);
       Mimi[i].render();
       }
@@ -263,5 +275,12 @@ void oscEvent(OscMessage theOscMessage) {
        for ( int i=0; i<3; i++) {
          position2sph[i] = theOscMessage.get(i).floatValue();
      }
-    }    
+    }
+    // get the osc values transmitted by Faust under name /output1 /output2 etc..
+    for ( int i=0; i<nb; i++) {
+        if (v.equals("/output"+str(i+1))) {
+      rayons[i]= (r2-r1)/(dBmax-dBmin)*theOscMessage.get(0).floatValue()+(dBmax*r1-dBmin*r2)/(dBmax-dBmin)+deltar; //linear interpolation : dBmin ==> r1 10 dBmax ==> r2
+      dB[i]=theOscMessage.get(0).floatValue();
+    }
+    }
 }
