@@ -19,10 +19,10 @@ nf=vgroup("NFC",checkbox("Yes"));
 // Spherical restitution speaker layout radius r2 is needeed to stabilize near-field filters, see [1]
 r2 = nentry("Speakers Radius", 1.07, 0.5, 10, 0.01);
 
-vmeter(x)		= attach(x, envelop(x) : vbargraph("[unit:dB]", -100, 10));
+vmeter(x)		= attach(x, envelop(x) : vbargraph("[unit:dB]", -70, 6));
 // vmeter2 produces an osc alias and send the value of the bargraph on this alias when -xmit 2 is used at execution time
-vmeter2(x,i) 		= x<:attach(x, envelop(x) : vbargraph("[unit:dB][osc:/output%i]", -100, 10));
-envelop			= abs : max(db2linear(-100)) : linear2db : min(10)  : max ~ -(80.0/SR);
+vmeter2(x,i) 		= x<:attach(x, envelop(x) : vbargraph("[unit:dB][osc:/output%i]", -70, 6));
+envelop			= abs : max(db2linear(-70)) : linear2db : min(6)  : max ~ -(80.0/SR);
 
 // Volume controler : CAUTION with maximal value (60 dB!) it's to compensate the attenuation of the microphone radial filters.
 smooth(c)       = *(1-c) : +~*(c);
