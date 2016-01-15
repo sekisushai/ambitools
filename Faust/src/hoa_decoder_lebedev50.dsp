@@ -15,7 +15,7 @@ import("lib/lebedev.lib");
 //[1] Lecomte, P., Gauthier, P.-A., Langrenne, C., Garcia, A., & Berry, A. (2015). On the use of a Lebedev grid for Ambisonics. In Audio Engineering Society Convention 139. New York.
 //[2] Lecomte, P., & Gauthier, P.-A. (2015). Real-Time 3D Ambisonics using Faust, Processing, Pure Data, And OSC. In 15th International Conference on Digital Audio Effects (DAFx-15). Trondheim, Norway.
 
-nf=vgroup("NFC",checkbox("Yes"));
+nf=checkbox("NFC");
 // Spherical restitution speaker layout radius r2 is needeed to stabilize near-field filters, see [1]
 r2 = nentry("Speakers Radius", 1.07, 0.5, 10, 0.01);
 
@@ -26,8 +26,8 @@ envelop			= abs : max(db2linear(-70)) : linear2db : min(6)  : max ~ -(80.0/SR);
 
 // Volume controler : CAUTION with maximal value (60 dB!) it's to compensate the attenuation of the microphone radial filters.
 smooth(c)       = *(1-c) : +~*(c);
-volin             = vgroup("Inputs Gain",vslider("[unit:dB][osc:/levelin -10 60]", 0, -10, 60, 0.1) : db2linear : smooth(0.999));
-volout             = vgroup("Outputs Gain",vslider("[unit:dB][osc:/levelout -10 60]", 0, -10, 60, 0.1) : db2linear : smooth(0.999));
+volin             = vslider("Inputs Gain[unit:dB][osc:/levelin -10 60]", 0, -10, 60, 0.1) : db2linear : smooth(0.999);
+volout             = vslider("Outputs Gain[unit:dB][osc:/levelout -10 60]", 0, -10, 60, 0.1) : db2linear : smooth(0.999);
 
 id(x,delta) =  vgroup("%2a",vmeter2(_,a)) with{
 a = x+1+delta;};
