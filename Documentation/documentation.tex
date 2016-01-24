@@ -1,0 +1,50 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage[hyphens]{url}
+\usepackage[colorlinks]{hyperref}
+\author{Pierre Lecomte \\ \textit{ \href{mailto:pierre.lecomte@gadz.org}{pierre.lecomte@gadz.org}}}
+\title{ambitools Documentation}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\section{Introduction}
+This document is organized as follows :
+
+\subsection{Goals of ambitools}
+ambitools is a collection of tools for sound-field synthesis using Near-Field Compensated Higher Orders Ambisonics (NFC-HOA). For the rest of this document, the denomination Ambisonics will be used for simplicity.
+
+ambitools is developped in the context of my PhD on sound field synthesis. The audio processing is coded in \textsc{Faust} (Functional AUdio Stream) which allows to produce efficent C++ code and exports in various DSP tools format : VST, standalone applications, lv2, etc. Thus, ambitools is multi-platform although conceived under Linux/Jack.
+
+The goal of ambitools is mainly to produces several modules to encode, decode, transform sound sources or 3D recordings in a context of physical sound field synthesis. 
+
+The project is open-source under GPL licence. The \textsc{Faust} code is easily editable without beeing an C++ DSP engineer, so if a module should be adapted to a configuration, it'll be very easy to change a few lines in the code and produce quickly the required tool, using for example \textsc{FaustLive}.
+
+Don't hesitate to contact me for any suggestions, requirements, critics or even to tell me you're using ambitools !
+
+\subsection{Ambisonics}
+This section presents the basis of Ambisonics for 3D sound field synthesis. If you're familiar with Ambisonics you may skip this section.
+
+\section{Installing ambitools}
+To install ambitools, simply go on the github repository and clone it
+
+\subsection{Depedencies}
+\section{The different tools}
+\subsection{Faust}
+\subsubsection{hoa\_encoder}
+\subsubsection{hoa\_decoder\_*}
+\subsubsection{hoa\_panning\_*}
+\subsubsection{hoa\_flipping}
+\subsubsection{hoa\_beamformer\_to\_mono}
+\subsubsection{hoa\_beamformer\_to\_hoa}
+\subsection{Processing}
+\subsubsection{Spherical\_VU\_Meter}
+\subsection{Jconvolver}
+\subsubsection{jconvolver\_mic*}
+\subsubsection{hrir\_lebedev50}
+\section{Examples}
+\subsection{Flys flying around}
+\subsection{Record trajectories with Ardour}
+\end{document}
