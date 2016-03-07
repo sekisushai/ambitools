@@ -393,6 +393,11 @@
       <setting name="enabled" control="gc-enabled-normal">true</setting>
     </event>
 
+    <event path="vm/gc/detailed/allocation_requiring_gc">
+      <setting name="enabled" control="gc-enabled-all">false</setting>
+      <setting name="stackTrace">true</setting>
+    </event>
+
     <event path="vm/compiler/config">
       <setting name="enabled" control="compiler-enabled">true</setting>
       <setting name="period">everyChunk</setting>

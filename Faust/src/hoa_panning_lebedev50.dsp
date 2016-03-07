@@ -17,8 +17,8 @@ gain02		= vslider("[5][osc:/source2_gain]Source 2 Gain", 0, -20, 20, 0.1) : db2l
 
 
 rhp = nentry("[9]Speaker Radius", 1, 0.5, 10, 0.01);
-r1 = vslider("[2][osc:source1_radius]Source 1 Radius", 2, 0.5, 50, 0.01);
-r2 = vslider("[6][osc:source2_radius]Source 2 Radius", 2, 0.5, 50, 0.01);
+r1 = vslider("[2][osc:/source1_radius]Source 1 Radius", 2, 0.5, 50, 0.01);
+r2 = vslider("[6][osc:/source2_radius]Source 2 Radius", 2, 0.5, 50, 0.01);
 
 speakers = 50;
 
@@ -31,11 +31,11 @@ envelop			= abs : max(db2linear(-70)) : linear2db : min(6)  : max ~ -(80.0/SR);
 id(x,delta) =  vgroup("%2a",vmeter2(_,a)) with{
 a = x+1+delta;};
 
-theta1=vslider("[3][osc:source1_theta]Source 1 Theta", 0, 0, 360, 0.1)*PI/180;
-delta1=vslider("[4][osc:source1_delta]Source 1 Delta", 0, -90, 90, 0.1)*PI/180;
+theta1=vslider("[3][osc:/source1_theta]Source 1 Theta", 0, 0, 360, 0.1)*PI/180;
+delta1=vslider("[4][osc:/source1_delta]Source 1 Delta", 0, -90, 90, 0.1)*PI/180;
 
-theta2=vslider("[7][osc:source2_theta]Source 2 Theta", 0, 0, 360, 0.1)*PI/180;
-delta2=vslider("[8][osc:source2_delat]Source 2 Delta", 0, -90, 90, 0.1)*PI/180;
+theta2=vslider("[7][osc:/source2_theta]Source 2 Theta", 0, 0, 360, 0.1)*PI/180;
+delta2=vslider("[8][osc:/source2_delta]Source 2 Delta", 0, -90, 90, 0.1)*PI/180;
 
 source1 = _*(rhp*gain01/r1)<:par(i,speakers,_*weight5(i)<:mute:(_,nf1(r1,rhp)*LegendreP1(angle(theta1,delta1,azimuth(i),elevation(i))),nf2(r1,rhp)*LegendreP2(angle(theta1,delta1,azimuth(i),elevation(i))),nf3(r1,rhp)*LegendreP3(angle(theta1,delta1,azimuth(i),elevation(i))),nf4(r1,rhp)*LegendreP4(angle(theta1,delta1,azimuth(i),elevation(i))),nf5(r1,rhp)*LegendreP5(angle(theta1,delta1,azimuth(i),elevation(i)))):>_);
 

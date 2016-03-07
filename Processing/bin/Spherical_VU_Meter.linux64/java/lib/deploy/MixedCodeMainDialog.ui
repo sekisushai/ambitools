@@ -4,7 +4,7 @@
     <property name="deletable">FALSE</property>
     <property name="resizable">FALSE</property>
     <property name="width-request">500</property>
-    <property name="height-request">220</property>
+    <property name="height-request">225</property>
     <property name="has-separator">FALSE</property>
 
     <child internal-child="vbox">
@@ -141,7 +141,7 @@
               </object>
               <packing>
                 <property name="x">55</property>
-                <property name="y">185</property>
+                <property name="y">198</property>
               </packing>
             </child>
 

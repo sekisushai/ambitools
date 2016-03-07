@@ -136,8 +136,19 @@ void draw() {
   cam.endHUD();
   drawHead();
   drawSphere();
+  spher2Cart();
   drawSources();
   drawAxis();
+}
+
+void spher2Cart(){
+  position1[0]=position1sph[0]*cos(position1sph[1]*PI/180)*cos(position1sph[2]*PI/180)*100; // x1
+  position1[1]=position1sph[0]*sin(position1sph[1]*PI/180)*cos(position1sph[2]*PI/180)*100; // y1
+  position1[2]=position1sph[0]*sin(position1sph[2]*PI/180)*100; // z1
+  
+  position2[0]=position2sph[0]*cos(position2sph[1]*PI/180)*cos(position2sph[2]*PI/180)*100; // x2
+  position2[1]=position2sph[0]*sin(position2sph[1]*PI/180)*cos(position2sph[2]*PI/180)*100; // y2
+  position2[2]=position2sph[0]*sin(position2sph[2]*PI/180)*100; // z2
 }
 
 void drawHead() {
@@ -251,26 +262,24 @@ void drawSources() {
   
 void oscEvent(OscMessage theOscMessage) {
   String v=theOscMessage.addrPattern();
-        if (v.equals("/position1")) {
-       for ( int i=0; i<3; i++) {
-         position1[i] = theOscMessage.get(i).floatValue()*100;
-     }
+   if (v.equals("/source1_radius")) {
+         position1sph[0] = theOscMessage.get(0).floatValue();
     }
-    if (v.equals("/position2")) {
-       for ( int i=0; i<3; i++) {
-         position2[i] = theOscMessage.get(i).floatValue()*100;
-     }
+   if (v.equals("/source1_theta")) {
+         position1sph[1] = theOscMessage.get(0).floatValue();
     }
-    if (v.equals("/position1sph")) {
-       for ( int i=0; i<3; i++) {
-         position1sph[i] = theOscMessage.get(i).floatValue();
-     }
+   if (v.equals("/source1_delta")) {
+         position1sph[2] = theOscMessage.get(0).floatValue();
     }
-    if (v.equals("/position2sph")) {
-       for ( int i=0; i<3; i++) {
-         position2sph[i] = theOscMessage.get(i).floatValue();
-     }
+   if (v.equals("/source2_radius")) {
+         position2sph[0] = theOscMessage.get(0).floatValue();
     }
+   if (v.equals("/source2_theta")) {
+         position2sph[1] = theOscMessage.get(0).floatValue();
+    }
+   if (v.equals("/source2_delta")) {
+         position2sph[2] = theOscMessage.get(0).floatValue();
+    }    
     // get the osc values transmitted by Faust under name /output1 /output2 etc..
     for ( int i=0; i<nb; i++) {
         if (v.equals("/output"+str(i+1))) {

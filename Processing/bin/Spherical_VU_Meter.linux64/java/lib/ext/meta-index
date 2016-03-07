@@ -8,6 +8,8 @@ sun/util
 # dnsns.jar
 META-INF/services/sun.net.spi.nameservice.NameServiceDescriptor
 sun/net
+! jaccess.jar
+com/sun/java/accessibility/
 # localedata.jar
 sun/text
 sun/util
