@@ -74,7 +74,7 @@ public void setup() {
   gfx=new ToxiclibsSupport(this);
 
   //CAMERA
-  cam = new PeasyCam(this,360);
+  cam = new PeasyCam(this,250);
   cam.setMinimumDistance(50);
   cam.setRotations(-0.68f,-1.30f,0.88f);
   cam.setMaximumDistance(2000);
@@ -167,11 +167,11 @@ public void draw() {
 
 public void spher2Cart(){
   position1[0]=position1sph[0]*cos(position1sph[1]*PI/180)*cos(position1sph[2]*PI/180)*100; // x1
-  position1[1]=position1sph[0]*sin(position1sph[1]*PI/180)*cos(position1sph[2]*PI/180)*100; // y1
+  position1[1]=-position1sph[0]*sin(position1sph[1]*PI/180)*cos(position1sph[2]*PI/180)*100; // y1 // BE CAREFUL HERE Y IS REVERSED TO ACCORD THE AXIS SENS IN PROCESSING
   position1[2]=position1sph[0]*sin(position1sph[2]*PI/180)*100; // z1
   
   position2[0]=position2sph[0]*cos(position2sph[1]*PI/180)*cos(position2sph[2]*PI/180)*100; // x2
-  position2[1]=position2sph[0]*sin(position2sph[1]*PI/180)*cos(position2sph[2]*PI/180)*100; // y2
+  position2[1]=-position2sph[0]*sin(position2sph[1]*PI/180)*cos(position2sph[2]*PI/180)*100; // y2 // BE CAREFUL HERE Y IS REVERSED TO ACCORD THE AXIS SENS IN PROCESSING
   position2[2]=position2sph[0]*sin(position2sph[2]*PI/180)*100; // z2
 }
 
