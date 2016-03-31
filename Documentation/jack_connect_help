@@ -1,0 +1,21 @@
+#jack_connect cookbook for ambitools
+#Pierre Lecomte 2016
+
+#ardour to hoa_mic_encoder_lebedev50
+for i in `seq 0 49`; do jack_connect "ardour:001/audio_out $((i+1))" "hoa_mic_encoder_lebedev50:in_$i";done;
+
+
+#hoa_mic_encoder_lebedev50 to jconvolver
+for i in `seq 0 35`; do jack_connect "hoa_mic_encoder_lebedev50:out_$i" "jconvolver:In-$((i+1))" ;done;
+
+#jconvolver to hoa_beamformer_to_hoa
+for i in `seq 0 35`; do jack_connect "jconvolver:Out-$((i+1))" "hoa_beamformer_to_hoa:in_$i" ;done;
+
+#jconvolver to hoa_beamforming_dirac_to_hoa
+for i in `seq 0 35`; do jack_connect "jconvolver:Out-$((i+1))" "hoa_beamforming_dirac_to_hoa:in_$i" ;done;
+
+#hoa_beamformer_to_hoa to hoa_decoder_lebedev50
+for i in `seq 0 35`; do jack_connect "hoa_beamformer_to_hoa:out_$i" "hoa_decoder_lebedev50:in_$i" ;done;
+
+#hoa_beamforming_dirac_to_hoa to hoa_decoder_lebedev50
+for i in `seq 0 35`; do jack_connect "hoa_beamforming_dirac_to_hoa:out_$i" "hoa_decoder_lebedev50:in_$i" ;done;
