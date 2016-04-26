@@ -24,7 +24,8 @@ vol             = hslider("2-volume", -96, -96, 0, 0.1): db2linear : smooth(0.99
 freq            = hslider("1-freq", 1000, 0, 24000, 0.1);
 dest            = rint(hslider("3-destination", 1, 1, 50, 1));
 
-testsignal      = osci(freq)*checkbox("sine wave")
+testsignal      = _*checkbox("input")
+		+ osci(freq)*checkbox("sine wave")
                 + noise * checkbox("white noise")
                 + pink(noise) * db2linear(20)  * checkbox("pink noise");
 
