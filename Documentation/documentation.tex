@@ -4,37 +4,133 @@
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 \usepackage[hyphens]{url}
 \usepackage[colorlinks]{hyperref}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{graphicx}
+\graphicspath{{Figures/}}
 \author{Pierre Lecomte \\ \textit{ \href{mailto:pierre.lecomte@gadz.org}{pierre.lecomte@gadz.org}}}
 \title{ambitools Documentation}
 
+%%% MY COLORS
+\definecolor{yoheader}{rgb}{0.71,0.01,0.0}
+
+%%%% margin par
+\definecolor{margincolor}{rgb}{0.52,0.02,0.02} % grey red.
+\definecolor{yobg}{rgb}{0.9,0.9,1}
+\definecolor{yotxt}{rgb}{0.01,0.01,0.52}
+\definecolor{mylstcmt}{rgb}{0.01,0.52,0.01} % a dark green.
+%\definecolor{mylstdoc}{rgb}{0.60,0.60,0.60} % a medium grey.
+\definecolor{mylstdoc}{rgb}{0.80,0.30,0.80} % a medium pink.
+%\definecolor{mylsteqn}{rgb}{0.80,0.80,0.30} % a medium pink.
+\definecolor{mylstkey}{rgb}{0.52,0.01,0.01} % a dark red.
+%%\newcommand{\farg}[1]{\textrm{\textit{#1}}}
+
 \begin{document}
+
+\lstset{
+  tabsize=4,
+  showspaces=false,
+  showstringspaces=false,
+  %language=C++, 
+  basicstyle=\ttfamily\color{yotxt},
+  numbers=none,
+  stepnumber=2,
+  commentstyle=\slshape\color{mylstcmt},
+  breaklines=true, 
+  emph={component, declare, environment, import, library, process},
+  emph={[3]button, checkbox, vslider, hslider, nentry, vgroup, hgroup, tgroup, vbargraph, hbargraph, attach},
+  emphstyle=\color{mylstkey},
+%  morecomment=[s][\color{mylsteqn}]{<equation>}{</equation>},
+  morecomment=[s][\color{mylstdoc}]{<mdoc>}{</mdoc>},
+  %% frame=single,
+  backgroundcolor=\color{yobg},
+  captionpos=b
+}
+
 \maketitle
 \tableofcontents
 \section{Introduction}
-This document is organized as follows :
 
 \subsection{Goals of ambitools}
 ambitools is a collection of tools for sound-field synthesis using Near-Field Compensated Higher Orders Ambisonics (NFC-HOA). For the rest of this document, the denomination Ambisonics will be used for simplicity.
 
-ambitools is developped in the context of my PhD on sound field synthesis. The audio processing is coded in \textsc{Faust} (Functional AUdio Stream) which allows to produce efficent C++ code and exports in various DSP tools format : VST, standalone applications, lv2, etc. Thus, ambitools is multi-platform although conceived under Linux/Jack.
+ambitools is developped in the context of my PhD on 3D sound field synthesis. The audio processing is coded in \textsc{Faust}\footnote{\url{http://faust.grame.fr}} (Functional AUdio Stream) which allows to produce efficent C++ code and exports in various DSP tools format : VST, standalone applications, lv2, etc. Thus, ambitools is multi-platform (although conceived under Linux/Jack).
 
-The goal of ambitools is mainly to produces several modules to encode, decode, transform sound sources or 3D recordings in a context of physical sound field synthesis. 
+The goal of ambitools is mainly to produces several modules to encode, decode and transform sound sources or 3D recordings in a context of physical sound field synthesis. 
 
 The project is open-source under GPL licence. The \textsc{Faust} code is easily editable without beeing an C++ DSP engineer, so if a module should be adapted to a configuration, it'll be very easy to change a few lines in the code and produce quickly the required tool, using for example \textsc{FaustLive}.
 
 Don't hesitate to contact me for any suggestions, requirements, critics or even to tell me you're using ambitools !
 
+\begin{flushright}
+Pierre Lecomte
+\end{flushright}
+
 \subsection{Ambisonics}
 This section presents the basis of Ambisonics for 3D sound field synthesis. If you're familiar with Ambisonics you may skip this section.
 
 \section{Installing ambitools}
-To install ambitools, simply go on the github repository and clone it
 
-\subsection{Depedencies}
+\subsection{Retrieve ambitools repository}
+To install ambitools, simply go on the github repository\footnote{\url{https://github.com/sekisushai/ambitools}} and clone it. To do so, open a terminal in the directory you'd like to clone the repository and type the following command:
+
+\begin{lstlisting}
+$ git clone https://github.com/sekisushai/ambitools
+\end{lstlisting}
+
+To keep the repository up to date, type the following command at the root of the directory \lstinline`ambitools/`:
+
+\begin{lstlisting}
+$ git pull
+\end{lstlisting}
+
+You can also download a \lstinline'.zip' file from github\footnote{\url{https://github.com/sekisushai/ambitools/archive/master.zip}}
+
+The resulting \lstinline'ambitools/' folder should have the following structure:
+
+\begin{itemize}
+    \item \lstinline'Documentation/': everything concerning the documentation (pdfs, including some scientific papers).
+    \item \lstinline'Faust/': everything written in \textsc{Faust} language (all the ambitools plug-ins + some utilities).
+    \item \lstinline'FIR/': Finite Impulse Response filters bank for binaural rendering and spherical microphone equalization filters, to use with Jconvoler, BruteFir, or other fast convolution software.
+    \item \lstinline'Processing/': everything written in Processing language, namely the spherical VU-Meter
+    \item \lstinline'PureData/': everything written in Pure Data (a few sounds generator patches, and PlayStation-like remote patch to drive \textsc{Faust} plug-ins with Open Sound Control protocol, OSC).
+\end{itemize}
+
+\subsection{Compile the plug-ins}
+%\subsection{Depedencies}
+%In \textit{\textsc{Faust}} and \textit{Processing} directories, there is a \textit{bin} sub-directory with the tools compiled for various architectures (VST, lv2, standalone). 
+% jack jconvolver \textsc{Faust} processing
+
 \section{The different tools}
-\subsection{Faust}
+This section gives a quick presentation of each tool contained in ambitools. 
+\subsection{\textsc{Faust}}
+The core of the sound processing is written in \textsc{Faust} language. Note that the majority of the figures presented here will be screenshots of the tools compiled as standalone \textsc{Jack} applications for Linux. However, thanks to the versatility of \textsc{Faust} compiler each of these tools can be compiled for various architecture, using \textsc{FaustLive}\footnote{\url{http://faust.grame.fr}} for example. 
+
 \subsubsection{hoa\_encoder}
+\label{sec:hoa_encoder}
+This first tool allows to encode a monophonic signal as 3D $B$-format spatial audio signals. The graphical user interface using \textsc{Faust} jack-qt4 compiler is shown in Fig.~\ref{fig:hoa_encoder}. Two types of sources encoding are available : plane waves sources and spherical wave source. 
+
+For the plane wave case, the check-box 'Spherical Wave Encoding' should be unselected. Consequently, the sliders 'Source Radius' and input entry 'Speaker Radius' are without effect on $B$-Format outputs signals.
+
+For the spherical wave case, near-field filters are activated. \cite{daniel2003spatial,lecomte2015real}. Those filters use the decoding near-field compensation filters to be stable. Thus in this case, the radius of the spherical loudspeakers layout should be known prior to decoding. Consequently, the slider 'Source Radius' allows to choose the source radius to origin and the 'Speaker Radius' input entry fixes the loudspeakers radius to origin. At the decoding stage, using \lstinline'hoa_decoder' tools, the near-field compensation filters should be deactivated as they are already used at the encoding (see Sec.\ref{sec:hoa_decoder}).
+
+\begin{figure}[!ht]
+\includegraphics[width=\columnwidth]{hoa_encoder.png}
+\caption{\lstinline'hoa_encoder' plug-in under linux jack-qt4. The 'Gain' button allows to adjust the input level of monophonic signal. The 'Spherical Wave Encoding' check-box enables the encoding of spherical wave, using near-field filters. 'Source Azimuth' and 'Source Elevation' sliders allows to choose the source direction. 'Source Radius' allows to choose the source distance to origin in case of spherical wave encoding. 'Speakers Radius' sets the radius for the spherical arrays of loudspeakers at decoding stage in case of spherical wave encoding. Finally the B-Format VU-Meters shows the level of 3D $B$-Format signals in dBFS up to order 5 (36 signals).}
+\label{fig:hoa_encoder}
+\end{figure}
+
 \subsubsection{hoa\_decoder\_*}
+Two basic decoder by mode matching \cite{daniel2000representation,poletti2005three} are available at the moment in ambitools: \lstinline'hoa_decoder_lebedev26' and
+\lstinline'hoa_decoder_lebedev50'. Those two decoder allows to decode a $B$-Format on Lebedev grids with respectively 26 and 50 loudspeakers \cite{lebedev1975values,lecomte2015on}. Those grids are able to reconstruct the sound field up to order $3$ and $5$ respectively.
+If other decoder are required, you should have a look at the ambisonic decoder toolbox from Aaron Heller \cite{heller2012toolkit}, or contact me. The graphical user interface using \textsc{Faust} jack-qt4 compiler is shown in Fig.~\ref{fig:hoa_decoder_lebedev50} for the \lstinline'hoa_decoder_lebedev50' decoder. The decoder can be with or without near-field compensation (NFC) filters \cite{daniel2003further,lecomte2015real}. Those filters allow to take into account the finite distance of the loudspeakers : if they are disabled, the loudspeakers are seen as plane-wave generators. In case of spherical wave encoding using the \lstinline'hoa_encoder' plug-in, the filters should be disabled as the near-field compensation filters are already used at encoding step (see Sec.~\ref{sec:hoa_encoder}).
+\begin{figure}[!ht]
+\includegraphics[width=\columnwidth]{hoa_decoder_lebedev50.png}
+\caption{\lstinline'hoa_decoder_lebedev50' plug-in under linux jack-qt4. The slider 'Outputs Gain' apply a global gain on all outputs (loudspeakers signals). The slider 'Inputs Gain' apply a global gain on all inputs ($B$-Format signals). The VU-Meters 'Inputs' and 'Outputs' give the signal level in dBFS. The check-box 'NFC' activate or deactivate the near-field compensation filters. The input entry 'Speakers Radius' allows to set the spherical grid radius. Finally, the check-boxes 'Mute' above all inputs VU-meters allow to mute some specific $B$-Format signals. Or, all the signal from an order with 'Mute' check-boxes on side of an VU-Meter group.}
+\label{fig:hoa_decoder_lebedev50}
+\end{figure}
+
+\label{sec:hoa_decoder}
 \subsubsection{hoa\_panning\_*}
 \subsubsection{hoa\_flipping}
 \subsubsection{hoa\_beamformer\_to\_mono}
@@ -44,7 +140,10 @@ To install ambitools, simply go on the github repository and clone it
 \subsection{Jconvolver}
 \subsubsection{jconvolver\_mic*}
 \subsubsection{hrir\_lebedev50}
-\section{Examples}
-\subsection{Flys flying around}
-\subsection{Record trajectories with Ardour}
+%\section{Examples}
+%\subsection{Flys flying around}
+%\subsection{Record trajectories with Ardour}
+\bibliography{These,ATIAM,Livres}
+\bibliographystyle{apalike}
+
 \end{document}
