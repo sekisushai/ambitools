@@ -15,8 +15,8 @@ r2 = nentry("[6]Speakers Radius", 1.07, 0.5, 10, 0.01);
 spherical=vgroup("[2]Spherical Wave Encoding",checkbox("Yes"));
 r1 = vslider("[5]Source Radius", 2, 0.5, 10, 0.01);
 
-vmeter(x)		= attach(x, envelop(x) : vbargraph("[unit:dB]",-100, 10));
-envelop			= abs : max(db2linear(-100)) : linear2db : min(10)  : max ~ -(80.0/SR);
+vmeter(x)		= attach(x, envelop(x) : vbargraph("[unit:dB]",-70, 6));
+envelop			= abs : max(db2linear(-70)) : linear2db : min(6)  : max ~ -(80.0/SR);
 
 id(x,delta) =  vgroup("%2a",vmeter) with{
 a = x+1+delta;};
