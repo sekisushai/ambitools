@@ -4,17 +4,12 @@
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
-@prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 <http://faustlv2.bitbucket.org/hoa_panning_plane_lebedev50>
     a lv2:Plugin ;
     lv2:binary <hoa_panning_plane_lebedev50.so> ;
     rdfs:seeAlso <hoa_panning_plane_lebedev50.ttl> .
-
-<http://faustlv2.bitbucket.org/hoa_panning_plane_lebedev50ui>
-    a ui:Qt4UI ;
-    ui:binary <hoa_panning_plane_lebedev50ui.so> .
 
 # Here's how you can declare the category of the plugin. (For instruments,
 # the lv2:InstrumentPlugin type will be added automatically.) See

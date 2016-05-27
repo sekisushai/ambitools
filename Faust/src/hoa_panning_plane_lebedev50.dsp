@@ -1,4 +1,4 @@
-declare name        "NFC-HOA with Lebedev grid up to order 5";
+declare name        "NFC-HOA of plane wave with Lebedev grid up to order 5";
 declare version     "1.0";
 declare author      "Pierre Lecomte";
 declare license     "GPL";
