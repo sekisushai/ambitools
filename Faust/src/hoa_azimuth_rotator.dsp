@@ -8,7 +8,10 @@ import("math.lib");
 import("music.lib");
 import("lib/ymn.lib");
 
-Theta=hslider("Theta[osc:/theta 0 360]", 0, 0, 360, 0.1)*PI/180;
+// HOA Azimuth Rotation: 36 inputs corresponding to 5th order 3D HOA scene are multiplied by a rotation matrix, with rotation axis 0z. Driven by osc from head-tracking data, this tool can compensate the head rotation when // the rendering is made over headphones. See [1] for example
+// [1] S. Moreau, “Étude et réalisation d’outils avancés d'encodage spatial pour la technique de spatialisation sonore Higher Order Ambisonics: microphone 3D et contrôle de distance,” Université du Maine, Le Mans, France, // 2006.
+
+Theta=hslider("Azimuth[osc:/theta 0 360]", 0, 0, 360, 0.1)*PI/180;
 
 // n = number of inputs
 // m = number of output
