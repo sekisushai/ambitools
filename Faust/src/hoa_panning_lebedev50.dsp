@@ -31,11 +31,11 @@ envelop			= abs : max(db2linear(-70)) : linear2db : min(6)  : max ~ -(80.0/SR);
 id(x,delta) =  vgroup("%2a",vmeter2(_,a)) with{
 a = x+1+delta;};
 
-theta1=vslider("[3][osc:/source1_theta 0 360]Source 1 Theta", 0, 0, 360, 0.1)*PI/180;
-delta1=vslider("[4][osc:/source1_delta -90 90]Source 1 Delta", 0, -90, 90, 0.1)*PI/180;
+theta1=vslider("[3][osc:/source1_theta 0 360]Source 1 Azimuth", 0, 0, 360, 0.1)*PI/180;
+delta1=vslider("[4][osc:/source1_delta -90 90]Source 1 Elevation", 0, -90, 90, 0.1)*PI/180;
 
-theta2=vslider("[7][osc:/source2_theta 0 360]Source 2 Theta", 0, 0, 360, 0.1)*PI/180;
-delta2=vslider("[8][osc:/source2_delta -90 90]Source 2 Delta", 0, -90, 90, 0.1)*PI/180;
+theta2=vslider("[7][osc:/source2_theta 0 360]Source 2 Azimuth", 0, 0, 360, 0.1)*PI/180;
+delta2=vslider("[8][osc:/source2_delta -90 90]Source 2 Elevation", 0, -90, 90, 0.1)*PI/180;
 
 source1 = _*(rhp*gain01/r1)<:par(i,speakers,_*weight5(i)<:mute:(_,nf1(r1,rhp)*LegendreP1(angle(theta1,delta1,azimuth(i),elevation(i))),nf2(r1,rhp)*LegendreP2(angle(theta1,delta1,azimuth(i),elevation(i))),nf3(r1,rhp)*LegendreP3(angle(theta1,delta1,azimuth(i),elevation(i))),nf4(r1,rhp)*LegendreP4(angle(theta1,delta1,azimuth(i),elevation(i))),nf5(r1,rhp)*LegendreP5(angle(theta1,delta1,azimuth(i),elevation(i)))):>_);
 
