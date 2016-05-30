@@ -1,4 +1,4 @@
-declare name        "HOA scene flipping";
+declare name        "HOA scene mirroring";
 declare version     "1.0";
 declare author      "Pierre Lecomte";
 declare license     "GPL";
@@ -39,4 +39,4 @@ _,(_<:if(fb==1,_*-1,_)),_,_,(_<:if(fb==1,_*-1,_)),_,(_<:if(fb==1,_*-1,_)),
 (_<:if(fb==1,_*-1,_)),_,(_<:if(fb==1,_*-1,_)),_,_,(_<:if(fb==1,_*-1,_)),_,(_<:if(fb==1,_*-1,_)),_,
 _,(_<:if(fb==1,_*-1,_)),_,(_<:if(fb==1,_*-1,_)),_,_,(_<:if(fb==1,_*-1,_)),_,(_<:if(fb==1,_*-1,_)),_,(_<:if(fb==1,_*-1,_)));
 
-process=vgroup("HOA scene flipping",updown:leftright:frontback);
+process=vgroup("HOA scene mirroring",updown:leftright:frontback);
