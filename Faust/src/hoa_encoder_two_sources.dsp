@@ -40,6 +40,6 @@ delta2=vslider("[10][osc:/source2_delta -90 90]Source 2 Elevation", 0, -90, 90, 
 plane(t,d)=_<:ytot(t,d);
 
 // Spherical wave : near-field filters included
-spherical(r,t,d)=_<:((nf0<:bus(1)),(nf1(r,rhp)<:bus(3)),(nf2(r,rhp)<:bus(5)),(nf3(r,rhp)<:bus(7)),(nf4(r,rhp)<:bus(9)),(nf5(r,rhp)<:bus(11))):ytot(t,d);
+spherical(r,t,d)=_*(rhp/r)<:((nf0<:bus(1)),(nf1(r,rhp)<:bus(3)),(nf2(r,rhp)<:bus(5)),(nf3(r,rhp)<:bus(7)),(nf4(r,rhp)<:bus(9)),(nf5(r,rhp)<:bus(11))):ytot(t,d);
 
 process=hgroup("Parameters",(_,_):(*(gain01),*(gain02))<:(*(spherical1),*(spherical2),*(1-spherical1),*(1-spherical2)):(spherical(r1,theta1,delta1),spherical(r2,theta2,delta2),plane(theta1,delta1),plane(theta2,delta2))):>bus(36):vgroup("B-Format",hgroup("0-3",meterm(0),meterm(1),meterm(2),meterm(3)),hgroup("4-5",meterm(4),meterm(5)));
