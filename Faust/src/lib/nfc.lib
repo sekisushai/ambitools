@@ -4,16 +4,18 @@ declare author      "Pierre Lecomte";
 declare license     "GPL";
 declare copyright   "(c) Pierre Lecomte 2014";
 
-//Near Field filters for HOA according to [1] and [2]. Implementation according [2]
-//[1] Daniel, J. (2000). Représentation de champs acoustiques, application à la transmission et à la reproduction de scènes sonores complexes dans un contexte multimédia. Université Paris 6, Paris, France. Retrieved from http://pcfarina.eng.unipr.it/Public/phd-thesis/jd-these-original-version.pdf
-//[2] Adriaensen, F. (2006). Near field filters for higher order Ambisonics. Retrieved October 28, 2013, from http://kokkinizita.linuxaudio.org/papers/hoafilt.pdf
-//[3] Lecomte, P., & Gauthier, P.-A. (2015). Real-Time 3D Ambisonics using Faust, Processing, Pure Data, And OSC. In 15th International Conference on Digital Audio Effects (DAFx-15). Trondheim, Norway.
+// Description: Library of Near Field and Near Field Compensation filters for HOA according to [1] and [2]. Implementation according [2]
+
+// References: 
+// [1] Daniel, J. (2000). Représentation de champs acoustiques, application à la transmission et à la reproduction de scènes sonores complexes dans un contexte multimédia. Université Paris 6, Paris, France.
+// [2] Adriaensen, F. (2006). Near field filters for higher order Ambisonics. Retrieved October 28, 2013, from http://kokkinizita.linuxaudio.org/papers/hoafilt.pdf
+// [3] Lecomte, P., & Gauthier, P.-A. (2015). Real-Time 3D Ambisonics using Faust, Processing, Pure Data, And OSC. In 15th International Conference on Digital Audio Effects (DAFx-15). Trondheim, Norway.
 
 import("music.lib");
 import("math.lib");
 
-// r1 = rayon de la source 
-// r2 = rayon des haut-parleurs
+// r1 = Virtual source radius
+// r2 = Loudspeaker radius
 
 
 c = 340;
@@ -47,10 +49,10 @@ TFINV(a1,a2) = sub~sum1(a1,a2)
 	};
 
 // ORDER 0
-nf0 = _;
+nf(0,r1,r2) = _;
+nfc(0,r2) = _;
 
 // ORDER 1
-
 x11a=1;
 
 b1 = x11a*w;
@@ -58,8 +60,8 @@ g1 = (1+b1);
 d1(r) = 2*b1(r)/g1(r);
 
 
-nf1(r1,r2) = _*(g1(r1)/g1(r2)):TFFF(1,d1(r1),0,d1(r2),0);
-nfc1(r2) = _*(1/g1(r2)):TFINV(d1(r2),0);
+nf(1,r1,r2) = _*(g1(r1)/g1(r2)):TFFF(1,d1(r1),0,d1(r2),0);
+nfc(1,r2) = _*(1/g1(r2)):TFINV(d1(r2),0);
 
 //ORDER 2
 x21a=3;
@@ -74,8 +76,8 @@ d221(r) = (2*b221(r)+4*b222(r))/g22(r);
 d222(r) = 4*b222(r)/g22(r);
 
 
-nf2(r1,r2) = _*(g22(r1)/g22(r2)):TFFF(1,d221(r1),d222(r1),d221(r2),d222(r2));
-nfc2(r2) = _*(1/g22(r2)):TFINV(d221(r2),d222(r2));
+nf(2,r1,r2) = _*(g22(r1)/g22(r2)):TFFF(1,d221(r1),d222(r1),d221(r2),d222(r2));
+nfc(2,r2) = _*(1/g22(r2)):TFINV(d221(r2),d222(r2));
 
 
 //ORDER 3
@@ -93,8 +95,8 @@ b31 = x31b*w;
 g31 = (1+b31);
 d31(r) = 2*b31(r)/g31(r);
 
-nf3(r1,r2) = _*(g32(r1)/g32(r2)):TFFF(1,d321(r1),d322(r1),d321(r2),d322(r2)):_*(g31(r1)/g31(r2)):TFFF(1,d31(r1),0,d31(r2),0);
-nfc3(r2) = _*(1/g32(r2)):TFINV(d321(r2),d322(r2)):_*(1/g31(r2)):TFINV(d31(r2),0);
+nf(3,r1,r2) = _*(g32(r1)/g32(r2)):TFFF(1,d321(r1),d322(r1),d321(r2),d322(r2)):_*(g31(r1)/g31(r2)):TFFF(1,d31(r1),0,d31(r2),0);
+nfc(3,r2) = _*(1/g32(r2)):TFINV(d321(r2),d322(r2)):_*(1/g31(r2)):TFINV(d31(r2),0);
 
 //ORDER 4
 x41a=4.20757879435927;
@@ -114,8 +116,8 @@ g42b(r) = 1 + b421b(r) +b422b(r);
 d421b(r) = (2*b421b(r)+4*b422b(r))/g42b(r);
 d422b(r) = 4*b422b(r)/g42b(r);
 
-nf4(r1,r2) = _*(g42a(r1)/g42a(r2)):TFFF(1,d421a(r1),d422a(r1),d421a(r2),d422a(r2)):_*(g42b(r1)/g42b(r2)):TFFF(1,d421b(r1),d422b(r1),d421b(r2),d422b(r2));
-nfc4(r2) = _*(1/g42a(r2)):TFINV(d421a(r2),d422a(r2)):_*(1/g42b(r2)):TFINV(d421b(r2),d422b(r2));
+nf(4,r1,r2) = _*(g42a(r1)/g42a(r2)):TFFF(1,d421a(r1),d422a(r1),d421a(r2),d422a(r2)):_*(g42b(r1)/g42b(r2)):TFFF(1,d421b(r1),d422b(r1),d421b(r2),d422b(r2));
+nfc(4,r2) = _*(1/g42a(r2)):TFINV(d421a(r2),d422a(r2)):_*(1/g42b(r2)):TFINV(d421b(r2),d422b(r2));
 
 
 //ORDER 5
@@ -143,5 +145,5 @@ b51 = x51c*w;
 g51 = (1+b51);
 d51(r) = 2*b51(r)/g51(r);
 
-nf5(r1,r2) = _*(g52a(r1)/g52a(r2)):TFFF(1,d521a(r1),d522a(r1),d521a(r2),d522a(r2)):_*(g52b(r1)/g52b(r2)):TFFF(1,d521b(r1),d522b(r1),d521b(r2),d522b(r2)):_*(g51(r1)/g51(r2)):TFFF(1,d51(r1),0,d51(r2),0);
-nfc5(r2) = _*(1/g52a(r2)):TFINV(d521a(r2),d522a(r2)):_*(1/g52b(r2)):TFINV(d521b(r2),d522b(r2)):_*(1/g51(r2)):TFINV(d51(r2),0);
+nf(5,r1,r2) = _*(g52a(r1)/g52a(r2)):TFFF(1,d521a(r1),d522a(r1),d521a(r2),d522a(r2)):_*(g52b(r1)/g52b(r2)):TFFF(1,d521b(r1),d522b(r1),d521b(r2),d522b(r2)):_*(g51(r1)/g51(r2)):TFFF(1,d51(r1),0,d51(r2),0);
+nfc(5,r2) = _*(1/g52a(r2)):TFINV(d521a(r2),d522a(r2)):_*(1/g52b(r2)):TFINV(d521b(r2),d522b(r2)):_*(1/g51(r2)):TFINV(d51(r2),0);

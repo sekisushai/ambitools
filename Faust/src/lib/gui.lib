@@ -1,0 +1,28 @@
+declare name        "GUI Library";
+declare version     "1.0";
+declare author      "Pierre Lecomte";
+declare license     "GPL";
+declare copyright   "(c) Pierre Lecomte 2016"; 
+
+// Description: Library of functions for GUI purposes.
+
+// VU-Meters
+vmeter(x) = attach(x, envelop(x) : vbargraph("[unit:dB]", -70, 6));
+hmeter(x) = attach(x, envelop(x) : hbargraph("[unit:dB]", -70, 6));
+
+// vmeter2 produces an osc alias and send the value of the bargraph on this alias when -xmit 2 is used at execution time
+vmeter2(x,i) = x<:attach(x, envelop(x) : vbargraph("[unit:dB][osc:/output%i]", -70, 6));
+envelop = abs : max(db2linear(-70)) : linear2db : min(6)  : max ~ -(80.0/SR);
+
+id(x,delta) =  vgroup("%2a",vmeter) with{
+a = x+1+delta;}; // to start the id at a chosen index
+
+id2(x,delta) =  vgroup("%2a",vmeter2(_,a)) with{
+a = x+1+delta;};
+
+meterm(m) = par(i,2*m+1,hgroup("%m",_:id(i,m*m-1))); // at Ambisonic order m, 2*m+1 signals
+
+idmute(x,delta) =  vgroup("%2a",_*(1-checkbox("Mute")):vmeter) with{
+a = x+1+delta;};
+
+metermute(m) = par(i,2*m+1,hgroup("%m",_*(1-checkbox("Mute")):idmute(i,m*m-1)));
