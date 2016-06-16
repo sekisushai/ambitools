@@ -22,7 +22,7 @@ n3d(0,0)=1;
 
 Legendre(0,0,d)=1;
 
-LegendreP0(x) = 1;
+LegendreP(0,x) = 1;
 
 // ORDER 1
 n3d(1,1) = sqrt(3);
@@ -31,7 +31,7 @@ n3d(1,1) = sqrt(3);
 Legendre(1,1,d) = cos(d);
   Legendre(1,0,d)= sin(d);
 
-LegendreP1(x) = 3*x;
+LegendreP(1,x) = 3*x;
 
 // ORDER 2
 n3d(2,2) = sqrt(15)/2;
@@ -42,7 +42,7 @@ Legendre(2,2,d) = cos(d)^2;
   Legendre(2,1,d) = sin(2*d);
    Legendre(2,0,d) = 3*sin(d)^2-1;
 
-LegendreP2(x) = 2.5*(-1 + 3*x^2);
+LegendreP(2,x) = 2.5*(-1 + 3*x^2);
 
 // ORDER 3
 n3d(3,3) = sqrt(35/8);
@@ -55,7 +55,7 @@ Legendre(3,3,d) = cos(d)^3;
     Legendre(3,1,d) = cos(d)*(5*sin(d)^2-1);
       Legendre(3,0,d) = sin(d)*(5*sin(d)^2-3);
       
-LegendreP3(x) = 3.5*(-3*x + 5*x^3);
+LegendreP(3,x) = 3.5*(-3*x + 5*x^3);
 
 // ORDER 4
 n3d(4,4) = (3/8)*sqrt(35);
@@ -70,7 +70,7 @@ Legendre(4,4,d) = cos(d)^4;
       Legendre(4,1,d) = sin(2*d)*(7*sin(d)^2 -3);
 	Legendre(4,0,d) = 35*sin(d)^4-30*sin(d)^2+3;
 
-LegendreP4(x) = 1.125*(3-30*x^2+35*x^4);
+LegendreP(4,x) = 1.125*(3-30*x^2+35*x^4);
 
 // ORDER 5
 n3d(5,5) = (3/8)*sqrt(77/2);
@@ -87,7 +87,7 @@ Legendre(5,5,d) = cos(d)^5;
 	Legendre(5,1,d) = (21*sin(d)^4 - 14*sin(d)^2 + 1)*cos(d);
 	  Legendre(5,0,d) = 63*sin(d)^5 - 70*sin(d)^3 + 15*sin(d);
       
-LegendreP5(x)=1.375*(15*x-70*x^3+63*x^5);
+LegendreP(5,x)=1.375*(15*x-70*x^3+63*x^5);
 
 // DEFINITION WITH 2 SUBSCRIPTS (m,n)
 ymn(m,0,t,d)=n3d(m,0)*Legendre(m,0,d); // first case if n=0,
