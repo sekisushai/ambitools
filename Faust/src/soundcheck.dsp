@@ -1,14 +1,17 @@
-declare name        "tester";
+declare name        "Soundcheck";
 declare version     "1.0";
-declare author      "Grame";
+declare author      "Pierre Lecomte";
 declare license     "BSD";
 declare copyright   "(c) GRAME 2006";
 
-//-----------------------------------------------
-// Audio tester : send a sinus to a loudspeaker
-//-----------------------------------------------
+// Description: Multichannel audio tester. The test signal are among: sinus tone, white noise, pink noise, audio input.
+
+// Input: 1
+// Outputs: N
 
 import("music.lib");
+
+N=50;
 
 pink    = f : (+ ~ g) with {
     f(x)    = 0.04957526213389*x - 0.06305581334498*x' +
@@ -20,14 +23,13 @@ pink    = f : (+ ~ g) with {
 // User interface
 //----------------
 smooth(c)       = *(1-c) : +~*(c);
-vol             = hslider("2-volume", -96, -96, 0, 0.1): db2linear : smooth(0.999);
-freq            = hslider("1-freq", 1000, 0, 24000, 0.1);
-dest            = rint(hslider("3-destination", 1, 1, 50, 1));
+vol             = hslider("[1]Volume", -96, -96, 0, 0.1): db2linear : smooth(0.999);
+freq            = hslider("[2]Freq", 1000, 0, 24000, 0.1);
+dest            = int(hslider("[3]Destination", 1, 1, N, 1));
 
-testsignal      = _*checkbox("input")
-		+ osci(freq)*checkbox("sine wave")
-                + noise * checkbox("white noise")
-                + pink(noise) * db2linear(20)  * checkbox("pink noise");
+testsignal      = _*checkbox("[7]Input")
+		+ osci(freq)*checkbox("[4]Sine Wave")
+                + noise * checkbox("[5]White Noise")
+                + pink(noise) * db2linear(20)  * checkbox("[6]Pink Noise");
 
-process         = vgroup( "Audio Tester", testsignal*vol <: par(i,50, _*((i+1)==dest)) );
-//process         = hgroup("Audio Tester",vgroup( "Parameters", testsignal*vol) <: vgroup("Channels",par(i,50,_*button("%2i"))));
+process         = vgroup( "Multichannel Audio Tester", testsignal*vol <: par(i,N, _*((i+1)==dest)) );

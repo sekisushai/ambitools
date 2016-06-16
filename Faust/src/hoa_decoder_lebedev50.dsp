@@ -22,24 +22,27 @@ import("lib/lebedev.lib");
 import("lib/gui.lib");
 import("filter.lib");
 
-M=5; // Maximum order 5 to have no aliasing in the sweet spot...
+M	=	5; // Maximum order 5 to have no aliasing in the sweet spot.
 
-near=vgroup("[3]NFC",checkbox("Yes"));
+ins	=	(M+1)^2;
+outs	=	50;
+
+near	=	vgroup("[3]NFC",checkbox("Yes"));
 
 // Spherical restitution speaker layout radius r2 is needeed to stabilize near-field filters, see [2]
-r2 = nentry("[4]Speakers Radius", 1.07, 0.5, 10, 0.01);
+r2	=	nentry("[4]Speakers Radius", 1.07, 0.5, 10, 0.01);
 
 // Gains: CAUTION with maximal value (60 dB!) it's to compensate the attenuation of the microphone radial filters.
-volin             = vslider("[1]Inputs Gain[unit:dB][osc:/levelin -10 60]", 0, -10, 60, 0.1) : db2linear : smooth(0.999);
-volout             = vslider("[2]Outputs Gain[unit:dB][osc:/levelout -10 60]", 0, -10, 60, 0.1) : db2linear : smooth(0.999);
+volin	=	vslider("[1]Inputs Gain[unit:dB][osc:/levelin -10 60]", 0, -10, 60, 0.1) : db2linear : smooth(0.999);
+volout	=	vslider("[2]Outputs Gain[unit:dB][osc:/levelout -10 60]", 0, -10, 60, 0.1) : db2linear : smooth(0.999);
 
-matrix(n,m) = hgroup("B-Format",bus((M+1)^2):par(i,M+1,metermute(i)))<:par(i,m,buswg(row(i)):>_*(volout));
+matrix(n,m)	=	hgroup("B-Format",bus(ins):par(i,M+1,metermute(i)))<:par(i,m,buswg(row(i)):>_*(volout));
 
 // When near-field compensation is activated, multiplication by 4*PI*r2 to have the correct gain, see [2]
-selecteur=bus((M+1)^2)<:((par(i,(M+1)^2,*(near*volin*4*PI*r2)):par(m,M+1,par(i,2*m+1,nfc(m,r2)))),par(i,(M+1)^2,*((1-near)*volin))):>bus((M+1)^2);
+selecteur	=	bus(ins)<:((par(i,ins,*(near*volin*4*PI*r2)):par(m,M+1,par(i,2*m+1,nfc(m,r2)))),par(i,ins,*((1-near)*volin))):>bus(ins);
 
 // Analytic decoder matrix Wlebedev.YLebedev [1]
-// Vector of weighted spherical harmonics : spherical harmonics times the speaker weight for weighet quadrature rules [1]
-row(i)= par(j,(M+1)^2,yacn(j,azimuth(i),elevation(i))*weight5(i));
+// Vector of weighted spherical harmonics : spherical harmonics times the speaker weight for weighed quadrature rules [1]
+row(i)	=	par(j,ins,yacn(j,azimuth(i),elevation(i))*weight5(i));
 
-process=hgroup("Inputs",selecteur:matrix((M+1)^2,50)):(hgroup("Outputs 1-25",par(i,25,id2(i,0))),hgroup("Outputs 26-50",par(i,25,id2(i,25))));
+process	=	hgroup("Inputs",selecteur:matrix(ins,outs)):(hgroup("Outputs 1-25",par(i,outs/2,id2(i,0))),hgroup("Outputs 26-50",par(i,outs/2,id2(i,outs/2))));
