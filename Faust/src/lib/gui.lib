@@ -6,6 +6,8 @@ declare copyright   "(c) Pierre Lecomte 2016";
 
 // Description: Library of functions for GUI purposes.
 
+import("music.lib");
+
 // VU-Meters
 vmeter(x) = attach(x, envelop(x) : vbargraph("[unit:dB]", -70, 6));
 hmeter(x) = attach(x, envelop(x) : hbargraph("[unit:dB]", -70, 6));
