@@ -18,9 +18,9 @@ declare copyright   "(c) Pierre Lecomte 2016";
 import("math.lib");
 
 // ORDER 0
-n3d(0,0)=1;
+n3d(0,0) = 1;
 
-Legendre(0,0,d)=1;
+Legendre(0,0,d) = 1;
 
 LegendreP(0,x) = 1;
 
@@ -31,7 +31,7 @@ n3d(1,1) = sqrt(3);
 Legendre(1,1,d) = cos(d);
   Legendre(1,0,d)= sin(d);
 
-LegendreP(1,x) = 3*x;
+LegendreP(1,x) = x;
 
 // ORDER 2
 n3d(2,2) = sqrt(15)/2;
@@ -42,7 +42,7 @@ Legendre(2,2,d) = cos(d)^2;
   Legendre(2,1,d) = sin(2*d);
    Legendre(2,0,d) = 3*sin(d)^2-1;
 
-LegendreP(2,x) = 2.5*(-1 + 3*x^2);
+LegendreP(2,x) = (1/2)*(-1 + 3*x^2);
 
 // ORDER 3
 n3d(3,3) = sqrt(35/8);
@@ -55,7 +55,7 @@ Legendre(3,3,d) = cos(d)^3;
     Legendre(3,1,d) = cos(d)*(5*sin(d)^2-1);
       Legendre(3,0,d) = sin(d)*(5*sin(d)^2-3);
       
-LegendreP(3,x) = 3.5*(-3*x + 5*x^3);
+LegendreP(3,x) = (1/2)*(-3*x + 5*x^3);
 
 // ORDER 4
 n3d(4,4) = (3/8)*sqrt(35);
@@ -70,7 +70,7 @@ Legendre(4,4,d) = cos(d)^4;
       Legendre(4,1,d) = sin(2*d)*(7*sin(d)^2 -3);
 	Legendre(4,0,d) = 35*sin(d)^4-30*sin(d)^2+3;
 
-LegendreP(4,x) = 1.125*(3-30*x^2+35*x^4);
+LegendreP(4,x) = (1/8)*(3-30*x^2+35*x^4);
 
 // ORDER 5
 n3d(5,5) = (3/8)*sqrt(77/2);
@@ -87,7 +87,26 @@ Legendre(5,5,d) = cos(d)^5;
 	Legendre(5,1,d) = (21*sin(d)^4 - 14*sin(d)^2 + 1)*cos(d);
 	  Legendre(5,0,d) = 63*sin(d)^5 - 70*sin(d)^3 + 15*sin(d);
       
-LegendreP(5,x)=1.375*(15*x-70*x^3+63*x^5);
+LegendreP(5,x)=(1/8)*(15*x-70*x^3+63*x^5);
+
+// ORDER 6
+n3d(6,6) = (1/16)*sqrt(3003/2);
+  n3d(6,5) = (3/8)*sqrt(1001/2);
+    n3d(6,4) = (3/16)*sqrt(91);
+      n3d(6,3) = (1/8)*sqrt(1365/2);
+	n3d(6,2) = (1/16)*sqrt(1365/2);
+	  n3d(6,1) = (1/16)*sqrt(273);
+	    n3d(6,0) = sqrt(13)/16;
+
+Legendre(6,6,d) = cos(d)^6;
+  Legendre(6,5,d)	= sin(d)*cos(d)^5;
+    Legendre(6,4,d) = (11*sin(d)^2 -1)*cos(d)^4;
+      Legendre(6,3,d) = sin(d)*(11*sin(d)^2-3)*cos(d)^3;
+	Legendre(6,2,d) = (33*sin(d)^4 - 18*sin(d)^2 +1)*cos(d)^2;
+	  Legendre(6,1,d) = sin(2*d)*(33*sin(d)^4 - 30*sin(d)^2 +5);
+	    Legendre(6,0,d) = 231*sin(d)^6 - 315*sin(d)^4 + 105*sin(d)^2 - 5;
+
+LegendreP(6,x)=(1/16)*(-5+105*x^2-315*x^4+231*x^6);
 
 // DEFINITION WITH 2 SUBSCRIPTS (m,n)
 ymn(m,0,t,d)=n3d(m,0)*Legendre(m,0,d); // first case if n=0,
