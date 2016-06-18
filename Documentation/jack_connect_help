@@ -24,3 +24,9 @@ for i in `seq 0 49`; do jack_connect "hoa_decoder_lebedev50:out_$i" "jconvolver-
 
 #jconvolver to hoa_decoder_lebedev50
 for i in `seq 0 35`; do jack_connect "jconvolver:Out-$((i+1))" "hoa_decoder_lebedev50:in_$i" ;done;
+
+#hoa_encoder_N_sources to hoa_azimuth_rotator
+for i in `seq 0 35`; do jack_connect "hoa_encoder_N_sources:out_$i" "hoa_azimuth_rotator:in_$i" ;done;
+
+#hoa_azimuth_rotator to hoa_decoder_lebedev50
+for i in `seq 0 35`; do jack_connect "hoa_azimuth_rotator:out_$i" "hoa_decoder_lebedev50:in_$i" ;done;

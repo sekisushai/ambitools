@@ -1,0 +1,66 @@
+%% Creator: Inkscape inkscape 0.48.4, www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'Fig_Apercu_Ambisonics.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{1773.1900107bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.61852685)%
+    \put(0,0){\includegraphics[width=\unitlength]{Fig_Apercu_Ambisonics.pdf}}%
+    \put(0.0909096,0.60481568){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{Natural sound field}}}%
+    \put(0.06383975,0.32509383){\color[rgb]{0.83137255,0,0}\makebox(0,0)[lb]{\smash{Spherical microphone}}}%
+    \put(0.08188632,0.00025554){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{Virtual sound field}}}%
+    \put(0.45184103,0.32058218){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{Encoding}}}%
+    \put(0.60523688,0.32058218){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{Decoding}}}%
+    \put(0.60974853,0.20936842){\color[rgb]{0.66666667,0,0}\makebox(0,0)[lb]{\smash{"Sweet Spot"}}}%
+    \put(0.83533067,0.164252){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{Restitution}}}%
+    \put(0.45184103,0.32058218){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{Encoding}}}%
+    \put(0.49244581,0.41983832){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{Transformations}}}%
+    \put(0.01421167,0.16718633){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{Monophonic signals}}}%
+    \put(0.19918903,0.05439526){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{Spatialization}}}%
+    \put(0.23753799,0.09725586){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$R, \theta, \varphi$}}}%
+  \end{picture}%
+\endgroup%
