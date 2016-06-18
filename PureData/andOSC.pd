@@ -1,0 +1,27 @@
+#N canvas 0 1100 1920 995 10;
+#X declare -lib mrpeach;
+#X obj 155 22 import mrpeach;
+#X obj 151 108 unpackOSC;
+#X obj 151 86 udpreceive 8000;
+#X obj 151 130 routeOSC /ori;
+#X obj 151 152 unpack i;
+#X obj 37 270 udpsend;
+#X msg 11 112 disconnect;
+#X msg 151 174 send /azimuth \$1;
+#X obj 151 196 packOSC;
+#X msg -42 84 connect localhost 5510;
+#X obj -42 37 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X text 273 84 <-- listen to osc messages on port 8000;
+#X text 273 129 <-- extract orientation messages;
+#X text 273 151 <-- extract yaw angle;
+#X text 99 269 <-- send to hoa_azimuth_rotator value of yaw angle;
+#X connect 1 0 3 0;
+#X connect 2 0 1 0;
+#X connect 3 0 4 0;
+#X connect 4 0 7 0;
+#X connect 6 0 5 0;
+#X connect 7 0 8 0;
+#X connect 8 0 5 0;
+#X connect 9 0 5 0;
+#X connect 10 0 9 0;
