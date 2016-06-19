@@ -1,4 +1,4 @@
-#N canvas 0 1100 1920 995 10;
+#N canvas 3 1103 1905 988 10;
 #X declare -lib mrpeach;
 #X obj 155 22 import mrpeach;
 #X obj 151 108 unpackOSC;
@@ -16,6 +16,7 @@
 #X text 273 129 <-- extract orientation messages;
 #X text 273 151 <-- extract yaw angle;
 #X text 99 269 <-- send to hoa_azimuth_rotator value of yaw angle;
+#X obj 102 175 print;
 #X connect 1 0 3 0;
 #X connect 2 0 1 0;
 #X connect 3 0 4 0;
