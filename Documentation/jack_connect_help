@@ -36,3 +36,6 @@ for i in `seq 0 35`; do jack_connect "hoa_encoder_N_sources:out_$i" "hoa_mirrori
 
 #hoa_mirroring to hoa_decoder_lebedev50
 for i in `seq 0 35`; do jack_connect "hoa_mirroring:out_$i" "hoa_decoder_lebedev50:in_$i" ;done;
+
+# hoa_azimuth_rotator to jconvolver
+for i in `seq 0 35`; do jack_connect "hoa_azimuth_rotator:out_$i" "jconvolver:In-$((i+1))" ;done;
