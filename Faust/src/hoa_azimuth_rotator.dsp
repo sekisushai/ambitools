@@ -20,7 +20,7 @@ M=5; // Maximum order of original HOA scene
 
 ins=(M+1)^2; // Number of inputs (= number of outputs).
 
-t=hslider("Azimuth[osc:/azimuth 0 360]", 0, 0, 360, 0.1)*PI/180; // Slider with azimuth rotation angle
+t=hslider("Azimuth[osc:/azimuth 0 360]", 0, 0, 360, 0.01)*PI/180; // Slider with azimuth rotation angle
 
 // SUB-MATRIX TERM, AT EACH ORDER
 // diagonal terms, anti-diagonal terms, extra diagonal terms
