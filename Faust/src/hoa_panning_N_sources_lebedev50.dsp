@@ -37,12 +37,12 @@ spherical(i)	=	hgroup("[%i+5]Spherical Wave",checkbox("Yes"));
 r2	=	nentry("[~]Speaker Radius", 1.07, 0.5, 10, 0.01); // louspeaker radius
 
 // For plane wave, gain multiplication by 4*PI*r2; for spherical wave, gain multiplication by (4*PI*r2)/(4*PI*r(i)) [2].
-selecteur(i)	=	_*(g(i))<:(*(spherical(i)),*(1-spherical(i)))<:(*(r2/r(i))<:par(m,M+1,nf(m,r(i),r2))),(*(4*PI*r2)<:par(m,M+1,nfc(m,r2))):>par(m,M+1,*(2*m+1));
+selecteur(i)	=	_*(g(i))<:(*(spherical(i)),*(1-spherical(i)))<:(*(r2/r(i))<:par(m,M+1,nf(m,r(i),r2))),(*(4*PI*r2)<:par(m,M+1,nfc(m,r2))):>par(m,M+1,*(2*m+1)):mute;
 
 signal(source,speaker)	=	hgroup("",selecteur(source):par(m,M+1,_*(LegendreP(m,gamma))):>_*(weight5(speaker)))
 			with {
 			gamma=angle(t(source),d(source),azimuth(speaker),elevation(speaker));
 			};
 
-process=bus(N)<:par(speaker,outs,par(source,N,signal(source,speaker)):>_):vgroup("[~]Outputs",hgroup("[~]1-25",par(i,outs/2,id(i,0))),hgroup("[~]26-50",par(i,outs/2,id(i,25))));
+process=bus(N)<:par(speaker,outs,par(source,N,signal(source,speaker)):>_):vgroup("[~]Outputs",hgroup("[~]1-25",par(i,outs/2,id2(i,0))),hgroup("[~]26-50",par(i,outs/2,id2(i,25))));
 
