@@ -9,6 +9,7 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{color}
+\usepackage{subfigure}
 \usepackage{graphicx}
 \graphicspath{{Figures/}}
 \author{Pierre Lecomte \\ \textit{ \href{mailto:pierre.lecomte@gadz.org}{pierre.lecomte@gadz.org}}}
@@ -40,7 +41,7 @@
   stepnumber=2,
   commentstyle=\slshape\color{mylstcmt},
   breaklines=true, 
-  emph={Gain,Radius,Azimuth,Elevation,Spherical, Wave, Speakers,Mute,NFC,Outputs,Inputs},
+  emph={Gain,Radius,Azimuth,Elevation,Spherical, Wave, Speakers,Mute,NFC,Outputs,Inputs,left,right,front,back,up,down},
   emphstyle=\color{mylstkey},
 %  morecomment=[s][\color{mylsteqn}]{<equation>}{</equation>},
   morecomment=[s][\color{mylstdoc}]{<mdoc>}{</mdoc>},
@@ -71,7 +72,7 @@ Don't hesitate to contact me for any suggestions, requirements, critics or even 
 Pierre Lecomte
 \end{flushright}
 
-\subsection{Ambisonics with ambitools overview}
+\subsection{Ambisonics overview}
 This section presents the basis of Ambisonics for 3D sound field synthesis. It is written with relatively few maths to focus on the concepts instead of the mathematical rigor, which would be out of scope of this document. If you want more insights to Ambisonics refer for example to \cite{daniel2000representation,poletti2005three,ahrens2012analytic}.
 
 \subsubsection{Principles}
@@ -222,15 +223,15 @@ Finally, the outputs of this tool are $B$-Format signals up to order $M$. Each o
 \label{sec:hoa_decoder}
 \begin{itemize}
 \item Inputs: $(M+1)^2$
-\item Outputs: $26$ or $50$ depending on the decoder.
+\item Outputs: $06$, $26$ or $50$ depending on the decoder.
 \end{itemize}
 
-Two basic decoder by mode-matching \cite{daniel2000representation,poletti2005three} are available at the moment in ambitools: \lstinline'hoa_decoder_lebedev26' and
-\lstinline'hoa_decoder_lebedev50'. Those two decoder allows to decode $(M+1)^2$ $B$-Format signals on Lebedev grids with respectively $26$ and $50$ loudspeakers \cite{lebedev1975values,lecomte2015on}. Those grids are able to reconstruct the sound field up to order $M=3$ and $M=5$ respectively.
-If other decoder are required, you should have a look at the ambisonic decoder toolbox from Aaron Heller \cite{heller2012toolkit}, or contact me. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_decoder_lebedev50} for the \lstinline'hoa_decoder_lebedev50' decoder compiled with $M=5$. The decoder can be with or without near-field compensation (NFC) filters \cite{daniel2003further,lecomte2015real}. Those filters allow to take into account the finite distance of the loudspeakers: In other terms, if they are disabled, the loudspeakers are modeled as plane-wave generators. In case of spherical wave encoding using the \lstinline'hoa_N_sources_encoder' plug-in, the \lstinline'NFC' check-box should be unchecked as the near-field compensation filters are already used at encoding step (see Sec.~\ref{sec:hoa_encoder}).
+Three basic decoders by mode-matching \cite{daniel2000representation,poletti2005three} are available at the moment in ambitools: \lstinline'hoa_decoder_lebedev06', \lstinline'hoa_decoder_lebedev26' and
+\lstinline'hoa_decoder_lebedev50'. Those decoders allow to decode $(M+1)^2$ $B$-Format signals on Lebedev grids with respectively $6$, $26$ and $50$ loudspeakers \cite{lebedev1975values,lecomte2015on}. Those grids are able to reconstruct the sound field up to order $M=1$, $M=3$ and $M=5$ respectively.
+If other decoders are required, you should have a look at the ambisonic decoder toolbox from Aaron Heller \cite{heller2012toolkit}, or contact me. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_decoder_lebedev50} for the \lstinline'hoa_decoder_lebedev50' decoder compiled with $M=5$. The decoder can be with or without near-field compensation (NFC) filters \cite{daniel2003further,lecomte2015real}. Those filters allow to take into account the finite distance of the loudspeakers: In other terms, if they are disabled, the loudspeakers are modeled as plane-wave generators. In case of spherical wave encoding using the \lstinline'hoa_N_sources_encoder' plug-in, the \lstinline'NFC' check-box should be unchecked as the near-field compensation filters are already used at encoding step (see Sec.~\ref{sec:hoa_encoder}).
 \begin{figure}[!ht]
 \includegraphics[width=\columnwidth]{hoa_decoder_lebedev50.png}
-\caption{\lstinline'hoa_decoder_lebedev50' compiled using \lstinline'faust2jaqt' script with $M=5$. The slider \lstinline'Outputs Gain' apply a global gain on all outputs (loudspeakers signals). The slider \lstinline'Inputs Gain' apply a global gain on all inputs ($B$-Format signals). The VU-Meters \lstinline'Inputs' and \lstinline'Outputs' give the signals level in dBFS. The check-box \lstinline'NFC' activate or deactivate the near-field compensation filters. The input entry \lstinline'Speakers Radius' allows to set the spherical grid radius. Finally, the check-boxes \lstinline'Mute' above all inputs VU-meters allow to mute some specific $B$-Format signals. Or, all the signal from an order with \lstinline'Mute' check-boxes on side of an VU-Meter group.}
+\caption{\lstinline'hoa_decoder_lebedev50' compiled using \lstinline'faust2jaqt' script with $M=5$. The slider \lstinline'Outputs Gain' applies a global gain on all outputs (loudspeakers signals). The slider \lstinline'Inputs Gain' applies a global gain on all inputs ($B$-Format signals). The VU-Meters \lstinline'Inputs' and \lstinline'Outputs' give the signals level in dBFS. The check-box \lstinline'NFC' activate or deactivate the near-field compensation filters. The input entry \lstinline'Speakers Radius' allows to set the spherical grid radius. Finally, the check-boxes \lstinline'Mute' above all inputs VU-meters allow to mute some specific $B$-Format signals. Or, all the signal from an order with \lstinline'Mute' check-boxes on side of a VU-Meter group.}
 \label{fig:hoa_decoder_lebedev50}
 \end{figure}
 
@@ -239,32 +240,51 @@ If other decoder are required, you should have a look at the ambisonic decoder t
 \label{section:hoa_panning}
 \begin{itemize}
 \item Inputs: $N$
-\item Outputs: $26$ or $50$ depending on the configuration.
+\item Outputs: $06$, $26$ or $50$ depending on the configuration.
 \end{itemize}
 
-It is possible to compute directly the driving signals of the loudspeakers without passing by and encoding/decoding process \cite{lecomte2015on}. This equivalent 3D panning is implemented in the tools \lstinline'hoa_panning_lebedev26' and \lstinline'hoa_panning_lebedev50' for 26 and 50 loudspeakers Lebedev grids respectively.
-The graphical user interface using \textsc{Faust} Linux jack-qt compiler is shown in Fig.~\ref{fig:hoa_panning_lebedev50} for the \lstinline'hoa_panning_lebedev50' tool. For this version, two spherical waves are synthesized.
+It is possible to compute directly the signals of the loudspeakers without passing by an encoding and decoding process \cite{lecomte2015on}. This equivalent 3D-panning is implemented in the tools \\ \lstinline'hoa_panning_N_sources_lebedev06', \lstinline'hoa_panning_N_sources_lebedev26' and \\ \lstinline'hoa_panning_N_sources_lebedev50' for Lebedev grids with $6$, $26$ and $50$ loudspeakers respectively \cite{lebedev1975values,lecomte2015on}. Those grids allow to control the sound field up to order $M=1$, $M=3$ and $M=5$ respectively \cite{lecomte2015on}. 
+The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_panning_N_sources_lebedev50} for the \lstinline'hoa_panning_N_sources_lebedev50' panning tool compiled with $M=5$ and $N=2$.
 \begin{figure}[!ht]
 \includegraphics[width=\columnwidth]{hoa_panning_lebedev50.png}
-\caption{\lstinline'hoa_panning_lebedev50' plug-in under Linux jack-qt4. The slider 'Outputs Gain' apply a global gain on all outputs (loudspeakers signals). The check-boxes 'Mute Order' allows to mute some Ambisonic orders in the computation of the driving signals. The sliders 'Gain' 'Radius' 'Azimuth' 'Elevation' controls the position and gain of two sources (spherical waves). In order to stabilize the near-field filters for spherical wave synthesis, the input entry 'Speaker Radius' fixes the loudspeaker array radius.}
-\label{fig:hoa_panning_lebedev50}
+\caption{\lstinline'hoa_panning_N_sources_lebedev50' compiled using \lstinline'faust2jaqt' script with $M=5$ and $N=2$. The slider \lstinline'Outputs Gain' applies a global gain on all outputs (loudspeakers signals). The check-boxes \lstinline'Mute Order' allow to mute some Ambisonic order in the computation of the driving signals. The sliders \lstinline'Gain' \lstinline'Radius' \lstinline'Azimuth' \lstinline'Elevation' control the position and gain of the sources. The check-box \lstinline'Spherical Wave' allows to switch between the synthesis of a spherical wave or a plane wave. In the case of spherical wave synthesis, the input entry \lstinline'Speakers Radius' sets the spherical loudspeakers system radius.}
+\label{fig:hoa_panning_N_sources_lebedev50}
+\end{figure}
+
+\pagebreak
+
+\subsubsection{Note about sound field transformation tools in Ambisonic domain}
+The tools presented in the next sections perform sound field transformations in Ambisonic domain. Thus, they should be used on Ambisonic signals and inserted after encoding step and before decoding step. For instance, on Fig.~\ref{fig:hoa_mirroring_claudia} is shown the connections for the tool \lstinline'hoa_mirroring': It is inserted after \lstinline'hoa_encoder_N_sources' and before \lstinline'hoa_decoder_lebedev50', acting on Ambisonic signals.
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.5\columnwidth]{hoa_mirroring_claudia.png}
+\caption{Connections between plug-ins \lstinline'hoa_encoder_N_sources',  \lstinline'hoa_mirroring' and \lstinline'hoa_decoder_lebedev50' compiled with \lstinline'faust2jaqt' script with $M=5$. \lstinline'hoa_mirroring' acts on Ambisonics signals. Screen-shot taken from Claudia under KXStudio Linux distribution.}
+\label{fig:hoa_mirroring_claudia}
 \end{figure}
 
 \pagebreak
 \subsubsection{hoa\_mirroring}
-The plug-in \lstinline'hoa_mirroring' allows a sound field transformation in Ambisonic domain. Thus, it should be inserted somewhere in between encoding and decoding steps. The sound field is here flipped upside-down, left-right or front-back, or any combination of the above. The tool changes the sign of particular Ambisonic components to realize the transformation \cite{kronlachner2014spatial}. The graphical user interface using \textsc{Faust} Linux jack-qt compiler is shown in Fig.~\ref{fig:hoa_mirroring}. An example of plug-in insertion under Linux jack is shown in Fig.~\ref{fig:hoa_mirroring_claudia}.
+\begin{itemize}
+\item Inputs: $(M+1)^2$
+\item Outputs: $(M+1)^2$
+\end{itemize}
+\lstinline'hoa_mirroring' performs mirroring operations on the sound field. The directions front and back can be inverted, as well as left and right, up and down, or any combination of the above. In fact, the transformation changes the sign of particular Ambisonic components \cite{kronlachner2014spatial}. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_mirroring}. To "visualize" the transformation, Fig.~\ref{fig:hoa_mirroring_2} shows the Spherical VU-Meter (see Sec.~\ref{sec:processing}) for a 50 nodes Lebedev grid with a source positioned at $(1.07~\text{m}, 0^\circ, 90^\circ)$, i.e, above the head of the listener. One can observe the signal level of each loudspeaker. Thus, on Fig.~\ref{fig:hoa_mirroring_2a}, when the \lstinline'hoa_mirroring' tool is not active, the maximum sound energy is above. When the check-box \lstinline'up-down' is checked, on Fig.~\ref{fig:hoa_mirroring_2b} one observes that the sound field has been mirrored according to the up-down inversion. Thus, the sound energy is coming from under the listener at present.
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=0.3\columnwidth]{hoa_mirroring.png}
-\caption{\lstinline'hoa_mirroring' plug-in under Linux jack-qt4. The check-boxes allows to select the mirror transformation : 'left-right', 'front-back' or 'up-down'.}
+\caption{\lstinline'hoa_mirroring' compiled using \lstinline'faust2jaqt' script. The check-boxes allows to select the mirror transformations among: \lstinline'left-right', \lstinline'front-back' or \lstinline'up-down'.}
 \label{fig:hoa_mirroring}
 \end{figure}
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=0.5\columnwidth]{hoa_mirroring_claudia.png}
-\caption{Example of \lstinline'hoa_mirroring' insertion between encoding and decoding steps, i.e. in Ambisonic domain.}
-\label{fig:hoa_mirroring_claudia}
+\subfigure[]{\includegraphics[width=0.45\columnwidth]{hoa_mirroring_2.png}
+\label{fig:hoa_mirroring_2a}}
+\subfigure[]{\includegraphics[width=0.45\columnwidth]{hoa_mirroring_3.png}
+\label{fig:hoa_mirroring_2b}}
+\caption{\lstinline'hoa_mirroring' effects on a sound field. \subref{fig:hoa_mirroring_2a}: original sound field decoded on a 50 loudspeaker Lebedev grid. \subref{fig:hoa_mirroring_2b} the sound field has been transformed according to a mirroring up-down with \lstinline'hoa_mirroring' tool.}
+\label{fig:hoa_mirroring_2}
 \end{figure}
+
 
 \pagebreak
 \subsubsection{hoa\_azimuth\_rotator}
@@ -288,6 +308,8 @@ ambitools provides a Spherical VU-Meter developped with \textsc{Processing} lang
 \subsection{Jconvolver}
 \subsubsection{jconvolver\_mic*}
 \subsubsection{hrir\_lebedev50}
+
+\subsection{Pure Data}
 %\section{Examples}
 %\subsection{Flys flying around}
 %\subsection{Record trajectories with Ardour}
