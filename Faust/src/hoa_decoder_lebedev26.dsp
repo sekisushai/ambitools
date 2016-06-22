@@ -39,7 +39,7 @@ volout	=	vslider("[2]Outputs Gain[unit:dB][osc:/levelout -10 60]", 0, -10, 60, 0
 matrix(n,m)	=	hgroup("B-Format",bus(ins):par(i,M+1,metermute(i)))<:par(i,m,buswg(row(i)):>_*(volout));
 
 // When near-field compensation is activated, multiplication by 4*PI*r2 to have the correct gain, see [2]
-selecteur	=	bus(ins)<:((par(i,ins,*(near*volin*4*PI*r2)):par(m,M+1,par(i,2*m+1,nfc(m,r2)))),par(i,ins,*((1-near)*volin))):>bus(ins);
+selecteur	=	bus(ins)<:((par(i,ins,*(near*volin*r2)):par(m,M+1,par(i,2*m+1,nfc(m,r2)))),par(i,ins,*((1-near)*volin))):>bus(ins);
 
 // Analytic decoder matrix Wlebedev.YLebedev [1]
 // Vector of weighted spherical harmonics : spherical harmonics times the speaker weight for weighet quadrature rules [1]
