@@ -94,6 +94,7 @@ Thus, in accordance to this Fig.~\ref{fig:ambisonics}, ambitools provides tools 
 \end{itemize}
 
 \subsubsection{Spherical coordinate system}
+\label{sec:spherical_coordinates}
 Ambisonics are usually described in spherical coordinate systems. In ambitools, the following spherical coordinate system is used:
 The following spherical coordinate system is used and is shown in Fig.~\ref{fig:coord_sph}:
 \begin{equation}
@@ -106,7 +107,7 @@ z = r \sin(\delta)\textcolor{red}{.}
 \caption{Spherical coordinate system in use. A point $P (x,y,z)$ is described by radius $r$, azimuth $\theta$ and elevation $\delta$.}
 \label{fig:coord_sph}
 \end{figure}
-The azimuth angle $\theta \in [0~~360^\circ]$. The elevation angle $\delta \in [-90^\circ~~90^\circ]$.
+The azimuth angle $\theta \in [0~~360^\circ]$. The elevation angle $\delta \in [-90^\circ~~90^\circ]$. The convention for rotation is counterclockwise direction (i.e. trigonometric direction).
 
 \subsubsection{Spherical harmonics}
 As mentionned before, Ambisonics describes a sound field over a spherical harmonics basis. Those functions are directional functions of the variable $\theta,\delta$. They are denoted $Y_{mn}(\theta,\delta)$ where subscript $m$ represent the order of the spherical harmonic and $n$ its degree. There is several definition for these functions. In ambitools, the N3D real spherical harmonic definition is used \cite{daniel2000representation}:
@@ -166,6 +167,28 @@ The resulting \lstinline'ambitools/' folder should have the following structure:
     \item \lstinline'PureData/' Everything written in Pure Data (a few sounds generator patches, head-tracking patch and PlayStation-like remote patch to drive \textsc{Faust} plug-ins with Open Sound Control protocol, OSC).
 \end{itemize}
 
+\subsection{Dependencies}
+Depending on what you're looking for with the code, the following dependencies should be provided:
+\begin{table}[!ht]
+\centering
+\begin{tabular}{|c|c|}
+\hline 
+Dependency & Usage \\ 
+\hline 
+\textsc{Osc} support & Drive the tools standalone tools with OSC. \\
+\hline
+\textsc{Java} & Run the Spherical VU-Meter (see Sec.~\ref{sec:processing}). \\
+\hline
+\textsc{Jconvolver} & Real-time convolution for binaural rendering or spherical microphone signals filtering.\\
+\hline
+\textsc{Processing} & Edit and compile the Processing code. \\
+\hline
+\textsc{Faust} or \textsc{FaustLive}  & Edit and compile the \textsc{Faust} code.\\
+\hline
+\end{tabular}
+\caption{Dependencies of ambitools}
+\end{table}
+
 \subsection{Compile the \textsc{Faust} plug-ins}
 The \textsc{Faust} plug-ins source codes are in the sub-folder \lstinline'Faust/src/'. 
 
@@ -193,7 +216,7 @@ The \textsc{Processing} source code is in the folder \lstinline'Processing/scr'.
 \section{The different tools}
 This section gives a quick presentation of each tool contained in ambitools. 
 \subsection{\textsc{Faust}}
-The core of the sound processing is written in \textsc{Faust} language. Note that the majority of the figures presented here will be screenshots of the tools compiled as standalone \textsc{Jack} applications for Linux, using \lstinline'faust2jaqt' script. However, thanks to the versatility of \textsc{Faust} language, remember that each of these tools can be compiled for various architecture, using \textsc{FaustLive}\footnoteref{faustlive} for example. 
+The core of the sound processing is written in \textsc{Faust} language. Note that the majority of the figures presented in the following section will be screen-shots of the tools compiled as standalone \textsc{Jack} applications for Linux, using \lstinline'faust2jaqt' script. However, thanks to the versatility of \textsc{Faust} language, note that each of these tools can be compiled for various architecture, using \textsc{FaustLive}\footnoteref{faustlive} for example. 
 
 \pagebreak
 \subsubsection{hoa\_N\_sources\_encoder}
@@ -253,6 +276,10 @@ The graphical user interface when using \lstinline'faust2jaqt' script is shown i
 
 \pagebreak
 
+\subsubsection{hoa\_mic\_encoder*}
+
+\pagebreak
+
 \subsubsection{Note about sound field transformation tools in Ambisonic domain}
 The tools presented in the next sections perform sound field transformations in Ambisonic domain. Thus, they should be used on Ambisonic signals and inserted after encoding step and before decoding step. For instance, on Fig.~\ref{fig:hoa_mirroring_claudia} is shown the connections for the tool \lstinline'hoa_mirroring': It is inserted after \lstinline'hoa_encoder_N_sources' and before \lstinline'hoa_decoder_lebedev50', acting on Ambisonic signals.
 \begin{figure}[!ht]
@@ -268,7 +295,7 @@ The tools presented in the next sections perform sound field transformations in 
 \item Inputs: $(M+1)^2$
 \item Outputs: $(M+1)^2$
 \end{itemize}
-\lstinline'hoa_mirroring' performs mirroring operations on the sound field. The directions front and back can be inverted, as well as left and right, up and down, or any combination of the above. In fact, the transformation changes the sign of particular Ambisonic components \cite{kronlachner2014spatial}. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_mirroring}. To "visualize" the transformation, Fig.~\ref{fig:hoa_mirroring_2} shows the Spherical VU-Meter (see Sec.~\ref{sec:processing}) for a 50 nodes Lebedev grid with a source positioned at $(1.07~\text{m}, 0^\circ, 90^\circ)$, i.e, above the head of the listener. One can observe the signal level of each loudspeaker. Thus, on Fig.~\ref{fig:hoa_mirroring_2a}, when the \lstinline'hoa_mirroring' tool is not active, the maximum sound energy is above. When the check-box \lstinline'up-down' is checked, on Fig.~\ref{fig:hoa_mirroring_2b} one observes that the sound field has been mirrored according to the up-down inversion. Thus, the sound energy is coming from under the listener at present.
+\lstinline'hoa_mirroring' performs mirroring operations on the sound field. The directions front and back can be inverted, as well as left and right, up and down, or any combination of the above. In fact, the transformation changes the sign of particular Ambisonic components \cite{kronlachner2014spatial}. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_mirroring}. To "visualize" the transformation, Fig.~\ref{fig:hoa_mirroring_2} shows the Spherical VU-Meter (see Sec.~\ref{sec:processing}) for a 50-node Lebedev grid with a source positioned at $(1.07~\text{m}, 0^\circ, 90^\circ)$, i.e, above the head of the listener. One can observe the signal level of each loudspeaker after decoding step. Thus, on Fig.~\ref{fig:hoa_mirroring_2a}, when the \lstinline'hoa_mirroring' tool is not active, the maximum sound energy is above. When the check-box \lstinline'up-down' is checked, on Fig.~\ref{fig:hoa_mirroring_2b} one observes that the sound field has been mirrored according to the up-down inversion. Thus, the sound energy is coming from under the listener at present.
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=0.3\columnwidth]{hoa_mirroring.png}
@@ -288,6 +315,30 @@ The tools presented in the next sections perform sound field transformations in 
 
 \pagebreak
 \subsubsection{hoa\_azimuth\_rotator}
+\begin{itemize}
+\item Inputs: $(M+1)^2$
+\item Outputs: $(M+1)^2$
+\end{itemize}
+\lstinline'hoa_azimuth_rotator' performs a rotation of the sound field around $z-$axis (yaw angle). One recalls that the trigonometric sens is chosen for rotation convention (i.e. anti-clockwise) (see Sec.~\ref{sec:spherical_coordinates}). The transformation is done by a rotation matrix operation on the Ambisonic components \cite{daniel2000representation, moreau2006etude,kronlachner2014spatial}. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_azimuth_rotator}. It's basically just a slider to choose the azimuth angle of rotation. To "visualize" the transformation, Fig.~\ref{fig:hoa_azimuth_rotator2} shows the Spherical VU-Meter (see Sec.~\ref{sec:processing}) for a 50-node Lebedev grid with a source positioned at $(1.07~\text{m}, 0^\circ, 0^\circ)$, i.e, in front of the listener. One can observe the signal level of each loudspeaker after decoding step. Thus, on Fig.~\ref{fig:hoa_mirroring_2a}, when the \lstinline'hoa_azimuth_rotator' slider \lstinline'Azimuth' is set to $0^\circ$, i.e. no rotation, the maximum sound energy is in front of the listener. When the slider \lstinline'Azimuth' is set to $90^\circ$, on Fig.~\ref{fig:hoa_mirroring_2b} one observes that the sound field has been rotated $90^\circ$ counter-clockwise around the $z-$axis. Thus, the sound energy is coming from the left of the listener at present.
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.3\columnwidth]{hoa_azimuth_rotator.png}
+\caption{\lstinline'hoa_azimuth_rotator' compiled using \lstinline'faust2jaqt' script. The slider \lstinline'Azimuth' allows to choose the azimuth angle of rotation, around the $z-$axis.}
+\label{fig:hoa_azimuth_rotator}
+\end{figure}
+\begin{figure}[!ht]
+\centering
+\subfigure[]{\includegraphics[width=0.45\columnwidth]{hoa_azimuth_rotator2.png}
+\label{fig:hoa_azimuth_rotator_2a}}
+\subfigure[]{\includegraphics[width=0.45\columnwidth]{hoa_azimuth_rotator3.png}
+\label{fig:hoa_azimuth_rotator_2b}}
+\caption{\lstinline'hoa_azimuth_rotator' effects on a sound field. \subref{fig:hoa_azimuth_rotator_2a}: original sound field decoded on a 50 loudspeaker Lebedev grid. \subref{fig:hoa_azimuth_rotator_2b} the sound field has been rotated according to a rotation around $z-$axis of $+90^\circ$ using \lstinline'hoa_azimuth_rotator' tool.}
+\label{fig:hoa_azimuth_rotator_2}
+\end{figure}
+\paragraph{Head Tracking}
+One possible use of the tool \lstinline'hoa_azimuth_rotator' is to compensate the rotation of the head of the listener around $z-$axis when driven by a head-tracking system \cite{noisternig20033d}. Thus, when using binaural rendering over headphone, the sound field is rotated of minus the angle of rotation of the head, to compensate the head rotation and leave the source at the same position is space for the listener. ambitools provides a Pure Data patch to drive \lstinline'hoa_azimuth_rotator' with OSC and perform an cheap head-tracking system with a smart-phone. See Sec.~\ref{sec:andOSC} for further informations.
+
+\pagebreak
 \subsubsection{hoa\_beamforming\_hypercardioid\_to\_mono}
 \subsubsection{hoa\_beamforming\_hypercardioid\_to\_hoa}
 \subsubsection{hoa\_beamforming\_dirac\_to\_hoa}
@@ -310,6 +361,9 @@ ambitools provides a Spherical VU-Meter developped with \textsc{Processing} lang
 \subsubsection{hrir\_lebedev50}
 
 \subsection{Pure Data}
+\subsubsection{andOSC.pd for Head Tracking}
+\label{sec:andOSC}
+\subsubsection{.pd to control Faust tools with a Joystick}
 %\section{Examples}
 %\subsection{Flys flying around}
 %\subsection{Record trajectories with Ardour}
