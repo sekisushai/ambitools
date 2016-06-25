@@ -262,22 +262,22 @@ void drawSources() {
   
 void oscEvent(OscMessage theOscMessage) {
   String v=theOscMessage.addrPattern();
-   if (v.equals("/source1_radius")) {
+   if (v.equals("/radius_0")) {
          position1sph[0] = theOscMessage.get(0).floatValue();
     }
-   if (v.equals("/source1_theta")) {
+   if (v.equals("/azimuth_0")) {
          position1sph[1] = theOscMessage.get(0).floatValue();
     }
-   if (v.equals("/source1_delta")) {
+   if (v.equals("/elevation_0")) {
          position1sph[2] = theOscMessage.get(0).floatValue();
     }
-   if (v.equals("/source2_radius")) {
+   if (v.equals("/radius_1")) {
          position2sph[0] = theOscMessage.get(0).floatValue();
     }
-   if (v.equals("/source2_theta")) {
+   if (v.equals("/azimuth_1")) {
          position2sph[1] = theOscMessage.get(0).floatValue();
     }
-   if (v.equals("/source2_delta")) {
+   if (v.equals("/elevation_1")) {
          position2sph[2] = theOscMessage.get(0).floatValue();
     }    
     // get the osc values transmitted by Faust under name /output1 /output2 etc..
