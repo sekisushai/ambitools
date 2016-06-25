@@ -41,7 +41,7 @@
   stepnumber=2,
   commentstyle=\slshape\color{mylstcmt},
   breaklines=true, 
-  emph={Gain,Radius,Azimuth,Elevation,Spherical, Wave, Speakers,Mute,NFC,Outputs,Inputs,left,right,front,back,up,down},
+  emph={Gain,Radius,Azimuth,Elevation,Spherical, Wave, Speakers,Mute,NFC,Outputs,Inputs,left,right,front,back,up,down,Order,Output},
   emphstyle=\color{mylstkey},
 %  morecomment=[s][\color{mylsteqn}]{<equation>}{</equation>},
   morecomment=[s][\color{mylstdoc}]{<mdoc>}{</mdoc>},
@@ -258,6 +258,12 @@ If other decoders are required, you should have a look at the ambisonic decoder 
 \label{fig:hoa_decoder_lebedev50}
 \end{figure}
 
+\paragraph{Usage with the Spherical VU-Meter}
+Note that when using these tools to drive the Spherical VU-Meter (Sec.~\ref{sec:processing}) with OSC, you need to activate OSC transmission mode 2. This is done by launching the tool with the argument \lstinline'-xmit 2'. For example, with the decoder \lstinline'hoa_decoder_lebedev50', the command should be:
+\begin{lstlisting}
+$ ./hoa_decoder_lebedev50 -xmit 2
+\end{lstlisting}
+
 \pagebreak
 \subsubsection{hoa\_panning\_*}
 \label{section:hoa_panning}
@@ -319,7 +325,7 @@ The tools presented in the next sections perform sound field transformations in 
 \item Inputs: $(M+1)^2$
 \item Outputs: $(M+1)^2$
 \end{itemize}
-\lstinline'hoa_azimuth_rotator' performs a rotation of the sound field around $z-$axis (yaw angle). One recalls that the trigonometric sens is chosen for rotation convention (i.e. anti-clockwise) (see Sec.~\ref{sec:spherical_coordinates}). The transformation is done by a rotation matrix operation on the Ambisonic components \cite{daniel2000representation, moreau2006etude,kronlachner2014spatial}. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_azimuth_rotator}. It's basically just a slider to choose the azimuth angle of rotation. To "visualize" the transformation, Fig.~\ref{fig:hoa_azimuth_rotator2} shows the Spherical VU-Meter (see Sec.~\ref{sec:processing}) for a 50-node Lebedev grid with a source positioned at $(1.07~\text{m}, 0^\circ, 0^\circ)$, i.e, in front of the listener. One can observe the signal level of each loudspeaker after decoding step. Thus, on Fig.~\ref{fig:hoa_mirroring_2a}, when the \lstinline'hoa_azimuth_rotator' slider \lstinline'Azimuth' is set to $0^\circ$, i.e. no rotation, the maximum sound energy is in front of the listener. When the slider \lstinline'Azimuth' is set to $90^\circ$, on Fig.~\ref{fig:hoa_mirroring_2b} one observes that the sound field has been rotated $90^\circ$ counter-clockwise around the $z-$axis. Thus, the sound energy is coming from the left of the listener at present.
+\lstinline'hoa_azimuth_rotator' performs a rotation of the sound field around $z-$axis (yaw angle). One recalls that the trigonometric sens is chosen for rotation convention (i.e. anti-clockwise) (see Sec.~\ref{sec:spherical_coordinates}). The transformation is done by a rotation matrix operation on the Ambisonic components \cite{daniel2000representation, moreau2006etude,kronlachner2014spatial}. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_azimuth_rotator}. It's basically just a slider to choose the azimuth angle of rotation. To "visualize" the transformation, Fig.~\ref{fig:hoa_azimuth_rotator_2} shows the Spherical VU-Meter (see Sec.~\ref{sec:processing}) for a 50-node Lebedev grid with a source positioned at $(1.07~\text{m}, 0^\circ, 0^\circ)$, i.e, in front of the listener. One can observe the signal level of each loudspeaker after decoding step. Thus, on Fig.~\ref{fig:hoa_mirroring_2a}, when the \lstinline'hoa_azimuth_rotator' slider \lstinline'Azimuth' is set to $0^\circ$, i.e. no rotation, the maximum sound energy is in front of the listener. When the slider \lstinline'Azimuth' is set to $90^\circ$, on Fig.~\ref{fig:hoa_mirroring_2b} one observes that the sound field has been rotated $90^\circ$ counter-clockwise around the $z-$axis. Thus, the sound energy is coming from the left of the listener at present.
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=0.3\columnwidth]{hoa_azimuth_rotator.png}
@@ -340,6 +346,34 @@ One possible use of the tool \lstinline'hoa_azimuth_rotator' is to compensate th
 
 \pagebreak
 \subsubsection{hoa\_beamforming\_hypercardioid\_to\_mono}
+\begin{itemize}
+\item Inputs: $(M+1)^2$
+\item Output: $1$
+\end{itemize}
+\lstinline'hoa_beamforming_hypercardioid_to_mono' is a tool to performs modal beamforming and extract a monophonic signal as it it was recorded by a directional microphone in the sound field. In fact, the Ambisonic signals are weighted and summed to give the monophonic output signal. The weights of the combination traduce the beampattern of the directional microphone which is used \cite{meyer2002highly}. Thus, this tools allows to listen to some chosen directions in the 3D sound field as is you were recording in the middle of the sound field with a directional microphone with a specified beampattern. \lstinline'hoa_beamforming_hypercardioid_to_mono' offers the weights corresponding to regular hyper-cardioid microphone up to order $3$ \cite{meyer2002highly,lecomte2016filtrage}. On Fig.~\ref{fig:hoa_beamforming_hypercardioids} are shown the beampatterns of the regular hyper-cardioid available: the more the order of the hyper-cardioid is high, the more directional the corresponding virtual microphone is. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_beamforming_hypercardioid_to_mono} for $M=3$.
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\columnwidth]{hoa_beamforming_hypercardioid_to_mono.png}
+\caption{\lstinline'hoa_beamforming_hypercardioid_to_mono' compiled using \lstinline'faust2jaqt' script. The VU-Meters on the left give the signal level of each Ambisonic component. The check-boxes \lstinline'Mute' allow to mute some components of all the components of an order. On the right, the slider \lstinline'Order' allows to select the regular hyper-cardioid order. The slider \lstinline'Output Gain' applies a gain on the output signal. The sliders \lstinline'Azimuth' and \lstinline'Elevation' allow to set the steering angles $(\theta_0,\delta_0)$ of the hyper-cardioid beampattern.}
+\label{fig:hoa_beamforming_hypercardioid_to_mono}
+\end{figure}
+\begin{figure}[!ht]
+\subfigure[Order 1]{
+\includegraphics[width=0.3\columnwidth]{hypercardioid1.pdf}
+\label{fig:hoa_beamforming_hypercardioid_1}
+}
+\subfigure[Order 2]{
+\includegraphics[width=0.3\columnwidth]{hypercardioid2.pdf}
+\label{fig:hoa_beamforming_hypercardioid_2}
+}
+\subfigure[Order 3]{
+\includegraphics[width=0.3\columnwidth]{hypercardioid3.pdf}
+\label{fig:hoa_beamforming_hypercardioid_3}
+}
+\caption{Regular hyper-cardioid beampattern up to order 3. The steering angles are $(\theta_0 = 45^\circ, \delta_0=10^\circ)$.}
+\label{fig:hoa_beamforming_hypercardioids}
+\end{figure}
+
 \subsubsection{hoa\_beamforming\_hypercardioid\_to\_hoa}
 \subsubsection{hoa\_beamforming\_dirac\_to\_hoa}
 
@@ -363,9 +397,12 @@ ambitools provides a Spherical VU-Meter developped with \textsc{Processing} lang
 \subsection{Pure Data}
 \subsubsection{andOSC.pd for Head Tracking}
 \label{sec:andOSC}
-\subsubsection{.pd to control Faust tools with a Joystick}
-%\section{Examples}
-%\subsection{Flys flying around}
+\subsubsection{joyscick\_XYZ\_to\_OSC.pd to control Faust tools with a Joystick}
+\subsubsection{houseflushell.pd to generate the sound of flies}
+
+\section{Examples of use}
+\subsubsection{Listening to a 3D HOA recording through binaural rendering}
+\subsubsection{Spatialize and control the trajectories of flies}
 %\subsection{Record trajectories with Ardour}
 \bibliography{These,ATIAM,Livres}
 \bibliographystyle{apalike}
