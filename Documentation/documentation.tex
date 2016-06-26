@@ -255,15 +255,18 @@ The different microphone configuration available in ambitools are $06$, $26$ or 
 \label{fig:hoa_mic_encoder_lebedev26}
 \end{figure}
 
+
 Fig.~\ref{fig:hoa_mic_encoder_2} shows the connection in order to obtain the Ambisonics components from the signals of a rigid spherical microphone. The raw signals issued from the spherical microphone are played using a Digital Audio Workstation, Ardour 4 in this case. Those signals feed the tool \lstinline'hoa_mic_encoder_lebedev50' in the middle of Fig.~\ref{fig:hoa_mic_encoder_2}. This tool mix the signals to operate the DSFT. The resulting outputs signals are finally filtered using Jconvolver, on the right of Fig.~\ref{fig:hoa_mic_encoder_2}. The outputs of Jconvolver are the Ambisonics components, here up to order $M=5$.
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=0.75\columnwidth]{hoa_mic_encoder_2.png}
+\includegraphics[width=0.65\columnwidth]{hoa_mic_encoder_2.png}
 \caption{Connections in order to obtain the Ambisonics components from the signals of a rigid spherical microphone. On the left, the $50$ outputs of Ardour 4: the $50$ signals of the rigid spherical microphone with a $50$-node Lebedev configuration. On the middle, the tool \lstinline'hoa_mic_encoder_lebedev50' which operates the DSFT. On the right, the filtering of the signals with Jconvolver, the outputs of this box are the Ambisonics components up to order $M=5$. Sceen-shot taken from Claudia under KXStudio Linux distribution.}
 \label{fig:hoa_mic_encoder_2}
 \end{figure}
-
+\clearpage
 \pagebreak
+
+
 \subsubsection{hoa\_decoder\_*}
 \label{sec:hoa_decoder}
 \begin{itemize}
@@ -292,6 +295,13 @@ $ ./hoa_decoder_lebedev50 -xmit 2
 \item Inputs: $(M+1)^2$
 \item Outputs: 2
 \end{itemize}
+\lstinline'hoa_decoder_lebedev50_binaural' is a decoder which computes directly the binaural signals for left and right hear from the Ambisonics components. It is construct using a basic decoder for $50$-node Lebedev grid \cite{lecomte2015on}, and Head Related Impulse Response (HRIR) of a dummy head Neumann KU-100 from \cite{bernschutz2013spherical}. There are $(M+1)^2 \times 2$ Finite Impulse Responses (FIR) filters involved in the process, with $256$-taps each. Thus, this tool can be quite CPU consuming as it applies  $(M+1)^2 \times 2$ linear convolution operations. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_decoder_lebedev50_binaural} for the \lstinline'hoa_decoder_lebedev50_binaural' binaural compiled with $M=2$.
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\columnwidth]{hoa_decoder_lebedev50_binaural.png}
+\caption{\lstinline'hoa_decoder_lebedev50_binaural' compiled using \lstinline'faust2jaqt' script with $M=2$. The VU-Meters on top show the signal level of inputs Ambisonics components in dBFS. The check-boxes \lstinline'Mute' allow to mute certain components or all components of an order. The slider \lstinline'Inputs Gain' applies a global gain on all inputs. The slider \lstinline'Ouputs Gain' applies a global gain on all outputs. Finally, the horizontal VU-Meters at the bottom show the signal level in dBFS of Left and Right channels for headphone signal.}
+\label{fig:hoa_decoder_lebedev50_binaural}
+\end{figure}
 \pagebreak
 
 \subsubsection{hoa\_panning\_*}
@@ -330,7 +340,7 @@ The tools presented in the next sections perform sound field transformations in 
 \item Inputs: $(M+1)^2$
 \item Outputs: $(M+1)^2$
 \end{itemize}
-\lstinline'hoa_mirroring' performs mirroring operations on the sound field. The directions front and back can be inverted, as well as left and right, up and down, or any combination of the above. In fact, the transformation changes the sign of particular Ambisonic components \cite{kronlachner2014spatial}. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_mirroring}. To "visualize" the transformation, Fig.~\ref{fig:hoa_mirroring_2} shows the Spherical VU-Meter (see Sec.~\ref{sec:processing}) for a 50-node Lebedev grid with a source positioned at $(1.07~\text{m}, 0^\circ, 90^\circ)$, i.e, above the head of the listener. One can observe the signal level of each loudspeaker after decoding step. Thus, on Fig.~\ref{fig:hoa_mirroring_2a}, when the \lstinline'hoa_mirroring' tool is not active, the maximum sound energy is above. When the check-box \lstinline'up-down' is checked, on Fig.~\ref{fig:hoa_mirroring_2b} one observes that the sound field has been mirrored according to the up-down inversion. Thus, the sound energy is coming from under the listener at present.
+\lstinline'hoa_mirroring' performs mirroring operations on the sound field. The directions front and back can be inverted, as well as left and right, up and down, or any combination of the above. In fact, the transformation changes the sign of particular Ambisonic components \cite{kronlachner2014spatial}. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_mirroring}. To "visualize" the transformation, Fig.~\ref{fig:hoa_mirroring_2} shows the Spherical VU-Meter (see Sec.~\ref{sec:processing}) for a 50-node Lebedev grid on which a sound field is decoded. The sound field is composed of one source positioned at $(1.07~\text{m}, 0^\circ, 90^\circ)$, i.e, above the head of the listener. One can observe the signal level of each loudspeaker after decoding step. Thus, on Fig.~\ref{fig:hoa_mirroring_2a}, when the \lstinline'hoa_mirroring' tool is not active, the maximum sound energy is above. When the check-box \lstinline'up-down' is checked, on Fig.~\ref{fig:hoa_mirroring_2b} one observes that the sound field has been mirrored according to the up-down inversion. Thus, the sound energy is coming from under the listener at present.
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=0.3\columnwidth]{hoa_mirroring.png}
@@ -354,7 +364,7 @@ The tools presented in the next sections perform sound field transformations in 
 \item Inputs: $(M+1)^2$
 \item Outputs: $(M+1)^2$
 \end{itemize}
-\lstinline'hoa_azimuth_rotator' performs a rotation of the sound field around $z-$axis (yaw angle). One recalls that the trigonometric sens is chosen for rotation convention (i.e. anti-clockwise) (see Sec.~\ref{sec:spherical_coordinates}). The transformation is done by a rotation matrix operation on the Ambisonic components \cite{daniel2000representation, moreau2006etude,kronlachner2014spatial}. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_azimuth_rotator}. It's basically just a slider to choose the azimuth angle of rotation. To "visualize" the transformation, Fig.~\ref{fig:hoa_azimuth_rotator_2} shows the Spherical VU-Meter (see Sec.~\ref{sec:processing}) for a 50-node Lebedev grid with a source positioned at $(1.07~\text{m}, 0^\circ, 0^\circ)$, i.e, in front of the listener. One can observe the signal level of each loudspeaker after decoding step. Thus, on Fig.~\ref{fig:hoa_mirroring_2a}, when the \lstinline'hoa_azimuth_rotator' slider \lstinline'Azimuth' is set to $0^\circ$, i.e. no rotation, the maximum sound energy is in front of the listener. When the slider \lstinline'Azimuth' is set to $90^\circ$, on Fig.~\ref{fig:hoa_mirroring_2b} one observes that the sound field has been rotated $90^\circ$ counter-clockwise around the $z-$axis. Thus, the sound energy is coming from the left of the listener at present.
+\lstinline'hoa_azimuth_rotator' performs a rotation of the sound field around $z-$axis (yaw angle). One recalls that the trigonometric sens is chosen for rotation convention (i.e. anti-clockwise, see Sec.~\ref{sec:spherical_coordinates}). The transformation is done by a rotation matrix operation on the Ambisonic components \cite{daniel2000representation, moreau2006etude,kronlachner2014spatial}. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_azimuth_rotator}. It's basically just a slider to choose the azimuth angle of rotation. To "visualize" the transformation, Fig.~\ref{fig:hoa_azimuth_rotator_2} shows the Spherical VU-Meter (see Sec.~\ref{sec:processing}) for a 50-node Lebedev grid on which a sound field is decoded. The sound field is composed of one source positioned at $(1.07~\text{m}, 0^\circ, 0^\circ)$, i.e, in front of the listener. One can observe the signal level of each loudspeaker after decoding step. Thus, on Fig.~\ref{fig:hoa_mirroring_2a}, when the \lstinline'hoa_azimuth_rotator' slider \lstinline'Azimuth' is set to $0^\circ$, i.e. no rotation, the maximum sound energy is in front of the listener. When the slider \lstinline'Azimuth' is set to $90^\circ$, on Fig.~\ref{fig:hoa_mirroring_2b} one observes that the sound field has been rotated $90^\circ$ counter-clockwise around the $z-$axis. Thus, the sound energy is coming from the left of the listener at present.
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=0.3\columnwidth]{hoa_azimuth_rotator.png}
@@ -371,7 +381,7 @@ The tools presented in the next sections perform sound field transformations in 
 \label{fig:hoa_azimuth_rotator_2}
 \end{figure}
 \paragraph{Head Tracking}
-One possible use of the tool \lstinline'hoa_azimuth_rotator' is to compensate the rotation of the head of the listener around $z-$axis when driven by a head-tracking system \cite{noisternig20033d}. Thus, when using binaural rendering over headphone, the sound field is rotated of minus the angle of rotation of the head, to compensate the head rotation and leave the source at the same position is space for the listener. ambitools provides a Pure Data patch to drive \lstinline'hoa_azimuth_rotator' with OSC and perform an cheap head-tracking system with a smart-phone. See Sec.~\ref{sec:andOSC} for further informations.
+One possible use of the tool \lstinline'hoa_azimuth_rotator' is to compensate the rotation of the head of the listener around $z-$axis when driven by a head-tracking system \cite{noisternig20033d}. Thus, when using binaural rendering over headphone, the sound field is rotated of minus the angle of rotation of the head, to compensate the head rotation and leave the source at the same position is space for the listener. ambitools provides a Pure Data patch to drive \lstinline'hoa_azimuth_rotator' with OSC and perform a head-tracking system with a smart-phone. See Sec.~\ref{sec:andOSC} for further informations.
 
 \pagebreak
 \subsubsection{hoa\_beamforming\_hypercardioid\_to\_mono}
@@ -404,7 +414,43 @@ One possible use of the tool \lstinline'hoa_azimuth_rotator' is to compensate th
 \end{figure}
 
 \subsubsection{hoa\_beamforming\_hypercardioid\_to\_hoa}
+\begin{itemize}
+\item Inputs: $(M+1)^2$
+\item Outputs: $(M_1+M+1)^2$
+\end{itemize}
+\lstinline'hoa_beamforming_hypercardioid_to_hoa' performs a directional filtering with directional pattern described by regular hyper-cardioid beampatterns of order $M_1$, as shown on Fig.~\ref{fig:hoa_beamforming_hypercardioids}. Thus, unlike the tool \\ \lstinline'hoa_beamforming_hypercardiod_to_mono' where the output is a monophonic signal, the outputs here are Ambisonic signals \cite{lecomte2016filtrage}. The transformation applies a beampattern on the sound field to enhance some directions and reject other. The output HOA scene should be of higher order than the input HOA scene to avoid losing spatial information after the filtering \cite{lecomte2016filtrage}. In fact, the input scene has $(M+1)^2$ components, and the output scene should have $(M+M_1+1)^2$ components with a beampattern of order $M_1$. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_beamforming_hypercardioid_to_hoa} for $M=3$ and $M_1=2$. In this figure, one observes that the input scene is of order $M=3$ ($16$ Ambisonic signals), and the output scene is of order $M_1+M=4$ ($25$ Ambisonic components active). In fact, the slider \lstinline'Order' is set to $1$, thus $M_1=1$ and $M_1+M=4$. Note that when the slider \lstinline'Order' is set to $0$, the effect is bypassed as a beampattern of order $M_1=0$ is omnidirectional.
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\columnwidth]{hoa_beamforming_hypercardioid_to_hoa.png}
+\caption{\lstinline'hoa_beamforming_hypercardioid_to_hoa' compiled using \lstinline'faust2jaqt' script with $M=3$ and $M_1=2$. The VU-Meters at the top show the inputs signal level in dBFS. The VU-Meters at the bottom show the outputs signal level in dBFS. The knob \lstinline'Azimuth' and \lstinline'Elevation' allow to choose the steering angles of the beampattern. Finally, the slider \lstinline'Order' allows to choose the hyper-cardioid order, from $M_1=0$ to $M_1=2$ in this case.}
+\label{fig:hoa_beamforming_hypercardioid_to_hoa}
+\end{figure}
+
+To "visualize" the transformation, Fig.~\ref{fig:hoa_beamforming_hypercardioid_to_hoa2} shows the Spherical VU-Meter (see Sec.~\ref{sec:processing}) for a 50-nodes Lebdev grid on which a sound field is decoded. The sound field is composed of two plane waves coming from direction $(0^\circ,0^\circ)$ and $(90^\circ,0^\circ)$ and was produced using tool \lstinline'hoa_encoder_N_sources' (see Sec.~\ref{sec:hoa_encoder}). The Fig.~\ref{fig:hoa_beamforming_hypercardioid_to_hoa_0} shows the meter when the knob \lstinline'Order' in Fig.~\ref{fig:hoa_beamforming_hypercardioid_to_hoa} is set to 0, i.e, the effect is by-passed. Fig.~\ref{fig:hoa_beamforming_hypercardioid_to_hoa_1} shows the same meter when knob \lstinline'Order' is set to 1 and knobs \lstinline'Azimuth' and \lstinline'Elevation' are set to $0^\circ$ and $0^\circ$ respectively, i.e. using a hypercardiod of order $M_1=1$ (Fig.~\ref{fig:hoa_beamforming_hypercardioid_1}) with steering angles in front of the listener. One can observes that the sound energy comes now more from the front direction. This is confirmed when the slider \lstinline'Order' is set to 2 (with same steering angle) on Fig.~\ref{fig:hoa_beamforming_hypercardioid_to_hoa_2}, i.e, with a hypercardioid of order $M_1=2$. In conclusion, t he tool \lstinline'hoa_beamforming_hypercardiod_to_hoa' allows to explore the sound scene with more and more directional precision \cite{lecomte2016filtrage}.
+\begin{figure}[!ht]
+\subfigure[\lstinline'Order' = 0]{
+\includegraphics[width=0.3\columnwidth]{hoa_beamforming_hypercardioid_to_hoa_0.png}
+\label{fig:hoa_beamforming_hypercardioid_to_hoa_0}
+}
+\subfigure[\lstinline'Order' = 1]{
+\includegraphics[width=0.3\columnwidth]{hoa_beamforming_hypercardioid_to_hoa_1.png}
+\label{fig:hoa_beamforming_hypercardioid_to_hoa_1}
+}
+\subfigure[\lstinline'Order' = 2]{
+\includegraphics[width=0.3\columnwidth]{hoa_beamforming_hypercardioid_to_hoa_2.png}
+\label{fig:hoa_beamforming_hypercardioid_to_hoa_2}
+}
+\caption{\lstinline'hoa_beamforming_hypercardioid_to_hoa' effects on a sound field. \subref{fig:hoa_beamforming_hypercardioid_to_hoa_0} original sound field decoded on a 50-loudspeaker Lebedev grid. \subref{fig:hoa_beamforming_hypercardioid_to_hoa_1} the sound field when the knob \lstinline'Order' is set to 1.
+\subref{fig:hoa_beamforming_hypercardioid_to_hoa_2} the sound field when the knob \lstinline'Order' is set to 2.}
+\label{fig:hoa_beamforming_hypercardioid_to_hoa2}
+\end{figure}
+\clearpage
+\pagebreak
 \subsubsection{hoa\_beamforming\_dirac\_to\_hoa}
+\begin{itemize}
+\item Inputs: $(M+1)^2$
+\item Outputs: $(M+1)^2$
+\end{itemize}
 
 \pagebreak
 \subsection{Processing}
