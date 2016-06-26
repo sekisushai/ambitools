@@ -41,7 +41,8 @@
   stepnumber=2,
   commentstyle=\slshape\color{mylstcmt},
   breaklines=true, 
-  emph={Gain,Radius,Azimuth,Elevation,Spherical, Wave, Speakers,Mute,NFC,Outputs,Inputs,left,right,front,back,up,down,Order,Output},
+  emph={Gain,Radius,Azimuth,Elevation,Spherical, Wave, Speakers,Mute,NFC,Outputs,Inputs,left,right,front,back,up,down,Order,Output,
+  On,Off,Crossfade},
   emphstyle=\color{mylstkey},
 %  morecomment=[s][\color{mylsteqn}]{<equation>}{</equation>},
   morecomment=[s][\color{mylstdoc}]{<mdoc>}{</mdoc>},
@@ -243,6 +244,7 @@ Finally, the outputs of this tool are $B$-Format signals up to order $M$. Each o
 \pagebreak
 
 \subsubsection{hoa\_mic\_encoder*}
+\label{sec:hoa_mic_encoder}
 \begin{itemize}
 \item Inputs: $06$, $26$, $32$, or $50$ depending on the configuration.
 \item Outputs: $(M+1)^2$
@@ -446,13 +448,40 @@ To "visualize" the transformation, Fig.~\ref{fig:hoa_beamforming_hypercardioid_t
 \end{figure}
 \clearpage
 \pagebreak
+
+
 \subsubsection{hoa\_beamforming\_dirac\_to\_hoa}
 \begin{itemize}
 \item Inputs: $(M+1)^2$
 \item Outputs: $(M+1)^2$
 \end{itemize}
+\lstinline'hoa_beamforming_dirac_to_hoa' performs a directional filtering on the sound field to listen to only one direction in space. The transformation is like in \lstinline'hoa_beamrforming_hypercardioid_to_hoa' but this time, the beampattern is a truncated directional Dirac \cite{lecomte2016filtrage}. That is to say a function which is null everywhere except in the steering angles direction $(\theta_0,\delta_0)$. Thus, this tool allows to listen to just one direction in the sound field.  The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_beamforming_dirac_to_hoa} for $M=3$. Note that this tool provides a crossfade between the situation without filtering and the situation with filtering on. This means that you can smoothly change between a sound field without any directional filtering and a sound field where just one direction is still on.
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\columnwidth]{hoa_beamforming_dirac_to_hoa.png}
+\caption{\lstinline'hoa_beamforming_dirac_to_hoa' compiled using \lstinline'faust2jaqt' script with $M=3$. The VU-Meters at the top show the inputs signal level in dBFS. The VU-Meters at the bottom show the outputs signal level in dBFS. The check-boxe \lstinline'On/Off' allows to bypass of not the effect with a crossfade. The input entry \lstinline'Crossfade' allows to set the duration of the crossfade. The slider 'Gain' applies a global gain on the output signals. The slider \lstinline'Azimuth' and \lstinline'Elevation' set the steering angles of the directional Dirac, i.e, the direction to listen to.}
+\label{fig:hoa_beamforming_dirac_to_hoa}
+\end{figure}
 
+To "visualise" the transformation, Fig.~\ref{fig:hoa_beamforming_dirac_to_hoa2} shows the Sperical VU-Meter (see Sec.~\ref{sec:processing}) for a 50-loudspeaker Lebedev grid on which a sound field is decoded. The sound field is issued from a capture by a rigid spherical microphone using 50-nodes Lebedev grid. It is encoded using the tools \lstinline'hoa_mic_encoder_lebedev50' (see Sec.\ref{sec:hoa_mic_encoder}) and Jconvolver filters (see Sec.~\ref{sec:jconvolver}). Fig.~\ref{fig:hoa_beamforming_dirac_to_hoa_off} shows the original sound field. No particular direction seem to predominant here. However, on Fig.~\ref{fig:hoa_beamforming_dirac_to_hoa_on}, the filtering is activated (check-box \lstinline'On/Off' checked in Fig.~\ref{fig:hoa_beamforming_dirac_to_hoa}). The steering angles are set to $(\theta_0=0^\circ,\delta_0=-45^\circ)$ and one observes that this is the main sound energy direction in the resulting decoded sound field.
+\begin{figure}
+\centering
+\subfigure[Effect Off]{
+\includegraphics[width=0.45\columnwidth]{hoa_beamforming_dirac_to_hoa_off.png}
+\label{fig:hoa_beamforming_dirac_to_hoa_off}
+}
+\subfigure[Effect On]{
+\includegraphics[width=0.45\columnwidth]{hoa_beamforming_dirac_to_hoa_on.png}
+\label{fig:hoa_beamforming_dirac_to_hoa_on}
+}
+\caption{\lstinline'hoa_beamforming_dirac_to_hoa' effects on a sound field. \subref{fig:hoa_beamforming_dirac_to_hoa_off} original sound field.
+\subref{fig:hoa_beamforming_dirac_to_hoa_off} the sound field after activation of the directional filtering.}
+\label{fig:hoa_beamforming_dirac_to_hoa2}
+\end{figure}
+\clearpage
 \pagebreak
+
+
 \subsection{Processing}
 \subsubsection{Spherical\_VU\_Meter}
 \label{sec:processing}
