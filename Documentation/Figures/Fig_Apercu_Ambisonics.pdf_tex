@@ -61,6 +61,6 @@
     \put(0.49244581,0.41983832){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{Transformations}}}%
     \put(0.01421167,0.16718633){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{Monophonic signals}}}%
     \put(0.19918903,0.05439526){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{Spatialization}}}%
-    \put(0.23753799,0.09725586){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$R, \theta, \varphi$}}}%
+    \put(0.23753799,0.09725586){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$R, \theta, \delta$}}}%
   \end{picture}%
 \endgroup%

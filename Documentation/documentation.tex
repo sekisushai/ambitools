@@ -87,7 +87,7 @@ Ambisonics are some mathematical approaches to represent a sound field in two or
 
 Thus, in accordance to this Fig.~\ref{fig:ambisonics}, ambitools provides tools to:
 \begin{itemize}
-\item Encode a sound field captured by spherical microphone.
+\item Encode a sound field captured by a spherical microphone.
 \item Encode a sound field from monophonic signals and explicit position in space.
 \item Transform and manipulate the encoded sound field in Ambisonic domain.
 \item Decode the sound field over spherical grids of speaker or over headphones with binaural convolution.
@@ -111,11 +111,11 @@ The azimuth angle $\theta \in [0~~360^\circ]$. The elevation angle $\delta \in [
 
 \subsubsection{Spherical harmonics}
 As mentionned before, Ambisonics describes a sound field over a spherical harmonics basis. Those functions are directional functions of the variable $\theta,\delta$. They are denoted $Y_{mn}(\theta,\delta)$ where subscript $m$ represent the order of the spherical harmonic and $n$ its degree. There is several definition for these functions. In ambitools, the N3D real spherical harmonic definition is used \cite{daniel2000representation}:
-\begin{multline}
-Y_{mn}(\theta,\delta) = \sqrt{(2m+1)\epsilon_n \frac{(m-|n|)!}{(m+|n|)!}} P_{m|n|}(\sin(\delta)) \\
+\begin{equation}
+Y_{mn}(\theta,\delta) = \sqrt{(2m+1)\epsilon_n \frac{(m-|n|)!}{(m+|n|)!}} P_{m|n|}(\sin(\delta))
  \times \left\lbrace \begin{aligned} \cos(|n| \theta) & & \text{if} & & n \geq 0 \\ \sin(|n| \theta)  & & \text{if} & & n < 0  \end{aligned} \right.,
 \label{eq:ymn}
-\end{multline}
+\end{equation}
 where $P_{m|n|}$ are the associated Legendre polynomials of order $m$ and degree $|n|$, $(m,n) \in (\mathbb{N},\mathbb{Z})$ with $|n| \leq m$, and $\epsilon_n = 1$ if $n = 0$, $\epsilon_n = 2$ if $|n| > 0$. In Eq.~\eqref{eq:ymn}, $m$ denotes the spherical harmonic order and $n$ its degree.
 
 For each order $m$, there are $(2 m +1)$ spherical harmonics. Thus a basis truncated at order $M$ contains $(M+1)^2$ functions. For example, on Fig.~\ref{fig:spherical_harmonics} are displayed the spherical harmonics up to order $M=5$ as balloon plots.
@@ -240,6 +240,28 @@ Finally, the outputs of this tool are $B$-Format signals up to order $M$. Each o
 \caption{\lstinline'hoa_encoder_N_sources' plug-in compiled using \lstinline'faust2jaqt' script with $N=2$ and $M=5$. The \lstinline'Gain' knob allows to adjust the input level of the input. \lstinline'Radius' knob allows to choose the source distance to origin in case of spherical wave encoding. \lstinline'Azimuth' and \lstinline'Elevation' knobs allow to choose the source direction. The \lstinline'Spherical Wave' check-box enables the encoding of spherical wave, using near-field filters. \lstinline'Speakers Radius' sets the radius for the spherical arrays of loudspeakers at decoding stage in case of spherical wave encoding. Finally, the VU-Meters shows the level of 3D $B$-Format signals in dBFS up to order $M$. Each meter as a \lstinline'Mute' check-box and each order as well.}
 \label{fig:hoa_encoder}
 \end{figure}
+\pagebreak
+
+\subsubsection{hoa\_mic\_encoder*}
+\begin{itemize}
+\item Inputs: $06$, $26$, $32$, or $50$ depending on the configuration.
+\item Outputs: $(M+1)^2$
+\end{itemize}
+It is possible to encode a natural sound field captured by a rigid spherical microphone, according to Fig.~\ref{fig:ambisonics}. To do so, the signals from each capsule on the spherical microphone are mixed to operate the Discrete Spherical Fourier Transform (DSFT) \cite{moreau20063d}. Then, the resulting $(M+1)^2$ components are filtered to obtain the Ambisonics components. In ambitools, the DSFT projection is done for several spherical rigid spherical microphone configurations using \lstinline'hoa_mic_encoder*' tools. The filtering of the resulting components is done using Jconvolver, a real-time fast convolution software. See Sec.~\ref{sec:jconvolver} for further details. Note that the filtering of the outputs signals of \lstinline'hoa_mic_encoder*' tools is mandatory in order to obtain the Ambisonics components.
+The different microphone configuration available in ambitools are $06$, $26$ or $50$ capsules spherical microphone arranged on a Lebedev grid \cite{lecomte2015on} and a $32$ capsules spherical microphone arranged on a pentakis-dodecahedron grid, i.e. the mh acoustics Eigenmike\textsuperscript{\textregistered} microphone \cite{elko2009audio}. Those configuration can operate the Spherical Fourier Transform up to order $M=1$, $M=3$, $M=5$ and $M=4$ respectively \cite{lecomte2015on,moreau20063d}. The corresponding tools are named \lstinline'hoa_mic_encoder_lebedev06', \lstinline'hoa_mic_encoder_lebedev26', \lstinline'hoa_mic_encoder_lebedev50' and \lstinline'hoa_mic_encoder_eigenmike32' respectively. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_mic_encoder_lebedev26} for the \lstinline'hoa_mic_encoder_lebedev26' tool compiled with $M=3$.
+\begin{figure}[!ht]
+\includegraphics[width=\columnwidth]{hoa_mic_encoder.png}
+\caption{\lstinline'hoa_mic_encoder_lebedev26' compiled using \lstinline'faust2jaqt' script with $M=3$. The VU-Meters at the top show the signal level in dBFS of each capsule on the spherical microphone. The VU-Meters at the bottom show the signal level of each components after the DSFT operation. The check-boxes \lstinline'Mute' allow to mute some components or all components of an order. The knob \lstinline'Gain' applies a global gain on the output signals.}
+\label{fig:hoa_mic_encoder_lebedev26}
+\end{figure}
+
+Fig.~\ref{fig:hoa_mic_encoder_2} shows the connection in order to obtain the Ambisonics components from the signals of a rigid spherical microphone. The raw signals issued from the spherical microphone are played using a Digital Audio Workstation, Ardour 4 in this case. Those signals feed the tool \lstinline'hoa_mic_encoder_lebedev50' in the middle of Fig.~\ref{fig:hoa_mic_encoder_2}. This tool mix the signals to operate the DSFT. The resulting outputs signals are finally filtered using Jconvolver, on the right of Fig.~\ref{fig:hoa_mic_encoder_2}. The outputs of Jconvolver are the Ambisonics components, here up to order $M=5$.
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.75\columnwidth]{hoa_mic_encoder_2.png}
+\caption{Connections in order to obtain the Ambisonics components from the signals of a rigid spherical microphone. On the left, the $50$ outputs of Ardour 4: the $50$ signals of the rigid spherical microphone with a $50$-node Lebedev configuration. On the middle, the tool \lstinline'hoa_mic_encoder_lebedev50' which operates the DSFT. On the right, the filtering of the signals with Jconvolver, the outputs of this box are the Ambisonics components up to order $M=5$. Sceen-shot taken from Claudia under KXStudio Linux distribution.}
+\label{fig:hoa_mic_encoder_2}
+\end{figure}
 
 \pagebreak
 \subsubsection{hoa\_decoder\_*}
@@ -250,7 +272,7 @@ Finally, the outputs of this tool are $B$-Format signals up to order $M$. Each o
 \end{itemize}
 
 Three basic decoders by mode-matching \cite{daniel2000representation,poletti2005three} are available at the moment in ambitools: \lstinline'hoa_decoder_lebedev06', \lstinline'hoa_decoder_lebedev26' and
-\lstinline'hoa_decoder_lebedev50'. Those decoders allow to decode $(M+1)^2$ $B$-Format signals on Lebedev grids with respectively $6$, $26$ and $50$ loudspeakers \cite{lebedev1975values,lecomte2015on}. Those grids are able to reconstruct the sound field up to order $M=1$, $M=3$ and $M=5$ respectively.
+\lstinline'hoa_decoder_lebedev50'. Those decoders allow to decode $(M+1)^2$ Ambisonics signals on Lebedev grids with respectively $6$, $26$ and $50$ loudspeakers \cite{lebedev1975values,lecomte2015on}. Those grids are able to reconstruct the sound field up to order $M=1$, $M=3$ and $M=5$ respectively.
 If other decoders are required, you should have a look at the ambisonic decoder toolbox from Aaron Heller \cite{heller2012toolkit}, or contact me. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_decoder_lebedev50} for the \lstinline'hoa_decoder_lebedev50' decoder compiled with $M=5$. The decoder can be with or without near-field compensation (NFC) filters \cite{daniel2003further,lecomte2015real}. Those filters allow to take into account the finite distance of the loudspeakers: In other terms, if they are disabled, the loudspeakers are modeled as plane-wave generators. In case of spherical wave encoding using the \lstinline'hoa_N_sources_encoder' plug-in, the \lstinline'NFC' check-box should be unchecked as the near-field compensation filters are already used at encoding step (see Sec.~\ref{sec:hoa_encoder}).
 \begin{figure}[!ht]
 \includegraphics[width=\columnwidth]{hoa_decoder_lebedev50.png}
@@ -263,8 +285,15 @@ Note that when using these tools to drive the Spherical VU-Meter (Sec.~\ref{sec:
 \begin{lstlisting}
 $ ./hoa_decoder_lebedev50 -xmit 2
 \end{lstlisting}
-
 \pagebreak
+
+\subsubsection{hoa\_decoder\_lebedev50\_binaural}
+\begin{itemize}
+\item Inputs: $(M+1)^2$
+\item Outputs: 2
+\end{itemize}
+\pagebreak
+
 \subsubsection{hoa\_panning\_*}
 \label{section:hoa_panning}
 \begin{itemize}
@@ -279,18 +308,18 @@ The graphical user interface when using \lstinline'faust2jaqt' script is shown i
 \caption{\lstinline'hoa_panning_N_sources_lebedev50' compiled using \lstinline'faust2jaqt' script with $M=5$ and $N=2$. The slider \lstinline'Outputs Gain' applies a global gain on all outputs (loudspeakers signals). The check-boxes \lstinline'Mute Order' allow to mute some Ambisonic order in the computation of the driving signals. The sliders \lstinline'Gain' \lstinline'Radius' \lstinline'Azimuth' \lstinline'Elevation' control the position and gain of the sources. The check-box \lstinline'Spherical Wave' allows to switch between the synthesis of a spherical wave or a plane wave. In the case of spherical wave synthesis, the input entry \lstinline'Speakers Radius' sets the spherical loudspeakers system radius.}
 \label{fig:hoa_panning_N_sources_lebedev50}
 \end{figure}
-
-\pagebreak
-
-\subsubsection{hoa\_mic\_encoder*}
-
+\paragraph{Usage with the Spherical VU-Meter}
+Note that when using these tools to drive the Spherical VU-Meter (Sec.~\ref{sec:processing}) with OSC, you need to activate OSC transmission mode 2. This is done by launching the tool with the argument \lstinline'-xmit 2'. For example, with the panning tool \lstinline'hoa_panning_N_sources_lebedev50', the command should be:
+\begin{lstlisting}
+$ ./hoa_panning_N_sources_lebedev50 -xmit 2
+\end{lstlisting}
 \pagebreak
 
 \subsubsection{Note about sound field transformation tools in Ambisonic domain}
 The tools presented in the next sections perform sound field transformations in Ambisonic domain. Thus, they should be used on Ambisonic signals and inserted after encoding step and before decoding step. For instance, on Fig.~\ref{fig:hoa_mirroring_claudia} is shown the connections for the tool \lstinline'hoa_mirroring': It is inserted after \lstinline'hoa_encoder_N_sources' and before \lstinline'hoa_decoder_lebedev50', acting on Ambisonic signals.
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=0.5\columnwidth]{hoa_mirroring_claudia.png}
+\includegraphics[width=0.75\columnwidth]{hoa_mirroring_claudia.png}
 \caption{Connections between plug-ins \lstinline'hoa_encoder_N_sources',  \lstinline'hoa_mirroring' and \lstinline'hoa_decoder_lebedev50' compiled with \lstinline'faust2jaqt' script with $M=5$. \lstinline'hoa_mirroring' acts on Ambisonics signals. Screen-shot taken from Claudia under KXStudio Linux distribution.}
 \label{fig:hoa_mirroring_claudia}
 \end{figure}
@@ -350,11 +379,11 @@ One possible use of the tool \lstinline'hoa_azimuth_rotator' is to compensate th
 \item Inputs: $(M+1)^2$
 \item Output: $1$
 \end{itemize}
-\lstinline'hoa_beamforming_hypercardioid_to_mono' is a tool to performs modal beamforming and extract a monophonic signal as it it was recorded by a directional microphone in the sound field. In fact, the Ambisonic signals are weighted and summed to give the monophonic output signal. The weights of the combination traduce the beampattern of the directional microphone which is used \cite{meyer2002highly}. Thus, this tools allows to listen to some chosen directions in the 3D sound field as is you were recording in the middle of the sound field with a directional microphone with a specified beampattern. \lstinline'hoa_beamforming_hypercardioid_to_mono' offers the weights corresponding to regular hyper-cardioid microphone up to order $3$ \cite{meyer2002highly,lecomte2016filtrage}. On Fig.~\ref{fig:hoa_beamforming_hypercardioids} are shown the beampatterns of the regular hyper-cardioid available: the more the order of the hyper-cardioid is high, the more directional the corresponding virtual microphone is. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_beamforming_hypercardioid_to_mono} for $M=3$.
+\lstinline'hoa_beamforming_hypercardioid_to_mono' is a tool to perform modal beamforming and extract a monophonic signal as if it was recorded by a directional microphone in the sound field. In fact, the Ambisonic signals are weighted and summed to give the monophonic output signal. The weights of the combination traduce the beampattern of the directional microphone which is used \cite{meyer2002highly}. Thus, this tool allows to listen to a chosen direction in the 3D sound field as if you were recording in the middle of the sound field with a directional microphone with a specific beampattern. \lstinline'hoa_beamforming_hypercardioid_to_mono' provides the weights corresponding to regular hyper-cardioid microphone up to order $3$ \cite{meyer2002highly,lecomte2016filtrage}. On Fig.~\ref{fig:hoa_beamforming_hypercardioids}, the beampatterns available are shown: the higher the order of the hyper-cardioid is, the more directional the corresponding virtual microphone becomes. The graphical user interface when using \lstinline'faust2jaqt' script is shown in Fig.~\ref{fig:hoa_beamforming_hypercardioid_to_mono} for $M=3$.
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=\columnwidth]{hoa_beamforming_hypercardioid_to_mono.png}
-\caption{\lstinline'hoa_beamforming_hypercardioid_to_mono' compiled using \lstinline'faust2jaqt' script. The VU-Meters on the left give the signal level of each Ambisonic component. The check-boxes \lstinline'Mute' allow to mute some components of all the components of an order. On the right, the slider \lstinline'Order' allows to select the regular hyper-cardioid order. The slider \lstinline'Output Gain' applies a gain on the output signal. The sliders \lstinline'Azimuth' and \lstinline'Elevation' allow to set the steering angles $(\theta_0,\delta_0)$ of the hyper-cardioid beampattern.}
+\caption{\lstinline'hoa_beamforming_hypercardioid_to_mono' compiled using \lstinline'faust2jaqt' script. The VU-Meters on the left give the signal level of each Ambisonic component. The check-boxes \lstinline'Mute' allow to mute some components of all the components of an order. On the right, the slider \lstinline'Order' allows to select the regular hyper-cardioid order. The slider \lstinline'Output Gain' applies a gain on the output signal. The sliders \lstinline'Azimuth' and \lstinline'Elevation' allow to set the steering angles $(\theta_0,\delta_0)$ of the hyper-cardioid beampattern. Finally, the horizontal VU-Meter on bottom shows the output signal level.}
 \label{fig:hoa_beamforming_hypercardioid_to_mono}
 \end{figure}
 \begin{figure}[!ht]
@@ -391,6 +420,7 @@ ambitools provides a Spherical VU-Meter developped with \textsc{Processing} lang
 
 \pagebreak
 \subsection{Jconvolver}
+\label{sec:jconvolver}
 \subsubsection{jconvolver\_mic*}
 \subsubsection{hrir\_lebedev50}
 
