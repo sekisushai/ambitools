@@ -364,6 +364,7 @@ The tools presented in the next sections perform sound field transformations in 
 
 \pagebreak
 \subsubsection{hoa\_azimuth\_rotator}
+\label{sec:hoa_azimuth_rotator}
 \begin{itemize}
 \item Inputs: $(M+1)^2$
 \item Outputs: $(M+1)^2$
@@ -509,7 +510,7 @@ The filters are provided as \lstinline'.wav' files containing the impulse respon
 
 \label{sec:jconvolver}
 \subsubsection{jconvolver\_mic*}
-The folders \lstinline'FIR/spherical_microphones/jconvolver_mic*/' contain the configuration files and impulse responses of radial equalization filters for several rigid microphone. Those filters are unstable by nature and are stabilized by regularization, as in \cite{moreau20063d}. They are applied after the Discrete Spherical Fourier Transform performed by \lstinline'hoa_mic_encoder*' tools (see Sec.~\ref{sec:hoa_mic_encoder}) and are mandatory to obtain the Ambisonic components. Thus, the connections should be as in Fig.~\ref{fig:hoa_mic_encoder_2}. Without giving more details, there is one filter by order, and the filter at order $m$ is replicated for each component at order $m$ issued from the DSFT. For example, as the rigid microphone mh acoustics EigenMike\textsuperscript{\textregistered} works up to order $M=4$ \cite{elko2009audio}, there are $4$ filters (i.e. $4$ \lstinline'.wav' files) in folder \lstinline'/FIR/jconvolver_mic_eigenmike32'.
+The folders \lstinline'FIR/spherical_microphones/jconvolver_mic*/' contain the configuration files and impulse responses of radial equalization filters for several rigid microphone. Those filters are unstable by nature and are stabilized by regularization, as in \cite{moreau20063d}. They are applied after the Discrete Spherical Fourier Transform performed by \lstinline'hoa_mic_encoder*' tools (see Sec.~\ref{sec:hoa_mic_encoder}) and are mandatory to obtain the Ambisonic components in the context of sound field capture by rigid spherical microphone. Thus, the connections should be as in Fig.~\ref{fig:hoa_mic_encoder_2}. Without giving more mathematical details (see \cite{daniel2000representation,moreau20063d,lecomte2015on} for instance), there is one filter by order. The filter at order $m$ is replicated $(2 m +1)$ times, for each component at order $m$ issued from the DSFT. For example, as the rigid microphone mh acoustics EigenMike\textsuperscript{\textregistered} works up to order $M=4$ \cite{elko2009audio}, there are $4$ filters (i.e. $4$ \lstinline'.wav' files) in folder \lstinline'/FIR/jconvolver_mic_eigenmike32'. 
 
 To start the convolution under JACK, the first thing to do is to edit the configuration file, for example \lstinline'mic_eigenmike32.conf'. Edit and uncomment the line 
 \begin{lstlisting}
@@ -540,17 +541,45 @@ Then, open a terminal in this folder and type the following command:
 $jconvolver hrir_lebedev50.conf
 \end{lstlisting}
 You should now have a JACK client named \lstinline'Jconvolver' with $L$ inputs and $2$ outputs, as in Fig.~\ref{fig:jconvolver_hrir}.
+
+\pagebreak
 \subsection{Pure Data}
+ambitools uses Pure Data to generate some sound but also to emit or convert OSC messages. Particulary the libraries \lstinline'mrpeach'\footnote{\url{https://puredata.info/downloads/mrpeach}} and \lstinline'hid'\footnote{\url{https://puredata.info/downloads/hid}} are used to manipulate OSC instructions signals of a USB joystick respectively.
 \subsubsection{andOSC.pd for Head Tracking}
 \label{sec:andOSC}
-\subsubsection{joyscick\_XYZ\_to\_OSC.pd to control Faust tools with a Joystick}
-\subsubsection{houseflyshell.pd to generate the sound of flies}
+The patch \lstinline'andOSC.pd' is used to convert the OSC instruction send from the free Android application \lstinline'andOSC' running on a smartphone.
+This application transmit on your local network OSC message with the values of accelerometer and gyroscope of your smartphone. On Fig.~\ref{fig:andOSC} is shown the graphical user interface of application \lstinline'andOSC' on an Android smartphone. The value of interest on this figure is the first value of Orientation, which correspond to the yaw angle.
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.5\columnwidth]{andOSC.png}
+\caption{Sceen-shot of application \lstinline'andOSC' on Android. The value of accelerometer an gyroscope are send by OSC on the local network.}
+\label{fig:andOSC}
+\end{figure}
+Basically, the Pure Data patch \lstinline'andOSC.pd' listen to all the information sent by application andOSC and extract the yaw angle value to drive the tool \lstinline'hoa_azimuth_rotator' (see Sec.\ref{sec:hoa_azimuth_rotator}). On Fig.~\ref{fig:andOSC.pd} is shown the graphical user interface of the patch \lstinline'andOSC.pd'. The yaw angle value is extracted and lowpass filtered to avoid brutal change of rotation value for \lstinline'hoa_azimuth_rotator' tool and limits audible click when brutal rotation of the sound-field is asked. The positive sens of rotation for \lstinline'andOSC' is clockwise, and it is anti-clockwise for ambitools. Thus, the value of yaw angle transmitted by \lstinline'andOSC' is directly the head rotation compensation angle needed for head-tracking with \lstinline'hoa_azimuth_rotator'.
+\begin{figure}
+\centering
+\includegraphics[width=0.7\columnwidth]{andOSC2.png}
+\caption{Graphical user interface of patch \lstinline'andOSC.pd'. By default, the listening port on is UDP 8000 and transmission port is UDP 6000.}
+\label{fig:andOSC.pd}
+\end{figure}
+To run the transmission of OSC message, DSP button should be on in PureData and tool \lstinline'hoa_azimuth_rotator', should listen to OSC message on port 6000. To do so, launch \lstinline'hoa_azimuth_rotator' with the following command:
+\begin{lstlisting}
+$./hoa_azimuth_rotator -port 6000
+\end{lstlisting}
 
+\pagebreak
+\subsubsection{joyscick\_XYZ\_to\_OSC.pd to control Faust tools with a Joystick}
+coming soon...
+\subsubsection{houseflyshell.pd to generate the sound of flies}
+coming soon...
 \section{Examples of use}
 \subsubsection{Listening to a 3D HOA recording through binaural rendering}
-coming soon...
+coming soon... \\
+\lstinline'Ardour' $->$ \lstinline'hoa_mic_encoder_lebedev50' $->$ \lstinline'jconvolver_mic_lebedev50' $->$ \lstinline'hoa_azimuth_rotator' $->$ \lstinline'hoa_decoder_lebedev50' $->$ \lstinline'jconvolver_hrir_ku100_lebedev50' $->$ outputs
 \subsubsection{Spatialize and control the trajectories of flies}
-coming soon...
+coming soon...\\
+\lstinline'hoa_encoder_N_sources' $->$ \lstinline'hoa_decoder*' $->$ outputs, or \\
+\lstinline'hoa_panning_N_sources_*' $->$ outputs
 %\subsection{Record trajectories with Ardour}
 \bibliography{These,ATIAM,Livres}
 \bibliographystyle{apalike}
