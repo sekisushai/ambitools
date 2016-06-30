@@ -523,8 +523,23 @@ $jconvolver mic_eigenmike.conf
 You should now have a JACK client named \lstinline'Jconvolver' with $(M+1)^2$ inputs and $(M+1)^2$ outputs, as in Fig.~\ref{fig:hoa_mic_encoder_2}.
 
 \subsubsection{hrir*}
-
-
+The folder \lstinline'FIR/hrir/' contains several set of Head Related Impulses Responses (HRIRs) computed on various grids. Those HRIRs allow to do the binaural Ambisonics rendering \cite{noisternig20033d}. In fact, the signals are decoded on a virtual grid of $L$ loudspeakers, and each virtual loudspeaker signal is convolved with the corresponding HRIR on left and right ear. The summation of all speakers signals on left and right ears gives the binaural signals. Thus, this operation is a matrix of filters with $L$ inputs and $2$ outputs. The Jconvolver JACK client should be inserted after the decoder as in Fig.~\ref{fig:jconvolver_hrir} for example.
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.65\columnwidth]{jconvolver_hrir.png}
+\caption{Connection between \lstinline'hoa_decoder_lebedev50' tool and Jconvolver for binaural rendering. Screen-shot taken from Claudia under KXStudio Linux distribution.}
+\label{fig:jconvolver_hrir}
+\end{figure}
+To start the convolution under JACK, the first thing to do is to edit the configuration file, for example \lstinline'hrir_ku100_lebedev50.conf'. Edit and uncomment the line 
+\begin{lstlisting}
+#/cd /put/here/your/local/directory/adress/
+\end{lstlisting}
+with the current absolute path address on your local installation.
+Then, open a terminal in this folder and type the following command:
+\begin{lstlisting}
+$jconvolver hrir_lebedev50.conf
+\end{lstlisting}
+You should now have a JACK client named \lstinline'Jconvolver' with $L$ inputs and $2$ outputs, as in Fig.~\ref{fig:jconvolver_hrir}.
 \subsection{Pure Data}
 \subsubsection{andOSC.pd for Head Tracking}
 \label{sec:andOSC}
