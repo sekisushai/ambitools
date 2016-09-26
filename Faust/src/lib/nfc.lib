@@ -11,15 +11,14 @@ declare copyright   "(c) Pierre Lecomte 2014";
 // [2] Adriaensen, F. (2006). Near field filters for higher order Ambisonics. Retrieved October 28, 2013, from http://kokkinizita.linuxaudio.org/papers/hoafilt.pdf
 // [3] Lecomte, P., & Gauthier, P.-A. (2015). Real-Time 3D Ambisonics using Faust, Processing, Pure Data, And OSC. In 15th International Conference on Digital Audio Effects (DAFx-15). Trondheim, Norway.
 
-import("music.lib");
-import("math.lib");
+import("stdfaust.lib");
 
 // r1 = Virtual source radius
 // r2 = Loudspeaker radius
 
 
 c = 340;
-w(r) = 0.5*c/(r*SR);
+w(r) = 0.5*c/(r*ma.SR);
 
 // FIRST ORDER BIQUAD WITH SUM OF PAST SAMPLES
 

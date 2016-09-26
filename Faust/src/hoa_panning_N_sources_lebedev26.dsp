@@ -13,11 +13,11 @@ declare copyright   "(c) Pierre Lecomte 2014";
 // Inputs: N
 // Outputs: 26
 
+import("stdfaust.lib");
 import("lib/nfc.lib");
 import("lib/ymn.lib");
 import("lib/lebedev.lib");
 import("lib/gui.lib");
-import("filter.lib");
 
 M	=	3; // maximum order for Ambisonics components
 N	=	2; // number of inputs (number of sources to encode)
@@ -25,10 +25,10 @@ N	=	2; // number of inputs (number of sources to encode)
 ins	=	N;
 outs	=	26;
 
-g(i)	=	hslider("[%i+1][osc:/gain_%i -20 20][style:knob]Gain %2i",0,-30,20,0.1): db2linear : smooth(0.999); // gain
+g(i)	=	hslider("[%i+1][osc:/gain_%i -20 20][style:knob]Gain %2i",0,-30,20,0.1): ba.db2linear : si.smooth(0.999); // gain
 r(i)	=	hslider("[%i+2][osc:/radius_%i 0.5 50][style:knob]Radius %2i", 2, 0.5, 50, 0.01); // radius
-t(i)	=	hslider("[%i+3][osc:/azimuth_%i 0 360][style:knob]Azimuth %2i", 0, 0, 360, 0.1)*PI/180; // azimuth
-d(i)	=	hslider("[%i+4][osc:/elevation_%i -90 90][style:knob]Elevation %2i", 0, -90, 90, 0.1)*PI/180; // elevation
+t(i)	=	hslider("[%i+3][osc:/azimuth_%i 0 360][style:knob]Azimuth %2i", 0, 0, 360, 0.1)*ma.PI/180; // azimuth
+d(i)	=	hslider("[%i+4][osc:/elevation_%i -90 90][style:knob]Elevation %2i", 0, -90, 90, 0.1)*ma.PI/180; // elevation
 
 mute	=	par(i,M+1,_*vgroup("[2]Mute Order",1-checkbox("%i")));
 
@@ -44,5 +44,5 @@ signal(source,speaker)	=	hgroup("",selecteur(source):par(m,M+1,_*(LegendreP(m,ga
 			gamma=angle(t(source),d(source),azimuth(speaker),elevation(speaker));
 			};
 
-process=bus(N)<:par(speaker,outs,par(source,N,signal(source,speaker)):>_):hgroup("[~]Outputs",par(i,outs,id2(i,0)));
+process=si.bus(N)<:par(speaker,outs,par(source,N,signal(source,speaker)):>_):hgroup("[~]Outputs",par(i,outs,id2(i,0)));
 

@@ -4,22 +4,24 @@ declare author      "Pierre Lecomte";
 declare license     "GPL";
 declare copyright   "(c) Pierre Lecomte 2014";
 
-// Lebedev grid with 6, 26, or 50 nodes. Coordinates are givent in azimuthh and elevation
+// Lebedev grid with 6, 26, or 50 nodes. Coordinates are given in azimuthh and elevation
+
+import("stdfaust.lib");
 
 // Vertex : 6 Nodes
 azimuth(0)=0;
 azimuth(1)=0;
-azimuth(2)=0.5*PI;
-azimuth(3)=PI;
-azimuth(4)=1.5*PI;
+azimuth(2)=0.5*ma.PI;
+azimuth(3)=ma.PI;
+azimuth(4)=1.5*ma.PI;
 azimuth(5)=0;
 
-elevation(0)=0.5*PI;
+elevation(0)=0.5*ma.PI;
 elevation(1)=0;
 elevation(2)=0;
 elevation(3)=0;
 elevation(4)=0;
-elevation(5)=-0.5*PI;
+elevation(5)=-0.5*ma.PI;
 
 weight1(0)=0.166666666666666667;
 weight1(1)=0.166666666666666667;
@@ -44,30 +46,30 @@ weight5(5)=0.012698412698412698;
 
 // Edge : 12 Nodes
 azimuth(6)=0;
-azimuth(7)=0.5*PI;
-azimuth(8)=PI;
-azimuth(9)=1.5*PI;
-azimuth(10)=0.25*PI;
-azimuth(11)=0.75*PI;
-azimuth(12)=1.25*PI;
-azimuth(13)=1.75*PI;
+azimuth(7)=0.5*ma.PI;
+azimuth(8)=ma.PI;
+azimuth(9)=1.5*ma.PI;
+azimuth(10)=0.25*ma.PI;
+azimuth(11)=0.75*ma.PI;
+azimuth(12)=1.25*ma.PI;
+azimuth(13)=1.75*ma.PI;
 azimuth(14)=0;
-azimuth(15)=0.5*PI;
-azimuth(16)=PI;
-azimuth(17)=1.5*PI;
+azimuth(15)=0.5*ma.PI;
+azimuth(16)=ma.PI;
+azimuth(17)=1.5*ma.PI;
 
-elevation(6)=0.25*PI;
-elevation(7)=0.25*PI;
-elevation(8)=0.25*PI;
-elevation(9)=0.25*PI;
+elevation(6)=0.25*ma.PI;
+elevation(7)=0.25*ma.PI;
+elevation(8)=0.25*ma.PI;
+elevation(9)=0.25*ma.PI;
 elevation(10)=0;
 elevation(11)=0;
 elevation(12)=0;
 elevation(13)=0;
-elevation(14)=-0.25*PI;
-elevation(15)=-0.25*PI;
-elevation(16)=-0.25*PI;
-elevation(17)=-0.25*PI;
+elevation(14)=-0.25*ma.PI;
+elevation(15)=-0.25*ma.PI;
+elevation(16)=-0.25*ma.PI;
+elevation(17)=-0.25*ma.PI;
 
 weight3(6)=0.03809523809523810;
 weight3(7)=0.03809523809523810;
@@ -96,14 +98,14 @@ weight5(16)=0.022574955908289243;
 weight5(17)=0.022574955908289243;
 
 // Face : 8 Nodes
-azimuth(18)=0.25*PI;
-azimuth(19)=0.75*PI;
-azimuth(20)=1.25*PI;
-azimuth(21)=1.75*PI;
-azimuth(22)=0.25*PI;
-azimuth(23)=0.75*PI;
-azimuth(24)=1.25*PI;
-azimuth(25)=1.75*PI;
+azimuth(18)=0.25*ma.PI;
+azimuth(19)=0.75*ma.PI;
+azimuth(20)=1.25*ma.PI;
+azimuth(21)=1.75*ma.PI;
+azimuth(22)=0.25*ma.PI;
+azimuth(23)=0.75*ma.PI;
+azimuth(24)=1.25*ma.PI;
+azimuth(25)=1.75*ma.PI;
 
 elevation(18)=0.6154797086703875;
 elevation(19)=0.6154797086703875;

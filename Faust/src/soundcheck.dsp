@@ -9,7 +9,7 @@ declare copyright   "(c) GRAME 2006";
 // Input: 1
 // Outputs: N
 
-import("music.lib");
+import("stdfaust.lib");
 
 N=50;
 
@@ -23,13 +23,13 @@ pink    = f : (+ ~ g) with {
 // User interface
 //----------------
 smooth(c)       = *(1-c) : +~*(c);
-vol             = hslider("[1]Volume", -96, -96, 0, 0.1): db2linear : smooth(0.999);
+vol             = hslider("[1]Volume", -96, -96, 0, 0.1): ba.db2linear : si.smooth(0.999);
 freq            = hslider("[2]Freq", 1000, 0, 24000, 0.1);
 dest            = int(hslider("[3]Destination", 1, 1, N, 1));
 
 testsignal      = _*checkbox("[7]Input")
-		+ osci(freq)*checkbox("[4]Sine Wave")
-                + noise * checkbox("[5]White Noise")
-                + pink(noise) * db2linear(20)  * checkbox("[6]Pink Noise");
+		+ os.osci(freq)*checkbox("[4]Sine Wave")
+                + no.noise * checkbox("[5]White Noise")
+                + pink(no.noise) * ba.db2linear(20)  * checkbox("[6]Pink Noise");
 
 process         = vgroup( "Multichannel Audio Tester", testsignal*vol <: par(i,N, _*((i+1)==dest)) );

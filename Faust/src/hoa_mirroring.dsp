@@ -12,7 +12,7 @@ declare copyright   "(c) Pierre Lecomte 2015";
 // Inputs: (M+1)^2
 // Outputs: (M+1)^2
 
-import("math.lib");
+import("stdfaust.lib");
 
 ud=checkbox("up-down");
 lr=checkbox("left-right");
@@ -22,14 +22,14 @@ M=5;
 
 //up-down switching: all spherical harmonics with order and degree as m+n odd
 updown = par(m,M+1,par(i,2*m+1,term
-	  with{	term	=	_<:if((ud==1) & (i%2==1),_*-1,_); // i+m^2 = m^2+m+n
+	  with{	term	=	_<:ba.if((ud==1) & (i%2==1),_*-1,_); // i+m^2 = m^2+m+n
 	  })
 	  );
 	
 	
 //left-right switching : all spherical harmonics of degree n<0
 leftright = par(m,M+1,par(i,2*m+1,term
-	  with{	term	=	_<:if((lr==1) & ((i-m)<0),_*-1,_); // i+m^2 = m^2+m+n
+	  with{	term	=	_<:ba.if((lr==1) & ((i-m)<0),_*-1,_); // i+m^2 = m^2+m+n
 	  })
 	  );
 	  
@@ -37,7 +37,7 @@ leftright = par(m,M+1,par(i,2*m+1,term
 //front-back switching : all spherical harmonics of degree (n<0 & n even) or (n>0 & n odd)
 frontback = par(m,M+1,par(i,2*m+1,term
 	  with{	term	=	_<:
-	  if(
+	  ba.if(
 	    ((fb==1)
 	    &
 	    (
@@ -70,7 +70,7 @@ process=vgroup("HOA scene mirroring",updown:leftright:frontback);
 //   _,u,_,u,_,u,_,u,_,
 // _,u,_,u,_,u,_,u,_,u,_
 // )
-// with { u = (_<:if(ud==1,_*-1,_)); };
+// with { u = (_<:ba.if(ud==1,_*-1,_)); };
 
 
 //left-right switching : all spherical harmonics of degree n<0
@@ -82,7 +82,7 @@ process=vgroup("HOA scene mirroring",updown:leftright:frontback);
 //   l,l,l,l,_,_,_,_,_,
 // l,l,l,l,l,_,_,_,_,_,_
 // )
-// with { l = (_<:if(lr==1,_*-1,_)); };
+// with { l = (_<:ba.if(lr==1,_*-1,_)); };
 
 //front-back switching : all spherical harmonics of degree (n<0 & n even) and (n>0 & n odd)
 // frontback=(
@@ -93,4 +93,4 @@ process=vgroup("HOA scene mirroring",updown:leftright:frontback);
 //   f,_,f,_,_,f,_,f,_,
 // _,f,_,f,_,_,f,_,f,_,f
 // )
-// with { f = (_<:if(fb==1,_*-1,_)); };
+// with { f = (_<:ba.if(fb==1,_*-1,_)); };

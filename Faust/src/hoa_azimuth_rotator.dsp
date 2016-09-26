@@ -12,15 +12,14 @@ declare copyright   "(c) Pierre Lecomte 2015";
 // Inputs: (M+1)^2
 // Outputs: (M+1)^2
 
-import("math.lib");
-import("music.lib");
+import("stdfaust.lib");
 import("lib/ymn.lib");
 
 M=5; // Maximum order of original HOA scene
 
 ins=(M+1)^2; // Number of inputs (= number of outputs).
 
-t=hslider("Azimuth[osc:/azimuth 0 360]", 0, 0, 360, 0.01)*PI/180; // Slider with azimuth rotation angle
+t=hslider("Azimuth[osc:/azimuth 0 360]", 0, 0, 360, 0.01)*ma.PI/180; // Slider with azimuth rotation angle
 
 // SUB-MATRIX TERM, AT EACH ORDER
 // diagonal terms, anti-diagonal terms, extra diagonal terms
@@ -34,7 +33,7 @@ rot(m,i,j)	=	case{
 // MAIN-MATRIX ROW			
 row(M,i)	=	par(m,M+1,
 			  par(j,2*m+1,term 
-			    with{term = if((i >= m^2) & (i< (m+1)^2),rot(m,int(i-m^2),j),0);}
+			    with{term = ba.if((i >= m^2) & (i< (m+1)^2),rot(m,int(i-m^2),j),0);}
 			    )
 			    );
 

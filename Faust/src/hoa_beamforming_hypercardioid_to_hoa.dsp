@@ -15,6 +15,7 @@ declare copyright   "(c) Pierre Lecomte 2016";
 
 // CAUTION : this code could take long time to compile for higher order M. It is normal in regards of the size of the matrix involved ((M+1)^2*(M+1)^2*(M1+1)^2).
 
+import("stdfaust.lib");
 import("lib/ymn.lib");
 import("lib/cijk.lib");
 import("lib/gui.lib");
@@ -25,8 +26,8 @@ M1	=	2; // Maximum order of hyppercardioid beampattern (implemented up to order 
 ins	=	(M+1)^2;
 outs	=	(M+M1+1)^2; //ins // Should be (M+M1+1)^2 to avoid loosing some information after filtering.
 
-t	=	hslider("Azimuth[style:knob]", 0, 0, 360, 0.1)*PI/180;
-d	=	hslider("Elevation[style:knob]", 0, -90, 90, 0.1)*PI/180;
+t	=	hslider("Azimuth[style:knob]", 0, 0, 360, 0.1)*ma.PI/180;
+d	=	hslider("Elevation[style:knob]", 0, -90, 90, 0.1)*ma.PI/180;
 
 order	=	int(hslider("Order[style:knob]",0,0,M1,1)); // Order of the beampattern used for filtering, order=0 is a bypass.
 
@@ -67,7 +68,7 @@ row(beam,i)	=	par(j,ins,mat(beam,i,j));
 matrix(beam,in,out)	=	par(i,in,_)<: par(i,out,buswg(row(beam,i)):>_);
 
 //process=bus(ins)<:par(i,M1+1,par(j,ins,_*(i==order))):bus(ins),par(i,M1,matrix(i+1,ins,outs)):>bus(outs);
-process	=	bus(ins):hgroup("[1]Inputs",par(i,M+1,meterm(i)))
-		<:hgroup("[3]Parameters",par(i,M1+1,matrix(i,ins,outs)):interleave(int(outs),int(M1+1)):par(i,outs,selectn(M1+1,order)))
+process	=	si.bus(ins):hgroup("[1]Inputs",par(i,M+1,meterm(i)))
+		<:hgroup("[3]Parameters",par(i,M1+1,matrix(i,ins,outs)):ro.interleave(int(outs),int(M1+1)):par(i,outs,ba.selectn(M1+1,order)))
 		:hgroup("[2]Outputs",par(i,int(sqrt(outs)),meterm(i)));
 

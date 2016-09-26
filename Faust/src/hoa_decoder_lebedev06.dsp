@@ -14,13 +14,11 @@ declare copyright   "(c) Pierre Lecomte 2014";
 // Inputs: (M+1)^2
 // Outputs: 26
 
-import("math.lib");
-import("music.lib");
+import("stdfaust.lib");
 import("lib/ymn.lib");
 import("lib/nfc.lib");
 import("lib/lebedev.lib");
 import("lib/gui.lib");
-import("filter.lib");
 
 M	=	1; // Maximum order 3 to have no aliasing in the sweet spot.
 
@@ -33,13 +31,13 @@ near	=	vgroup("[3]NFC",checkbox("Yes"));
 r2	=	nentry("[4]Speakers Radius", 1.07, 0.5, 10, 0.01);
 
 // Gains: CAUTION with maximal value (60 dB!) it's to compensate the attenuation of the microphone radial filters.
-volin	=	vslider("[1]Inputs Gain[unit:dB][osc:/levelin -10 60]", 0, -10, 60, 0.1) : db2linear : smooth(0.999);
-volout	=	vslider("[2]Outputs Gain[unit:dB][osc:/levelout -10 60]", 0, -10, 60, 0.1) : db2linear : smooth(0.999);
+volin	=	vslider("[1]Inputs Gain[unit:dB][osc:/levelin -10 60]", 0, -10, 60, 0.1) : ba.db2linear : si.smooth(0.999);
+volout	=	vslider("[2]Outputs Gain[unit:dB][osc:/levelout -10 60]", 0, -10, 60, 0.1) : ba.db2linear : si.smooth(0.999);
 
-matrix(n,m)	=	hgroup("B-Format",bus(ins):par(i,M+1,metermute(i)))<:par(i,m,buswg(row(i)):>_*(volout));
+matrix(n,m)	=	hgroup("B-Format",si.bus(ins):par(i,M+1,metermute(i)))<:par(i,m,buswg(row(i)):>_*(volout));
 
 // When near-field compensation is activated, multiplication by 4*PI*r2 to have the correct gain, see [2]
-selecteur	=	bus(ins)<:((par(i,ins,*(near*volin*r2)):par(m,M+1,par(i,2*m+1,nfc(m,r2)))),par(i,ins,*((1-near)*volin))):>bus(ins);
+selecteur	=	si.bus(ins)<:((par(i,ins,*(near*volin*r2)):par(m,M+1,par(i,2*m+1,nfc(m,r2)))),par(i,ins,*((1-near)*volin))):>si.bus(ins);
 
 // Analytic decoder matrix Wlebedev.YLebedev [1]
 // Vector of weighted spherical harmonics : spherical harmonics times the speaker weight for weighet quadrature rules [1]

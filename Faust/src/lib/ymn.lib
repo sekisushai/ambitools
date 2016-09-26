@@ -15,7 +15,7 @@ declare copyright   "(c) Pierre Lecomte 2016";
 // [3] Lecomte, P., Gauthier, P.-A., Langrenne, C., Garcia, A., & Berry, A. (2015). On the use of a Lebedev grid for Ambisonics. In Audio Engineering Society Convention 139. New York.
 // [4] http://ambisonics.ch/standards/channels/
 
-import("math.lib");
+import("stdfaust.lib");
 
 // ORDER 0
 n3d(0,0) = 1;

@@ -15,19 +15,17 @@ declare copyright   "(c) Pierre Lecomte 2015";
 // [2] S. Moreau, J. Daniel, and S. Bertet, “3d sound field recording with higher order ambisonics-objective measurements and validation of spherical microphone,” in Audio Engineering Society Convention 120, 2006, pp. 1–24.
 // [3] P. Lecomte, P.-A. Gauthier, C. Langrenne, A. Garcia, and A. Berry, “On the use of a Lebedev grid for Ambisonics,” in Audio Engineering Society Convention 139, 2015.
 
-import("math.lib");
-import("music.lib");
+import("stdfaust.lib");
 import("lib/eigenmike32.lib");
 import("lib/ymn.lib");
 import("lib/gui.lib");
-import("filter.lib");
 
 M	=	4; // Maximum order M=4 for eigenmike32 [2].
 
 ins	=	32;
 outs	=	(M+1)^2;
 
-vol	=	hslider("[1]Gain[unit:dB][style:knob]", 0, -10, 50, 0.1) : db2linear : smooth(0.999);
+vol	=	hslider("[1]Gain[unit:dB][style:knob]", 0, -10, 50, 0.1) : ba.db2linear : si.smooth(0.999);
 
 // Vector of weighted spherical harmonics : spherical harmonics times the speaker weight for weighed quadrature rules [3].
 row(i)	=	par(j,ins,yacn(i,azimuth(j),elevation(j))*weight(j));
