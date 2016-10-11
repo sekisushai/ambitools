@@ -15,7 +15,7 @@ declare copyright   "(c) Pierre Lecomte 2015";
 import("stdfaust.lib");
 import("lib/ymn.lib");
 
-M=5; // Maximum order of original HOA scene
+M	=	5; // Maximum order of original HOA scene
 
 ins=(M+1)^2; // Number of inputs (= number of outputs).
 
