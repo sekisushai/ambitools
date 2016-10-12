@@ -59,7 +59,7 @@ echo "The tools are compiled from order m=1 up to maximum order Mmax allowed by 
               echo "INFO: compilation starts for the tool ${liste[$i]} at order m=$m"
                           output=${liste[$i]/.dsp/$suffix".dsp"}
                           sed "$l s/.*/M=$m;/g" ${liste[$i]} > $output
-                          sed -i "1s/.*/declare version     \"${liste[$i]/.dsp/$suffix}\";/" $output
+                          sed -i "1s/.*/declare name     \"${liste[$i]/.dsp/$suffix}\";/" $output
 #                           faust2jaqt -double -osc -t 0 $prefix${liste[$i]}
                           faust2supercollider -double -t 0 $output
                           rm $output
