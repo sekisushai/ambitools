@@ -40,11 +40,6 @@ liste2=""
                 read reply2
 done
 
-# Order selection
-#echo "Which Ambisonic order would you like to compile? (M<=5)"
-#read M
-# Compilation
-#mkdir tmp
 echo "Compilation starts for the selected tools"
 echo "The tools are compiled from order m=1 up to maximum order Mmax allowed by each tool"
 
@@ -56,14 +51,15 @@ echo "The tools are compiled from order m=1 up to maximum order Mmax allowed by 
           for m in $(seq $Mmax)
               do
               suffix="_"$m
+              echo $m
               echo "INFO: compilation starts for the tool ${liste[$i]} at order m=$m"
                           output=${liste[$i]/.dsp/$suffix".dsp"}
                           output2=${liste[$i]/.dsp/$suffix"_2.dsp"}
                           sed "$l s/.*/M=$m;/g" ${liste[$i]} > $output
                           sed "1s/.*/declare name     \"${liste[$i]/.dsp/$suffix}\";/" $output > $output2
 #                           faust2jaqt -double -osc -t 0 $prefix${liste[$i]}
-                          faust2supercollider -double -t 0 $output2
-                          rm $output $output2
+                         faust2supercollider -double -t 0 $output2
+                         rm $output $output2
               done
      done
 #cd tmp
