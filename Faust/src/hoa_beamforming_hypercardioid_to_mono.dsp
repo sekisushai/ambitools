@@ -49,4 +49,4 @@ g(beam,m)	=	hypercoeff(beam,m)*norm(m);
 
 gvec(beam,M)	=	par(m,M+1,par(n,2*m+1,_*g(beam,m)));
 
-process		=	hgroup("Inputs",par(i,M+1,metermute(i)):yvec((M+1)^2,t,d)<:par(m,M,gvec(m+1,M):>_*vol):ba.selectn(M,order-1)):hgroup("Output",hmeter)<:(_,_);
+process		=	hgroup("Inputs",par(i,M+1,metermute(i)):yvec((M+1)^2,t,d)<:par(m,M,gvec(m+1,M):>_*vol):ba.selectn(M,order-1)):hgroup("Output",hmeter);
