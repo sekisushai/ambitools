@@ -20,7 +20,8 @@ import("lib/nfc.lib");
 import("lib/lebedev.lib");
 import("lib/gui.lib");
 
-M	=	1; // Maximum order 3 to have no aliasing in the sweet spot.
+// Maximum order 3 to have no aliasing in the sweet spot.
+M	=	1;
 
 ins	=	(M+1)^2;
 outs	=	6;
@@ -43,4 +44,4 @@ selecteur	=	si.bus(ins)<:((par(i,ins,*(near*volin*r2)):par(m,M+1,par(i,2*m+1,nfc
 // Vector of weighted spherical harmonics : spherical harmonics times the speaker weight for weighet quadrature rules [1]
 row(i)	=	par(j,ins,yacn(j,azimuth(i),elevation(i))*weight1(i));
 
-process	=	hgroup("Inputs",selecteur:matrix(ins,outs)):hgroup("Outputs 1-outs/2",par(i,outs,id2(i,0)));
+process	=	hgroup("Inputs",selecteur:matrix(ins,outs)):hgroup("Outputs 1-6",par(i,outs,id2(i,0)));

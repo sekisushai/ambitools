@@ -20,7 +20,8 @@ import("lib/nfc.lib");
 import("lib/lebedev.lib");
 import("lib/gui.lib");
 
-M	=	5; // Maximum order 5 to have no aliasing in the sweet spot.
+// Maximum order 5 to have no aliasing in the sweet spot.
+M	=	5;
 
 ins	=	(M+1)^2;
 outs	=	50;
