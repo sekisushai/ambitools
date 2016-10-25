@@ -22,7 +22,7 @@ pitch   =   hslider("Pitch[osc:/picth 0 360]", 0, 0, 360, 0.01)*ma.PI/180; // Sl
 roll    =   hslider("Roll[osc:/roll 0 360]", 0, 0, 360, 0.01)*ma.PI/180; // Slider with roll rotation angle
 
 // Maximum required order
-M	=	3;
+M	=	4;
 
 ins =   (M+1)^2;
 
