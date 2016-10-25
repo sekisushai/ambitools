@@ -23,10 +23,10 @@ M	=	5;
 ins     =       (M+1)^2;
 outs     =       ins;
 
-inconv  =       rint(hslider("Input[style:knob] (1-ACN_N3D,2-ACN_SN3D, 3-FuMa)",1,1,3,1));
-outconv =       rint(hslider("Output[style:knob] (1-ACN_N3D,2-ACN_SN3D, 3-FuMa)",1,1,3,1));
+inconv  =       rint(hslider("[0]Input[style:knob] (1-ACN_N3D,2-ACN_SN3D, 3-FuMa)",1,1,3,1));
+outconv =       rint(hslider("[0]Output[style:knob] (1-ACN_N3D,2-ACN_SN3D, 3-FuMa)",1,1,3,1));
 
-uniq    =       int(3*inconv + outconv - 3);
+uniq    =       int(3*inconv + outconv - 4);
 
 // ACN_N3D Input
 conversion(1,1) =   si.bus(ins); // ACN_N3D to ACN_N3D
@@ -49,7 +49,7 @@ ACNFuMa(1) = ro.cross(3):(_,ro.cross(2)):
 ACNFuMa(2) = (ro.cross(3),_,_):(_,ro.cross(3),_):(_,_,ro.cross(2),_):(_,_,_,ro.cross(2)):
             (_*(1/sqrt(5)),_*(2/sqrt(15)),_*(2/sqrt(15)),_*(2/sqrt(15)),_*(2/sqrt(15)));
 ACNFuMa(3) = (ro.cross(4),_,_,_):(_,ro.cross(4),_,_):(_,_,ro.cross(3),_,_):(_,_,_,ro.cross(3),_):(_,_,_,_,ro.cross(2),_):(_,_,_,_,_,ro.cross(2)):
-            (_*(1/sqrt(7)),_*sqrt(45/224),_*sqrt(45/224),_*(3/sqrt(35)),_*(3/sqrt(35)),_*(8/sqrt(35)),_*(8/sqrt(35)));
+            (_*(1/sqrt(7)),_*sqrt(45/224),_*sqrt(45/224),_*(3/sqrt(35)),_*(3/sqrt(35)),_*sqrt(8/35),_*sqrt(8/35));
 ACNFuMa(m) = par(i,2*m+1,!:0);
 
 FuMaACN(0) = _*sqrt(2);
@@ -61,6 +61,6 @@ FuMaACN(3) = ro.cross(7):(_,ro.cross(2),ro.cross(2),_,_):(_,_,ro.cross(2),_,_,_)
             (_*sqrt(35/8),_*(sqrt(35)/3),_*sqrt(224/45),_*sqrt(7),_*sqrt(224/45),_*(sqrt(35)/3),_*sqrt(35/8));
 FuMaACN(m) = par(i,2*m+1,!:0); // normally they shouldn't be FuMa components for M>3
 
-process = si.bus(ins)<:par(i,3,par(j,3,conversion(i+1,j+1))):ro.interleave(int(ins),9):par(i,outs,ba.selectn(9,uniq));
+process = si.bus(ins):hgroup("[1]Inputs",par(i,M+1,meterm(i)))<:par(i,3,par(j,3,conversion(i+1,j+1))):ro.interleave(int(ins),9):par(i,outs,ba.selectn(9,uniq)):hgroup("[2]Outputs",par(i,M+1,meterm(i)));
 
 //process=par(i,M+1,ACNFuMa(i)):par(i,M+1,FuMaACN(i)); // If the routing is correct, shouldn't have any effects :
