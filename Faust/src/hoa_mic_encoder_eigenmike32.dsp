@@ -20,7 +20,8 @@ import("lib/eigenmike32.lib");
 import("lib/ymn.lib");
 import("lib/gui.lib");
 
-M	=	4; // Maximum order M=4 for eigenmike32 [2].
+// Maximum order M=4 for eigenmike32 [2].
+M	=	4; 
 
 ins	=	32;
 outs	=	(M+1)^2;
