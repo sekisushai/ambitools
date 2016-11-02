@@ -20,7 +20,8 @@ import("lib/nfc.lib");
 import("lib/lebedev.lib");
 import("lib/gui.lib");
 
-M	=	3; // Maximum order 3 to have no aliasing in the sweet spot.
+// Maximum order 3 to have no aliasing in the sweet spot.
+M	=	3;
 
 ins	=	(M+1)^2;
 outs	=	26;

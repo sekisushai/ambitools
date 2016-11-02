@@ -22,7 +22,7 @@ pitch   =   hslider("Pitch[osc:/picth 0 360]", 0, 0, 360, 0.01)*ma.PI/180; // Sl
 roll    =   hslider("Roll[osc:/roll 0 360]", 0, 0, 360, 0.01)*ma.PI/180; // Slider with roll rotation angle
 
 // Maximum required order
-M	=	4;
+M	=	5;
 
 ins =   (M+1)^2;
 
@@ -84,4 +84,5 @@ row(M,i)	=	par(m,M+1,
 matrix(n,m) = par(i,n,_) <: par(i,m,buswg(row(M,i)):>_);
 
 process = matrix(ins,ins);
+
 

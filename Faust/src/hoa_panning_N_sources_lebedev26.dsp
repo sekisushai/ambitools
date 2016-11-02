@@ -19,8 +19,10 @@ import("lib/ymn.lib");
 import("lib/lebedev.lib");
 import("lib/gui.lib");
 
-M	=	3; // maximum order for Ambisonics components
-N	=	2; // number of inputs (number of sources to encode)
+// maximum order for Ambisonics components
+M	=	3;
+// number of inputs (number of sources to encode)
+N	=	2;
 
 ins	=	N;
 outs	=	26;

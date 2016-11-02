@@ -16,7 +16,8 @@ import("stdfaust.lib");
 import("lib/ymn.lib");
 import("lib/gui.lib");
 
-M	=	3; // Maximum order of original HOA scene.
+// Maximum order of original HOA scene.
+M	=	3;
 
 // Output gain
 vol	=	vslider("[2]Output Gain", 0, -10, 10, 0.1) : ba.db2linear : si.smooth(0.999);

@@ -18,7 +18,8 @@ import("lib/lebedev.lib");
 import("lib/ymn.lib");
 import("lib/gui.lib");
 
-M	=	3; // Maximum order M=3 for 26-node Lebedev grid [1].
+// Maximum order M=3 for 26-node Lebedev grid [1].
+M	=	3;
 
 ins	=	26;
 outs	=	(M+1)^2;

@@ -20,8 +20,10 @@ import("lib/ymn.lib");
 import("lib/cijk.lib");
 import("lib/gui.lib");
 
-M	=	3; // Maximum order of original HOA scene
-M1	=	2; // Maximum order of hyppercardioid beampattern (implemented up to order M1=3, but very CPU consuming when M1=3 is chosen)
+// Maximum order of original HOA scene
+M	=	3;
+// Maximum order of hyppercardioid beampattern (implemented up to order M1=3, but very CPU consuming when M1=3 is chosen)
+M1	=	2;
 
 ins	=	(M+1)^2;
 outs	=	(M+M1+1)^2; //ins // Should be (M+M1+1)^2 to avoid loosing some information after filtering.

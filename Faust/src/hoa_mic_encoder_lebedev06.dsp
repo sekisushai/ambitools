@@ -18,7 +18,8 @@ import("lib/lebedev.lib");
 import("lib/ymn.lib");
 import("lib/gui.lib");
 
-M	=	1; // Maximum order M=1 for 6-node Lebedev grid [1].
+// Maximum order M=1 for 6-node Lebedev grid [1].
+M	=	1;
 
 ins	=	6;
 outs	=	(M+1)^2;

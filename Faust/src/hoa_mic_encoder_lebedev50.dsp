@@ -18,7 +18,8 @@ import("lib/lebedev.lib");
 import("lib/ymn.lib");
 import("lib/gui.lib");
 
-M	=	5; // Maximum order M=5 for 50-node Lebedev grid [1].
+// Maximum order M=5 for 50-node Lebedev grid [1].
+M	=	5;
 
 ins	=	50;
 outs	=	(M+1)^2;

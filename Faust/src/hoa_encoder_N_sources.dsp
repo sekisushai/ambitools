@@ -17,8 +17,10 @@ import("lib/nfc.lib");
 import("lib/ymn.lib");
 import("lib/gui.lib");
 
-M	=	5; // maximum order for Ambisonics components
-N	=	3; // number of inputs (number of sources to encoder)
+// maximum order for Ambisonics components
+M	=	5;
+// number of inputs (number of sources to encoder)
+N	=	3;
 
 g(i)	=	hslider("[%i+1][osc:/gain_%i -20 20][style:knob]Gain %2i",0,-20,20,0.1): ba.db2linear : si.smooth(0.999); // gain
 r(i)	=	hslider("[%i+2][osc:/radius_%i 0.5 50][style:knob]Radius %2i", 2, 0.5, 50, 0.01); // radius

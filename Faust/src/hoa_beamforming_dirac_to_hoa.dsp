@@ -18,8 +18,10 @@ import("lib/ymn.lib");
 import("lib/nfc.lib");
 import("lib/gui.lib");
 
-M	=	5; // Order of the input HOA scene.
-M1	=	M; // Order of the ouptut HOA scene. For the moment, as to be equal to M because of the Bypass..
+// Order of the input HOA scene.
+M	=	5;
+// Order of the ouptut HOA scene. For the moment, as to be equal to M because of the Bypass..
+M1	=	M;
 
 ins	=	(M+1)^2;
 outs	=	ins;
