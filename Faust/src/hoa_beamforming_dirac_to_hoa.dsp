@@ -26,6 +26,16 @@ M1	=	M;
 ins	=	(M+1)^2;
 outs	=	ins;
 
+// VU-Meters activation (choose between vumeteron or off)
+insvumeter  =   insvumeteroff;
+outsvumeter =   outsvumeteroff;
+
+insvumeteron    =   par(i,M+1,meterm(i));
+insvumeteroff   =   par(i,ins,_);
+
+outsvumeteron   =   par(i,M+1,meterm(i));
+outsvumeteroff  =   par(i,outs,_);
+
 // Steering angles
 theta0	=	vslider("[5]Azimuth", 0, 0, 360, 0.1)*ma.PI/180;
 delta0	=	vslider("[6]Elevation", 0, -90, 90, 0.1)*ma.PI/180;
@@ -49,8 +59,8 @@ compteurbas2	=	ba.countdown(duree*ma.SR,1-trig)/(duree*ma.SR);
 
 updownsig1	=	par(i,ins,_<:select2(trig,*(vol*compteurbas1),*(vol*compteurhaut1))):yvec(ins,theta0,delta0):>_*(1/(4*ma.PI))<:yvec(outs,theta0,delta0):si.bus(outs);
 updownsig2	=	par(i,ins,_<:select2(trig,*(compteurhaut2),*(compteurbas2))):si.bus(outs);
-selecteur	=	hgroup("Parameters",hgroup("[1]Inputs",par(i,M+1,meterm(i)))<:((updownsig2),(updownsig1)):>si.bus(outs));
+selecteur	=	hgroup("Parameters",hgroup("[1]Inputs",insvumeter)<:((updownsig2),(updownsig1)):>si.bus(outs));
 
 matrix(n,m)	=	par(i,m,buswg(row(i)):>_);
 
-process		=	selecteur:hgroup("Outputs",par(i,M1+1,meterm(i)));
+process		=	selecteur:hgroup("Outputs",outsvumeter);

@@ -24,9 +24,19 @@ M	=	5;
 ins	=	50;
 outs	=	(M+1)^2;
 
+// VU-Meters activation (choose between vumeteron or off)
+insvumeter  =   insvumeteroff;
+outsvumeter =   outsvumeteroff;
+
+insvumeteron    =   par(i,ins,id(i,0));
+insvumeteroff   =   par(i,ins,_);
+
+outsvumeteron   =   par(i,M+1,metermute(i));
+outsvumeteroff  =   par(i,outs,_);
+
 vol	=	hslider("[1]Gain[unit:dB][style:knob]", 0, -10, 50, 0.1) : ba.db2linear : si.smooth(0.999);
 
 // Vector of weighted spherical harmonics : spherical harmonics times the speaker weight for weighed quadrature rules [1].
 row(i)	=	par(j,ins,yacn(i,azimuth(j),elevation(j))*(weight5(j)));
 
-process	=	hgroup("[0]Inputs",par(i,ins,id(i,0)))<:par(i,outs,buswg(row(i)):>_):hgroup("[1]Outputs",par(i,outs,*(vol)):par(i,M+1,metermute(i)));
+process	=	hgroup("[0]Inputs",insvumeter)<:par(i,outs,buswg(row(i)):>_):hgroup("[1]Outputs",par(i,outs,*(vol)):outsvumeter);

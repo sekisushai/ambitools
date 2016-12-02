@@ -28,6 +28,16 @@ M1	=	2;
 ins	=	(M+1)^2;
 outs	=	(M+M1+1)^2; //ins // Should be (M+M1+1)^2 to avoid loosing some information after filtering.
 
+// VU-Meters activation (choose between vumeteron or off)
+insvumeter = insvumeteroff;
+outsvumeter = outsvumeteroff;
+
+insvumeteron = par(i,M+1,meterm(i));
+insvumeteroff= par(i,ins,_);
+
+outsvumeteron = par(i,int(sqrt(outs)),meterm(i));
+outsvumeteroff = par(i,outs,_);
+
 t	=	hslider("Azimuth[style:knob]", 0, 0, 360, 0.1)*ma.PI/180;
 d	=	hslider("Elevation[style:knob]", 0, -90, 90, 0.1)*ma.PI/180;
 
@@ -70,7 +80,7 @@ row(beam,i)	=	par(j,ins,mat(beam,i,j));
 matrix(beam,in,out)	=	par(i,in,_)<: par(i,out,buswg(row(beam,i)):>_);
 
 //process=bus(ins)<:par(i,M1+1,par(j,ins,_*(i==order))):bus(ins),par(i,M1,matrix(i+1,ins,outs)):>bus(outs);
-process	=	si.bus(ins):hgroup("[1]Inputs",par(i,M+1,meterm(i)))
+process	=	si.bus(ins):hgroup("[1]Inputs",insvumeter)
 		<:hgroup("[3]Parameters",par(i,M1+1,matrix(i,ins,outs)):ro.interleave(int(outs),int(M1+1)):par(i,outs,ba.selectn(M1+1,order)))
-		:hgroup("[2]Outputs",par(i,int(sqrt(outs)),meterm(i)));
+		:hgroup("[2]Outputs",outsvumeter);
 
