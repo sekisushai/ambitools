@@ -16,7 +16,7 @@ declare copyright   "(c) Pierre Lecomte 2015";
 import("stdfaust.lib");
 import("lib/gui.lib");
 
-M	=	5; 
+M	=	1; 
 // WARNING: very CPU consuming if taking order up to 5 (36 linear convolution involved, prefer solution like jconvolver...)
 
 // Filter bank
