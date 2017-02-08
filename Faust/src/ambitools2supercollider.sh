@@ -50,7 +50,7 @@ echo "The tools are compiled from order m=1 up to maximum order Mmax allowed by 
 
 outdir="../bin/ambitools2supercollider/HOA/"
 
-mkdir -p "$outdir/Classes" # create the outdir folder for supercollider
+mkdir -p "$outdir/sc/Classes" # create the outdir folder for supercollider
 
  for i in ${liste2[*]}
     do
@@ -80,7 +80,7 @@ mkdir -p "$outdir/Classes" # create the outdir folder for supercollider
                            rmdir $tmp/*
                            mv $tmp/*.cpp $outdir
                            rm $tmp/*.xml
-                           mv $tmp/* $outdir/Classes
+                           mv $tmp/* $outdir/sc/Classes
                            rmdir $tmp
                            rm $output
                done
