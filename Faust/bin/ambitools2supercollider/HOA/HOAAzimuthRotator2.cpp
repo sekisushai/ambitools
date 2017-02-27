@@ -2,7 +2,7 @@
 author: "Pierre Lecomte"
 copyright: "(c) Pierre Lecomte 2015"
 license: "GPL"
-name: "azimuth_rotator_1"
+name: "HOAAzimuthRotator2"
 version: "1.0"
 Code generated with Faust 2.0.a55 (http://faust.grame.fr)
 ------------------------------------------------------------ */
@@ -671,16 +671,16 @@ class mydsp : public dsp {
 		m->declare("maths.lib/license", "LGPL with exception");
 		m->declare("maths.lib/name", "Faust Math Library");
 		m->declare("maths.lib/version", "2.0");
-		m->declare("name", "azimuth_rotator_1");
+		m->declare("name", "HOAAzimuthRotator2");
 		m->declare("version", "1.0");
 	}
 
 	virtual int getNumInputs() {
-		return 4;
+		return 9;
 		
 	}
 	virtual int getNumOutputs() {
-		return 4;
+		return 9;
 		
 	}
 	virtual int getInputRate(int channel) {
@@ -699,6 +699,26 @@ class mydsp : public dsp {
 				break;
 			}
 			case 3: {
+				rate = 1;
+				break;
+			}
+			case 4: {
+				rate = 1;
+				break;
+			}
+			case 5: {
+				rate = 1;
+				break;
+			}
+			case 6: {
+				rate = 1;
+				break;
+			}
+			case 7: {
+				rate = 1;
+				break;
+			}
+			case 8: {
 				rate = 1;
 				break;
 			}
@@ -727,6 +747,26 @@ class mydsp : public dsp {
 				break;
 			}
 			case 3: {
+				rate = 1;
+				break;
+			}
+			case 4: {
+				rate = 1;
+				break;
+			}
+			case 5: {
+				rate = 1;
+				break;
+			}
+			case 6: {
+				rate = 1;
+				break;
+			}
+			case 7: {
+				rate = 1;
+				break;
+			}
+			case 8: {
 				rate = 1;
 				break;
 			}
@@ -779,7 +819,7 @@ class mydsp : public dsp {
 	virtual void buildUserInterface(UI* ui_interface) {
 		ui_interface->openVerticalBox("0x00");
 		ui_interface->declare(&fHslider0, "osc", "/azimuth 0 360");
-		ui_interface->addHorizontalSlider("Azimuth", &fHslider0, 0.0, -1.5707963267948966, 1.5707963267948966, 0.01);
+		ui_interface->addHorizontalSlider("Azimuth", &fHslider0, 0.0, -3.1415926535897931, 3.1415926535897931, 0.01);
 		ui_interface->closeBox();
 		
 	}
@@ -789,16 +829,32 @@ class mydsp : public dsp {
 		FAUSTFLOAT* input1 = inputs[1];
 		FAUSTFLOAT* input2 = inputs[2];
 		FAUSTFLOAT* input3 = inputs[3];
+		FAUSTFLOAT* input4 = inputs[4];
+		FAUSTFLOAT* input5 = inputs[5];
+		FAUSTFLOAT* input6 = inputs[6];
+		FAUSTFLOAT* input7 = inputs[7];
+		FAUSTFLOAT* input8 = inputs[8];
 		FAUSTFLOAT* output0 = outputs[0];
 		FAUSTFLOAT* output1 = outputs[1];
 		FAUSTFLOAT* output2 = outputs[2];
 		FAUSTFLOAT* output3 = outputs[3];
+		FAUSTFLOAT* output4 = outputs[4];
+		FAUSTFLOAT* output5 = outputs[5];
+		FAUSTFLOAT* output6 = outputs[6];
+		FAUSTFLOAT* output7 = outputs[7];
+		FAUSTFLOAT* output8 = outputs[8];
 		double fSlow0 = double(fHslider0);
 		double fSlow1 = cos(fSlow0);
 		double fSlow2 = sin(fSlow0);
 		double fSlow3 = (0.0 - fSlow0);
 		double fSlow4 = sin(fSlow3);
 		double fSlow5 = cos(fSlow3);
+		double fSlow6 = (2.0 * fSlow0);
+		double fSlow7 = cos(fSlow6);
+		double fSlow8 = sin(fSlow6);
+		double fSlow9 = (0.0 - fSlow6);
+		double fSlow10 = sin(fSlow9);
+		double fSlow11 = cos(fSlow9);
 		for (int i = 0; (i < count); i = (i + 1)) {
 			output0[i] = FAUSTFLOAT(double(input0[i]));
 			double fTemp0 = double(input1[i]);
@@ -806,6 +862,15 @@ class mydsp : public dsp {
 			output1[i] = FAUSTFLOAT(((fSlow1 * fTemp0) + (fSlow2 * fTemp1)));
 			output2[i] = FAUSTFLOAT(double(input2[i]));
 			output3[i] = FAUSTFLOAT(((fSlow4 * fTemp0) + (fSlow5 * fTemp1)));
+			double fTemp2 = double(input4[i]);
+			double fTemp3 = double(input8[i]);
+			output4[i] = FAUSTFLOAT(((fSlow7 * fTemp2) + (fSlow8 * fTemp3)));
+			double fTemp4 = double(input5[i]);
+			double fTemp5 = double(input7[i]);
+			output5[i] = FAUSTFLOAT(((fSlow1 * fTemp4) + (fSlow2 * fTemp5)));
+			output6[i] = FAUSTFLOAT(double(input6[i]));
+			output7[i] = FAUSTFLOAT(((fSlow4 * fTemp4) + (fSlow5 * fTemp5)));
+			output8[i] = FAUSTFLOAT(((fSlow10 * fTemp2) + (fSlow11 * fTemp3)));
 			
 		}
 		

@@ -2,7 +2,7 @@
 author: "Pierre Lecomte"
 copyright: "(c) Pierre Lecomte 2015"
 license: "GPL"
-name: "azimuth_rotator_4"
+name: "HOAAzimuthRotator4"
 version: "1.0"
 Code generated with Faust 2.0.a55 (http://faust.grame.fr)
 ------------------------------------------------------------ */
@@ -671,7 +671,7 @@ class mydsp : public dsp {
 		m->declare("maths.lib/license", "LGPL with exception");
 		m->declare("maths.lib/name", "Faust Math Library");
 		m->declare("maths.lib/version", "2.0");
-		m->declare("name", "azimuth_rotator_4");
+		m->declare("name", "HOAAzimuthRotator4");
 		m->declare("version", "1.0");
 	}
 
@@ -947,7 +947,7 @@ class mydsp : public dsp {
 	virtual void buildUserInterface(UI* ui_interface) {
 		ui_interface->openVerticalBox("0x00");
 		ui_interface->declare(&fHslider0, "osc", "/azimuth 0 360");
-		ui_interface->addHorizontalSlider("Azimuth", &fHslider0, 0.0, -1.5707963267948966, 1.5707963267948966, 0.01);
+		ui_interface->addHorizontalSlider("Azimuth", &fHslider0, 0.0, -3.1415926535897931, 3.1415926535897931, 0.01);
 		ui_interface->closeBox();
 		
 	}
