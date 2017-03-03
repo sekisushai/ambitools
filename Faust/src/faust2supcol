@@ -154,20 +154,20 @@ for p in $FILES; do
     mkdir "$TMP"
 
     # compile the .dsp file to c++ and xml
-    faust -xml "$SRCDIR/$f" -o /dev/null  || exit
+    faust -xml -time -t 0 "$SRCDIR/$f" -o /dev/null  || exit
     mv "$SRCDIR/$f.xml" $TMP/
-    faust -i -a supercollider.cpp $OPTIONS "$SRCDIR/$f" -o "$TMP/${f%.dsp}.cpp" || exit
+    faust -i -a supercollider.cpp -time -t 0 $OPTIONS "$SRCDIR/$f" -o "$TMP/${f%.dsp}.cpp" || exit
 
     # compile c++ to binary; --prefix should be same as in ../../examples/Makefile.sccompile
     (
         cd "$TMP"
-        faust2sc --prefix=HOA $SYNTHDEF $f.xml > "${f%.dsp}.sc" 2>$OUTDEV
+        faust2sc --prefix=Faust $SYNTHDEF $f.xml > "${f%.dsp}.sc" 2>$OUTDEV
         ${CXX=g++}  -O3 $FAUSTTOOLSFLAGS $SCFLAGS -I$CUR $INCLUDE $CXXFLAGS $OMP -Dmydsp=${f%.dsp} -o ${f%.dsp}.$EXT ${f%.dsp}.cpp
     )> $OUTDEV || exit
 
     ## move the produced files from tmp to source dir
-    #cp "$TMP/${f%.dsp}.$EXT" "$SRCDIR/${f%.dsp}.$EXT"
-    #cp "$TMP/${f%.dsp}.sc" "$SRCDIR/${f%.dsp}.sc"
+    cp "$TMP/${f%.dsp}.$EXT" "$SRCDIR/${f%.dsp}.$EXT"
+    cp "$TMP/${f%.dsp}.sc" "$SRCDIR/${f%.dsp}.sc"
 
 
     if [ $F2SC_DEBUG = 1 ]; then
