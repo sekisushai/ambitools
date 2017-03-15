@@ -22,7 +22,7 @@ import("lib/gui.lib");
 // maximum order for Ambisonics components
 M	=	5;
 // number of inputs (number of sources to encode)
-N	=	2; 
+N	=	1; 
 
 ins	=	N;
 outs	=	50;
