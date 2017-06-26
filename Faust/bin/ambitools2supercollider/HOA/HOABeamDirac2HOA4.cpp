@@ -4,16 +4,11 @@ copyright: "(c) Pierre Lecomte 2016"
 license: "GPL"
 name: "HOABeamDirac2HOA4"
 version: "1.0"
-Code generated with Faust 2.0.a55 (http://faust.grame.fr)
+Code generated with Faust 2.2.0 (http://faust.grame.fr)
 ------------------------------------------------------------ */
 
 #ifndef  __mydsp_H__
 #define  __mydsp_H__
-
-// If other than 'faust2sc --prefix Faust' is used, sed this as well:
-#if !defined(SC_FAUST_PREFIX)
-# define SC_FAUST_PREFIX "Faust"
-#endif
 
 //-------------------------------------------------------------------
 // FAUST architecture file for SuperCollider.
@@ -35,52 +30,38 @@ Code generated with Faust 2.0.a55 (http://faust.grame.fr)
 // 02111-1307 USA
 //-------------------------------------------------------------------
 
+// If other than 'faust2sc --prefix Faust' is used, sed this as well:
+#if !defined(SC_FAUST_PREFIX)
+#define SC_FAUST_PREFIX "Faust"
+#endif
+
 #include <map>
 #include <string>
 #include <string.h>
 #include <SC_PlugIn.h>
 
 /************************************************************************
-    IMPORTANT NOTE : this file contains two clearly delimited sections :
-    the ARCHITECTURE section (in two parts) and the USER section. Each section
-    is governed by its own copyright and license. Please check individually
-    each section for license and copyright information.
-*************************************************************************/
-
-/*******************BEGIN ARCHITECTURE SECTION (part 1/2)****************/
-
-/************************************************************************
-    FAUST Architecture File
-    Copyright (C) 2003-2011 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 3 of
-    the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; If not, see <http://www.gnu.org/licenses/>.
-
-    EXCEPTION : As a special exception, you may create a larger work
-    that contains this FAUST architecture section and distribute
-    that work under terms of your choice, so long as this FAUST
-    architecture section is not modified.
-
- ************************************************************************
- ************************************************************************/
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
  
-/******************************************************************************
-*******************************************************************************
-
-								FAUST DSP
-
-*******************************************************************************
-*******************************************************************************/
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
+ ************************************************************************/
 
 #ifndef __dsp__
 #define __dsp__
@@ -93,6 +74,19 @@ Code generated with Faust 2.0.a55 (http://faust.grame.fr)
 
 class UI;
 struct Meta;
+
+/**
+ * DSP memory manager.
+ */
+
+struct dsp_memory_manager {
+    
+    virtual ~dsp_memory_manager() {}
+    
+    virtual void* allocate(size_t size) = 0;
+    virtual void destroy(void* ptr) = 0;
+    
+};
 
 /**
 * Signal processor definition.
@@ -112,16 +106,16 @@ class dsp {
         virtual int getNumOutputs() = 0;
     
         /**
-         * Trigger the UI* parameter with instance specific calls
+         * Trigger the ui_interface parameter with instance specific calls
          * to 'addBtton', 'addVerticalSlider'... in order to build the UI.
          *
-         * @param ui_interface - the UI* user interface builder
+         * @param ui_interface - the user interface builder
          */
         virtual void buildUserInterface(UI* ui_interface) = 0;
     
         /* Returns the sample rate currently used by the instance */
         virtual int getSampleRate() = 0;
-
+    
         /** Global init, calls the following methods :
          * - static class 'classInit' : static table initialisation
          * - 'instanceInit' : constants and instance table initialisation
@@ -132,13 +126,13 @@ class dsp {
 
         /** Init instance state
          *
-         * @param samplingRate - the sampling rate in Herz
+         * @param samplingRate - the sampling rate in Hertz
          */
         virtual void instanceInit(int samplingRate) = 0;
 
         /** Init instance constant state
          *
-         * @param samplingRate - the sampling rate in Herz
+         * @param samplingRate - the sampling rate in Hertz
          */
         virtual void instanceConstants(int samplingRate) = 0;
     
@@ -166,19 +160,19 @@ class dsp {
          * DSP instance computation, to be called with sucessive in/out audio buffers.
          *
          * @param count - the nomber of frames to compute
-         * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, doucbe or quad)
-         * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, doucbe or quad)
+         * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
+         * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          *
          */
         virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) = 0;
     
         /**
-         * DSP instance computation : alternative method to be used by subclasses.
+         * DSP instance computation: alternative method to be used by subclasses.
          *
          * @param date_usec - the timestamp in microsec given by audio driver.
          * @param count - the nomber of frames to compute
-         * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, doucbe or quad)
-         * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, doucbe or quad)
+         * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
+         * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          *
          */
         virtual void compute(double date_usec, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { compute(count, inputs, outputs); }
@@ -211,13 +205,14 @@ class decorator_dsp : public dsp {
         virtual void instanceClear() { fDSP->instanceClear(); }
         virtual decorator_dsp* clone() { return new decorator_dsp(fDSP->clone()); }
         virtual void metadata(Meta* m) { return fDSP->metadata(m); }
+        // Beware: subclasses usually have to overload the two 'compute' methods
         virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(count, inputs, outputs); }
         virtual void compute(double date_usec, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(date_usec, count, inputs, outputs); }
     
 };
 
 /**
- * DSP factory class
+ * DSP factory class.
  */
 
 class dsp_factory {
@@ -225,7 +220,7 @@ class dsp_factory {
     protected:
     
         // So that to force sub-classes to use deleteDSPFactory(dsp_factory* factory);
-        ~dsp_factory() {}
+        virtual ~dsp_factory() {}
     
     public:
     
@@ -233,6 +228,9 @@ class dsp_factory {
         virtual std::string getSHAKey() = 0;
         virtual std::string getDSPCode() = 0;
         virtual dsp* createDSPInstance() = 0;
+    
+        virtual void setMemoryManager(dsp_memory_manager* manager) = 0;
+        virtual dsp_memory_manager* getMemoryManager() = 0;
     
 };
 
@@ -254,31 +252,28 @@ class dsp_factory {
 
 #endif
 /************************************************************************
-    FAUST Architecture File
-    Copyright (C) 2003-2016 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 3 of
-    the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; If not, see <http://www.gnu.org/licenses/>.
-
-    EXCEPTION : As a special exception, you may create a larger work
-    that contains this FAUST architecture section and distribute
-    that work under terms of your choice, so long as this FAUST
-    architecture section is not modified.
-
-
- ************************************************************************
- ************************************************************************/
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
  
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
+ ************************************************************************/
+
 #ifndef FAUST_UI_H
 #define FAUST_UI_H
 
@@ -287,9 +282,10 @@ class dsp_factory {
 #endif
 
 /*******************************************************************************
- * UI : Faust User Interface
- * This abstract class contains only the method that the faust compiler can
- * generate to describe a DSP interface.
+ * UI : Faust DSP User Interface
+ * User Interface as expected by the buildUserInterface() method of a DSP.
+ * This abstract class contains only the method that the Faust compiler can
+ * generate to describe a DSP user interface.
  ******************************************************************************/
 
 class UI
@@ -326,69 +322,28 @@ class UI
         virtual void declare(FAUSTFLOAT*, const char*, const char*) {}
 };
 
-//----------------------------------------------------------------
-//  Generic decorator
-//----------------------------------------------------------------
-
-class DecoratorUI : public UI
-{
-    protected:
-    
-        UI* fUI;
-
-    public:
-    
-        DecoratorUI(UI* ui = 0):fUI(ui)
-        {}
-
-        virtual ~DecoratorUI() { delete fUI; }
-
-        // -- widget's layouts
-        virtual void openTabBox(const char* label)          { fUI->openTabBox(label); }
-        virtual void openHorizontalBox(const char* label)   { fUI->openHorizontalBox(label); }
-        virtual void openVerticalBox(const char* label)     { fUI->openVerticalBox(label); }
-        virtual void closeBox()                             { fUI->closeBox(); }
-
-        // -- active widgets
-        virtual void addButton(const char* label, FAUSTFLOAT* zone)         { fUI->addButton(label, zone); }
-        virtual void addCheckButton(const char* label, FAUSTFLOAT* zone)    { fUI->addCheckButton(label, zone); }
-        virtual void addVerticalSlider(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step)
-            { fUI->addVerticalSlider(label, zone, init, min, max, step); }
-        virtual void addHorizontalSlider(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step) 	
-            { fUI->addHorizontalSlider(label, zone, init, min, max, step); }
-        virtual void addNumEntry(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step) 			
-            { fUI->addNumEntry(label, zone, init, min, max, step); }
-
-        // -- passive widgets	
-        virtual void addHorizontalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) 
-            { fUI->addHorizontalBargraph(label, zone, min, max); }
-        virtual void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max)
-            { fUI->addVerticalBargraph(label, zone, min, max); }
-
-        virtual void declare(FAUSTFLOAT* zone, const char* key, const char* val) { fUI->declare(zone, key, val); }
-
-};
-
 #endif
 /************************************************************************
- ************************************************************************
-    FAUST Architecture File
-	Copyright (C) 2003-2011 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3 of
-	the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-	along with this program; If not, see <http://www.gnu.org/licenses/>.
-
- ************************************************************************
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
  ************************************************************************/
  
 #ifndef __misc__
@@ -400,26 +355,28 @@ class DecoratorUI : public UI
 #include <stdlib.h>
 
 /************************************************************************
- ************************************************************************
-    FAUST Architecture File
-	Copyright (C) 2003-2011 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3 of
-	the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-	along with this program; If not, see <http://www.gnu.org/licenses/>.
-
- ************************************************************************
- ************************************************************************/
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
  
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
+ ************************************************************************/
+
 #ifndef __meta__
 #define __meta__
 
@@ -475,9 +432,15 @@ inline const char* lopts(char* argv[], const char* name, const char* def)
 using namespace std;
 
 #if defined(__GNUC__) && __GNUC__ >= 4
-# define FAUST_EXPORT __attribute__((visibility("default")))
+    #define FAUST_EXPORT __attribute__((visibility("default")))
 #else
-# define FAUST_EXPORT  SC_API_EXPORT
+    #define FAUST_EXPORT  SC_API_EXPORT
+#endif
+
+#ifdef WIN32
+    #define STRDUP _strdup
+#else
+    #define STRDUP strdup
 #endif
 
 //----------------------------------------------------------------------------
@@ -640,18 +603,18 @@ private:
 
 #include <math.h>
 
+double cos(double dummy0);
 double sin(double dummy0);
-double faustpower2_f(double value) {
+double pow(double dummy0, double dummy1);
+double mydsp_faustpower2_f(double value) {
 	return (value * value);
 	
 }
-double pow(double dummy0, double dummy1);
-double cos(double dummy0);
-double faustpower3_f(double value) {
+double mydsp_faustpower3_f(double value) {
 	return ((value * value) * value);
 	
 }
-double faustpower4_f(double value) {
+double mydsp_faustpower4_f(double value) {
 	return (((value * value) * value) * value);
 	
 }
@@ -664,19 +627,19 @@ class mydsp : public dsp {
 	
  private:
 	
-	int fSamplingFreq;
-	double fRec0[2];
-	double fRec1[2];
-	double fRec2[2];
-	double fRec3[2];
-	double fRec4[2];
 	FAUSTFLOAT fCheckbox0;
+	int fSamplingFreq;
 	double fConst0;
 	double fConst1;
 	FAUSTFLOAT fEntry0;
+	double fRec0[2];
+	double fRec1[2];
 	FAUSTFLOAT fVslider0;
 	FAUSTFLOAT fVslider1;
 	FAUSTFLOAT fVslider2;
+	double fRec2[2];
+	double fRec3[2];
+	double fRec4[2];
 	
  public:
 	
@@ -956,7 +919,7 @@ class mydsp : public dsp {
 	
 	virtual void instanceConstants(int samplingFreq) {
 		fSamplingFreq = samplingFreq;
-		fConst0 = min(192000.0, max(1.0, double(fSamplingFreq)));
+		fConst0 = min(192000.0, max(1000.0, double(fSamplingFreq)));
 		fConst1 = (1.0 / fConst0);
 		
 	}
@@ -971,24 +934,24 @@ class mydsp : public dsp {
 	}
 	
 	virtual void instanceClear() {
-		for (int i0 = 0; (i0 < 2); i0 = (i0 + 1)) {
-			fRec0[i0] = 0.0;
+		for (int l0 = 0; (l0 < 2); l0 = (l0 + 1)) {
+			fRec0[l0] = 0.0;
 			
 		}
-		for (int i1 = 0; (i1 < 2); i1 = (i1 + 1)) {
-			fRec1[i1] = 0.0;
+		for (int l1 = 0; (l1 < 2); l1 = (l1 + 1)) {
+			fRec1[l1] = 0.0;
 			
 		}
-		for (int i2 = 0; (i2 < 2); i2 = (i2 + 1)) {
-			fRec2[i2] = 0.0;
+		for (int l2 = 0; (l2 < 2); l2 = (l2 + 1)) {
+			fRec2[l2] = 0.0;
 			
 		}
-		for (int i3 = 0; (i3 < 2); i3 = (i3 + 1)) {
-			fRec3[i3] = 0.0;
+		for (int l3 = 0; (l3 < 2); l3 = (l3 + 1)) {
+			fRec3[l3] = 0.0;
 			
 		}
-		for (int i4 = 0; (i4 < 2); i4 = (i4 + 1)) {
-			fRec4[i4] = 0.0;
+		for (int l4 = 0; (l4 < 2); l4 = (l4 + 1)) {
+			fRec4[l4] = 0.0;
 			
 		}
 		
@@ -1016,16 +979,16 @@ class mydsp : public dsp {
 		ui_interface->openHorizontalBox("Parameters");
 		ui_interface->declare(0, "2", "");
 		ui_interface->openVerticalBox("On/Off");
-		ui_interface->addCheckButton("On",&fCheckbox0);
+		ui_interface->addCheckButton("On", &fCheckbox0);
 		ui_interface->closeBox();
 		ui_interface->declare(&fEntry0, "3", "");
 		ui_interface->declare(&fEntry0, "unit", "s");
 		ui_interface->addNumEntry("Crossfade", &fEntry0, 1.0, 0.10000000000000001, 10.0, 0.10000000000000001);
-		ui_interface->declare(&fVslider1, "4", "");
-		ui_interface->declare(&fVslider1, "unit", "dB");
-		ui_interface->addVerticalSlider("Gain", &fVslider1, 0.0, -20.0, 20.0, 0.10000000000000001);
-		ui_interface->declare(&fVslider2, "5", "");
-		ui_interface->addVerticalSlider("Azimuth", &fVslider2, 0.0, -3.1415926535897931, 3.1415926535897931, 0.10000000000000001);
+		ui_interface->declare(&fVslider2, "4", "");
+		ui_interface->declare(&fVslider2, "unit", "dB");
+		ui_interface->addVerticalSlider("Gain", &fVslider2, 0.0, -20.0, 20.0, 0.10000000000000001);
+		ui_interface->declare(&fVslider1, "5", "");
+		ui_interface->addVerticalSlider("Azimuth", &fVslider1, 0.0, -3.1415926535897931, 3.1415926535897931, 0.10000000000000001);
 		ui_interface->declare(&fVslider0, "6", "");
 		ui_interface->addVerticalSlider("Elevation", &fVslider0, 0.0, -1.5707963267948966, 1.5707963267948966, 0.10000000000000001);
 		ui_interface->closeBox();
@@ -1091,140 +1054,145 @@ class mydsp : public dsp {
 		double fSlow5 = (fConst0 * fSlow2);
 		int iSlow6 = ((1.0 - fSlow0) > 0.0);
 		double fSlow7 = double(fVslider0);
-		double fSlow8 = sin(fSlow7);
-		double fSlow9 = faustpower2_f(fSlow8);
-		double fSlow10 = ((((35.0 * fSlow9) + -30.0) * fSlow9) + 3.0);
-		double fSlow11 = (0.375 * fSlow10);
-		double fSlow12 = (0.0010000000000000009 * pow(10.0, (0.050000000000000003 * double(fVslider1))));
-		double fSlow13 = sin((2.0 * fSlow7));
-		double fSlow14 = double(fVslider2);
+		double fSlow8 = cos(fSlow7);
+		double fSlow9 = double(fVslider1);
+		double fSlow10 = (3.0 * fSlow9);
+		double fSlow11 = sin(fSlow10);
+		double fSlow12 = (2.0916500663351889 * (fSlow11 * fSlow8));
+		double fSlow13 = (0.0010000000000000009 * pow(10.0, (0.050000000000000003 * double(fVslider2))));
+		double fSlow14 = (2.0 * fSlow9);
 		double fSlow15 = sin(fSlow14);
-		double fSlow16 = cos(fSlow14);
-		double fSlow17 = cos(fSlow7);
-		double fSlow18 = faustpower2_f(fSlow17);
-		double fSlow19 = (2.0 * fSlow14);
-		double fSlow20 = sin(fSlow19);
-		double fSlow21 = cos(fSlow19);
-		double fSlow22 = ((3.0 * fSlow9) + -1.0);
-		double fSlow23 = (1.1180339887498949 * fSlow22);
-		double fSlow24 = (7.0 * fSlow9);
-		double fSlow25 = (fSlow24 + -3.0);
-		double fSlow26 = (1.1858541225631423 * (fSlow25 * fSlow13));
-		double fSlow27 = (5.0 * fSlow9);
-		double fSlow28 = (fSlow27 + -3.0);
-		double fSlow29 = (1.3228756555322954 * fSlow28);
-		double fSlow30 = (5.123475382979799 * fSlow21);
-		double fSlow31 = (3.0 * fSlow14);
-		double fSlow32 = sin(fSlow31);
-		double fSlow33 = (fSlow32 * fSlow17);
-		double fSlow34 = (6.2749501990055663 * fSlow33);
-		double fSlow35 = cos(fSlow31);
-		double fSlow36 = (fSlow35 * fSlow17);
-		double fSlow37 = (6.2749501990055663 * fSlow36);
-		double fSlow38 = (fSlow27 + -1.0);
-		double fSlow39 = (1.6201851746019651 * fSlow38);
-		double fSlow40 = (2.0916500663351889 * fSlow33);
-		double fSlow41 = (5.123475382979799 * (fSlow20 * fSlow8));
-		double fSlow42 = (2.0916500663351889 * fSlow36);
-		double fSlow43 = (4.0 * fSlow14);
-		double fSlow44 = sin(fSlow43);
-		double fSlow45 = (2.2185299186623562 * (fSlow44 * fSlow18));
-		double fSlow46 = (fSlow24 + -1.0);
-		double fSlow47 = (fSlow20 * fSlow46);
-		double fSlow48 = (1.6770509831248424 * fSlow47);
-		double fSlow49 = (fSlow21 * fSlow46);
-		double fSlow50 = (1.6770509831248424 * fSlow49);
-		double fSlow51 = cos(fSlow43);
-		double fSlow52 = (2.2185299186623562 * (fSlow51 * fSlow18));
-		double fSlow53 = (0.13783222385544802 * (fSlow15 * fSlow17));
-		double fSlow54 = (0.13783222385544802 * fSlow8);
-		double fSlow55 = (0.13783222385544802 * (fSlow16 * fSlow17));
-		double fSlow56 = (fSlow20 * fSlow18);
-		double fSlow57 = (0.15410111101537496 * fSlow56);
-		double fSlow58 = (0.15410111101537496 * (fSlow15 * fSlow13));
-		double fSlow59 = (0.088970317927147144 * fSlow22);
-		double fSlow60 = (0.15410111101537496 * (fSlow16 * fSlow13));
-		double fSlow61 = (fSlow21 * fSlow18);
-		double fSlow62 = (0.15410111101537496 * fSlow61);
-		double fSlow63 = faustpower3_f(fSlow17);
-		double fSlow64 = (fSlow32 * fSlow63);
-		double fSlow65 = (0.16644822363786807 * fSlow64);
-		double fSlow66 = (0.40771321650543829 * (fSlow56 * fSlow8));
-		double fSlow67 = (0.12893023963105413 * ((fSlow15 * fSlow38) * fSlow17));
-		double fSlow68 = (0.10527109983694811 * (fSlow28 * fSlow8));
-		double fSlow69 = (0.12893023963105413 * ((fSlow16 * fSlow38) * fSlow17));
-		double fSlow70 = (0.40771321650543829 * (fSlow61 * fSlow8));
-		double fSlow71 = (fSlow35 * fSlow63);
-		double fSlow72 = (0.16644822363786807 * fSlow71);
-		double fSlow73 = faustpower4_f(fSlow17);
-		double fSlow74 = (0.17654500147618726 * (fSlow44 * fSlow73));
-		double fSlow75 = (0.49934467091360413 * (fSlow64 * fSlow8));
-		double fSlow76 = (0.13345547689072071 * (fSlow47 * fSlow18));
-		double fSlow77 = (0.094367272695913204 * ((fSlow15 * fSlow25) * fSlow13));
-		double fSlow78 = (0.029841551829730376 * fSlow10);
-		double fSlow79 = (0.094367272695913204 * ((fSlow16 * fSlow25) * fSlow13));
-		double fSlow80 = (0.13345547689072071 * (fSlow49 * fSlow18));
-		double fSlow81 = (0.49934467091360413 * (fSlow71 * fSlow8));
-		double fSlow82 = (0.17654500147618726 * (fSlow51 * fSlow73));
+		double fSlow16 = sin(fSlow7);
+		double fSlow17 = (5.123475382979799 * (fSlow15 * fSlow16));
+		double fSlow18 = sin(fSlow9);
+		double fSlow19 = mydsp_faustpower2_f(fSlow16);
+		double fSlow20 = (5.0 * fSlow19);
+		double fSlow21 = (fSlow20 + -1.0);
+		double fSlow22 = (fSlow18 * fSlow21);
+		double fSlow23 = (1.6201851746019651 * fSlow22);
+		double fSlow24 = cos(fSlow9);
+		double fSlow25 = (fSlow24 * fSlow21);
+		double fSlow26 = (1.6201851746019651 * fSlow25);
+		double fSlow27 = cos(fSlow10);
+		double fSlow28 = mydsp_faustpower2_f(fSlow8);
+		double fSlow29 = (2.0916500663351889 * (fSlow27 * fSlow28));
+		double fSlow30 = (4.0 * fSlow9);
+		double fSlow31 = sin(fSlow30);
+		double fSlow32 = mydsp_faustpower3_f(fSlow8);
+		double fSlow33 = (2.2185299186623562 * (fSlow31 * fSlow32));
+		double fSlow34 = (7.0 * fSlow19);
+		double fSlow35 = (fSlow34 + -1.0);
+		double fSlow36 = (fSlow15 * fSlow35);
+		double fSlow37 = (1.6770509831248424 * (fSlow36 * fSlow8));
+		double fSlow38 = cos(fSlow14);
+		double fSlow39 = (fSlow38 * fSlow35);
+		double fSlow40 = (1.6770509831248424 * (fSlow39 * fSlow8));
+		double fSlow41 = cos(fSlow30);
+		double fSlow42 = (2.2185299186623562 * (fSlow41 * fSlow32));
+		double fSlow43 = (fSlow20 + -3.0);
+		double fSlow44 = (1.3228756555322954 * fSlow43);
+		double fSlow45 = (fSlow38 * fSlow28);
+		double fSlow46 = (5.123475382979799 * fSlow45);
+		double fSlow47 = (fSlow11 * fSlow32);
+		double fSlow48 = (6.2749501990055663 * fSlow47);
+		double fSlow49 = (fSlow27 * fSlow32);
+		double fSlow50 = (6.2749501990055663 * fSlow49);
+		double fSlow51 = (fSlow34 + -3.0);
+		double fSlow52 = sin((2.0 * fSlow7));
+		double fSlow53 = (1.1858541225631423 * (fSlow51 * fSlow52));
+		double fSlow54 = (fSlow18 * fSlow8);
+		double fSlow55 = (fSlow24 * fSlow8);
+		double fSlow56 = ((3.0 * fSlow19) + -1.0);
+		double fSlow57 = (1.1180339887498949 * fSlow56);
+		double fSlow58 = (fSlow15 * fSlow28);
+		double fSlow59 = (fSlow18 * fSlow52);
+		double fSlow60 = (fSlow24 * fSlow52);
+		double fSlow61 = ((((35.0 * fSlow19) + -30.0) * fSlow19) + 3.0);
+		double fSlow62 = (0.375 * fSlow61);
+		double fSlow63 = (0.13783222385544802 * fSlow54);
+		double fSlow64 = (0.13783222385544802 * fSlow16);
+		double fSlow65 = (0.13783222385544802 * fSlow55);
+		double fSlow66 = (0.15410111101537496 * fSlow58);
+		double fSlow67 = (0.15410111101537496 * fSlow59);
+		double fSlow68 = (0.088970317927147144 * fSlow56);
+		double fSlow69 = (0.15410111101537496 * fSlow60);
+		double fSlow70 = (0.15410111101537496 * fSlow45);
+		double fSlow71 = (0.16644822363786807 * fSlow47);
+		double fSlow72 = (0.40771321650543829 * (fSlow58 * fSlow16));
+		double fSlow73 = (0.12893023963105413 * (fSlow22 * fSlow8));
+		double fSlow74 = (0.10527109983694811 * (fSlow43 * fSlow16));
+		double fSlow75 = (0.12893023963105413 * (fSlow25 * fSlow8));
+		double fSlow76 = (0.40771321650543829 * (fSlow45 * fSlow16));
+		double fSlow77 = (0.16644822363786807 * fSlow49);
+		double fSlow78 = mydsp_faustpower4_f(fSlow8);
+		double fSlow79 = (0.17654500147618726 * (fSlow31 * fSlow78));
+		double fSlow80 = (0.49934467091360413 * (fSlow47 * fSlow16));
+		double fSlow81 = (0.13345547689072071 * (fSlow36 * fSlow28));
+		double fSlow82 = (0.094367272695913204 * ((fSlow18 * fSlow51) * fSlow52));
+		double fSlow83 = (0.029841551829730376 * fSlow61);
+		double fSlow84 = (0.094367272695913204 * ((fSlow24 * fSlow51) * fSlow52));
+		double fSlow85 = (0.13345547689072071 * (fSlow39 * fSlow28));
+		double fSlow86 = (0.49934467091360413 * (fSlow49 * fSlow16));
+		double fSlow87 = (0.17654500147618726 * (fSlow41 * fSlow78));
 		for (int i = 0; (i < count); i = (i + 1)) {
 			fRec0[0] = (iSlow4?0.0:min(fSlow5, (fRec0[1] + 1.0)));
 			double fTemp0 = double(input0[i]);
 			fRec1[0] = (iSlow6?fSlow5:max(0.0, (fRec1[1] + -1.0)));
-			fRec2[0] = (fSlow12 + (0.999 * fRec2[1]));
+			fRec2[0] = (fSlow13 + (0.999 * fRec2[1]));
 			fRec3[0] = (iSlow4?fSlow5:max(0.0, (fRec3[1] + -1.0)));
 			double fTemp1 = (fRec2[0] * fRec3[0]);
-			double fTemp2 = double(input20[i]);
+			double fTemp2 = double(input9[i]);
 			fRec4[0] = (iSlow6?0.0:min(fSlow5, (fRec4[1] + 1.0)));
 			double fTemp3 = (fRec2[0] * fRec4[0]);
-			double fTemp4 = double(input5[i]);
-			double fTemp5 = double(input7[i]);
-			double fTemp6 = double(input4[i]);
-			double fTemp7 = double(input8[i]);
-			double fTemp8 = double(input6[i]);
-			double fTemp9 = double(input2[i]);
-			double fTemp10 = double(input1[i]);
-			double fTemp11 = double(input3[i]);
-			double fTemp12 = double(input19[i]);
-			double fTemp13 = double(input21[i]);
-			double fTemp14 = double(input12[i]);
-			double fTemp15 = double(input14[i]);
-			double fTemp16 = double(input17[i]);
-			double fTemp17 = double(input23[i]);
-			double fTemp18 = double(input11[i]);
-			double fTemp19 = double(input13[i]);
-			double fTemp20 = double(input9[i]);
-			double fTemp21 = double(input10[i]);
-			double fTemp22 = double(input15[i]);
-			double fTemp23 = double(input16[i]);
-			double fTemp24 = double(input18[i]);
-			double fTemp25 = double(input22[i]);
-			double fTemp26 = double(input24[i]);
-			double fTemp27 = ((fSlow11 * (iSlow1?(fSlow3 * (fTemp3 * fTemp2)):(fSlow3 * (fTemp1 * fTemp2)))) + ((1.9364916731037085 * ((fSlow13 * ((fSlow15 * (iSlow1?(fSlow3 * (fTemp3 * fTemp4)):(fSlow3 * (fTemp1 * fTemp4)))) + (fSlow16 * (iSlow1?(fSlow3 * (fTemp3 * fTemp5)):(fSlow3 * (fTemp1 * fTemp5)))))) + (fSlow18 * ((fSlow20 * (iSlow1?(fSlow3 * (fTemp3 * fTemp6)):(fSlow3 * (fTemp1 * fTemp6)))) + (fSlow21 * (iSlow1?(fSlow3 * (fTemp3 * fTemp7)):(fSlow3 * (fTemp1 * fTemp7)))))))) + ((fSlow23 * (iSlow1?(fSlow3 * (fTemp3 * fTemp8)):(fSlow3 * (fTemp1 * fTemp8)))) + ((1.7320508075688772 * ((fSlow8 * (iSlow1?(fSlow3 * (fTemp3 * fTemp9)):(fSlow3 * (fTemp1 * fTemp9)))) + (fSlow17 * ((fSlow15 * (iSlow1?(fSlow3 * (fTemp3 * fTemp10)):(fSlow3 * (fTemp1 * fTemp10)))) + (fSlow16 * (iSlow1?(fSlow3 * (fTemp3 * fTemp11)):(fSlow3 * (fTemp1 * fTemp11)))))))) + ((fSlow26 * ((fSlow15 * (iSlow1?(fSlow3 * (fTemp3 * fTemp12)):(fSlow3 * (fTemp1 * fTemp12)))) + (fSlow16 * (iSlow1?(fSlow3 * (fTemp3 * fTemp13)):(fSlow3 * (fTemp1 * fTemp13)))))) + ((fSlow8 * ((fSlow29 * (iSlow1?(fSlow3 * (fTemp3 * fTemp14)):(fSlow3 * (fTemp1 * fTemp14)))) + (fSlow18 * (((fSlow30 * (iSlow1?(fSlow3 * (fTemp3 * fTemp15)):(fSlow3 * (fTemp1 * fTemp15)))) + (fSlow34 * (iSlow1?(fSlow3 * (fTemp3 * fTemp16)):(fSlow3 * (fTemp1 * fTemp16))))) + (fSlow37 * (iSlow1?(fSlow3 * (fTemp3 * fTemp17)):(fSlow3 * (fTemp1 * fTemp17)))))))) + ((iSlow1?(fSlow3 * (fTemp3 * fTemp0)):(fSlow3 * (fTemp1 * fTemp0))) + (fSlow17 * ((fSlow39 * ((fSlow15 * (iSlow1?(fSlow3 * (fTemp3 * fTemp18)):(fSlow3 * (fTemp1 * fTemp18)))) + (fSlow16 * (iSlow1?(fSlow3 * (fTemp3 * fTemp19)):(fSlow3 * (fTemp1 * fTemp19)))))) + (fSlow17 * (((((((fSlow40 * (iSlow1?(fSlow3 * (fTemp3 * fTemp20)):(fSlow3 * (fTemp1 * fTemp20)))) + (fSlow41 * (iSlow1?(fSlow3 * (fTemp3 * fTemp21)):(fSlow3 * (fTemp1 * fTemp21))))) + (fSlow42 * (iSlow1?(fSlow3 * (fTemp3 * fTemp22)):(fSlow3 * (fTemp1 * fTemp22))))) + (fSlow45 * (iSlow1?(fSlow3 * (fTemp3 * fTemp23)):(fSlow3 * (fTemp1 * fTemp23))))) + (fSlow48 * (iSlow1?(fSlow3 * (fTemp3 * fTemp24)):(fSlow3 * (fTemp1 * fTemp24))))) + (fSlow50 * (iSlow1?(fSlow3 * (fTemp3 * fTemp25)):(fSlow3 * (fTemp1 * fTemp25))))) + (fSlow52 * (iSlow1?(fSlow3 * (fTemp3 * fTemp26)):(fSlow3 * (fTemp1 * fTemp26)))))))))))))));
+			double fTemp4 = double(input10[i]);
+			double fTemp5 = double(input11[i]);
+			double fTemp6 = double(input13[i]);
+			double fTemp7 = double(input15[i]);
+			double fTemp8 = double(input16[i]);
+			double fTemp9 = double(input18[i]);
+			double fTemp10 = double(input22[i]);
+			double fTemp11 = double(input24[i]);
+			double fTemp12 = double(input12[i]);
+			double fTemp13 = double(input14[i]);
+			double fTemp14 = double(input17[i]);
+			double fTemp15 = double(input23[i]);
+			double fTemp16 = double(input19[i]);
+			double fTemp17 = double(input21[i]);
+			double fTemp18 = double(input1[i]);
+			double fTemp19 = double(input2[i]);
+			double fTemp20 = double(input3[i]);
+			double fTemp21 = double(input6[i]);
+			double fTemp22 = double(input4[i]);
+			double fTemp23 = double(input5[i]);
+			double fTemp24 = double(input7[i]);
+			double fTemp25 = double(input8[i]);
+			double fTemp26 = double(input20[i]);
+			double fTemp27 = ((fSlow8 * ((((((((fSlow8 * ((fSlow12 * (iSlow1?(fSlow3 * (fTemp3 * fTemp2)):(fSlow3 * (fTemp1 * fTemp2)))) + (fSlow17 * (iSlow1?(fSlow3 * (fTemp3 * fTemp4)):(fSlow3 * (fTemp1 * fTemp4)))))) + (fSlow23 * (iSlow1?(fSlow3 * (fTemp3 * fTemp5)):(fSlow3 * (fTemp1 * fTemp5))))) + (fSlow26 * (iSlow1?(fSlow3 * (fTemp3 * fTemp6)):(fSlow3 * (fTemp1 * fTemp6))))) + (fSlow29 * (iSlow1?(fSlow3 * (fTemp3 * fTemp7)):(fSlow3 * (fTemp1 * fTemp7))))) + (fSlow33 * (iSlow1?(fSlow3 * (fTemp3 * fTemp8)):(fSlow3 * (fTemp1 * fTemp8))))) + (fSlow37 * (iSlow1?(fSlow3 * (fTemp3 * fTemp9)):(fSlow3 * (fTemp1 * fTemp9))))) + (fSlow40 * (iSlow1?(fSlow3 * (fTemp3 * fTemp10)):(fSlow3 * (fTemp1 * fTemp10))))) + (fSlow42 * (iSlow1?(fSlow3 * (fTemp3 * fTemp11)):(fSlow3 * (fTemp1 * fTemp11)))))) + ((fSlow16 * ((((fSlow44 * (iSlow1?(fSlow3 * (fTemp3 * fTemp12)):(fSlow3 * (fTemp1 * fTemp12)))) + (fSlow46 * (iSlow1?(fSlow3 * (fTemp3 * fTemp13)):(fSlow3 * (fTemp1 * fTemp13))))) + (fSlow48 * (iSlow1?(fSlow3 * (fTemp3 * fTemp14)):(fSlow3 * (fTemp1 * fTemp14))))) + (fSlow50 * (iSlow1?(fSlow3 * (fTemp3 * fTemp15)):(fSlow3 * (fTemp1 * fTemp15)))))) + ((fSlow53 * ((fSlow18 * (iSlow1?(fSlow3 * (fTemp3 * fTemp16)):(fSlow3 * (fTemp1 * fTemp16)))) + (fSlow24 * (iSlow1?(fSlow3 * (fTemp3 * fTemp17)):(fSlow3 * (fTemp1 * fTemp17)))))) + (((((iSlow1?(fSlow3 * (fTemp3 * fTemp0)):(fSlow3 * (fTemp1 * fTemp0))) + (1.7320508075688772 * (((fSlow54 * (iSlow1?(fSlow3 * (fTemp3 * fTemp18)):(fSlow3 * (fTemp1 * fTemp18)))) + (fSlow16 * (iSlow1?(fSlow3 * (fTemp3 * fTemp19)):(fSlow3 * (fTemp1 * fTemp19))))) + (fSlow55 * (iSlow1?(fSlow3 * (fTemp3 * fTemp20)):(fSlow3 * (fTemp1 * fTemp20))))))) + (fSlow57 * (iSlow1?(fSlow3 * (fTemp3 * fTemp21)):(fSlow3 * (fTemp1 * fTemp21))))) + (1.9364916731037085 * ((((fSlow58 * (iSlow1?(fSlow3 * (fTemp3 * fTemp22)):(fSlow3 * (fTemp1 * fTemp22)))) + (fSlow59 * (iSlow1?(fSlow3 * (fTemp3 * fTemp23)):(fSlow3 * (fTemp1 * fTemp23))))) + (fSlow60 * (iSlow1?(fSlow3 * (fTemp3 * fTemp24)):(fSlow3 * (fTemp1 * fTemp24))))) + (fSlow45 * (iSlow1?(fSlow3 * (fTemp3 * fTemp25)):(fSlow3 * (fTemp1 * fTemp25))))))) + (fSlow62 * (iSlow1?(fSlow3 * (fTemp3 * fTemp26)):(fSlow3 * (fTemp1 * fTemp26))))))));
 			output0[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp0)):(fSlow3 * (fRec0[0] * fTemp0))) + (0.079577471545947673 * fTemp27)));
-			output1[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp10)):(fSlow3 * (fRec0[0] * fTemp10))) + (fSlow53 * fTemp27)));
-			output2[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp9)):(fSlow3 * (fRec0[0] * fTemp9))) + (fSlow54 * fTemp27)));
-			output3[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp11)):(fSlow3 * (fRec0[0] * fTemp11))) + (fSlow55 * fTemp27)));
-			output4[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp6)):(fSlow3 * (fRec0[0] * fTemp6))) + (fSlow57 * fTemp27)));
-			output5[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp4)):(fSlow3 * (fRec0[0] * fTemp4))) + (fSlow58 * fTemp27)));
-			output6[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp8)):(fSlow3 * (fRec0[0] * fTemp8))) + (fSlow59 * fTemp27)));
-			output7[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp5)):(fSlow3 * (fRec0[0] * fTemp5))) + (fSlow60 * fTemp27)));
-			output8[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp7)):(fSlow3 * (fRec0[0] * fTemp7))) + (fSlow62 * fTemp27)));
-			output9[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp20)):(fSlow3 * (fRec0[0] * fTemp20))) + (fSlow65 * fTemp27)));
-			output10[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp21)):(fSlow3 * (fRec0[0] * fTemp21))) + (fSlow66 * fTemp27)));
-			output11[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp18)):(fSlow3 * (fRec0[0] * fTemp18))) + (fSlow67 * fTemp27)));
-			output12[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp14)):(fSlow3 * (fRec0[0] * fTemp14))) + (fSlow68 * fTemp27)));
-			output13[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp19)):(fSlow3 * (fRec0[0] * fTemp19))) + (fSlow69 * fTemp27)));
-			output14[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp15)):(fSlow3 * (fRec0[0] * fTemp15))) + (fSlow70 * fTemp27)));
-			output15[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp22)):(fSlow3 * (fRec0[0] * fTemp22))) + (fSlow72 * fTemp27)));
-			output16[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp23)):(fSlow3 * (fRec0[0] * fTemp23))) + (fSlow74 * fTemp27)));
-			output17[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp16)):(fSlow3 * (fRec0[0] * fTemp16))) + (fSlow75 * fTemp27)));
-			output18[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp24)):(fSlow3 * (fRec0[0] * fTemp24))) + (fSlow76 * fTemp27)));
-			output19[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp12)):(fSlow3 * (fRec0[0] * fTemp12))) + (fSlow77 * fTemp27)));
-			output20[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp2)):(fSlow3 * (fRec0[0] * fTemp2))) + (fSlow78 * fTemp27)));
-			output21[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp13)):(fSlow3 * (fRec0[0] * fTemp13))) + (fSlow79 * fTemp27)));
-			output22[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp25)):(fSlow3 * (fRec0[0] * fTemp25))) + (fSlow80 * fTemp27)));
-			output23[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp17)):(fSlow3 * (fRec0[0] * fTemp17))) + (fSlow81 * fTemp27)));
-			output24[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp26)):(fSlow3 * (fRec0[0] * fTemp26))) + (fSlow82 * fTemp27)));
+			output1[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp18)):(fSlow3 * (fRec0[0] * fTemp18))) + (fSlow63 * fTemp27)));
+			output2[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp19)):(fSlow3 * (fRec0[0] * fTemp19))) + (fSlow64 * fTemp27)));
+			output3[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp20)):(fSlow3 * (fRec0[0] * fTemp20))) + (fSlow65 * fTemp27)));
+			output4[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp22)):(fSlow3 * (fRec0[0] * fTemp22))) + (fSlow66 * fTemp27)));
+			output5[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp23)):(fSlow3 * (fRec0[0] * fTemp23))) + (fSlow67 * fTemp27)));
+			output6[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp21)):(fSlow3 * (fRec0[0] * fTemp21))) + (fSlow68 * fTemp27)));
+			output7[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp24)):(fSlow3 * (fRec0[0] * fTemp24))) + (fSlow69 * fTemp27)));
+			output8[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp25)):(fSlow3 * (fRec0[0] * fTemp25))) + (fSlow70 * fTemp27)));
+			output9[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp2)):(fSlow3 * (fRec0[0] * fTemp2))) + (fSlow71 * fTemp27)));
+			output10[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp4)):(fSlow3 * (fRec0[0] * fTemp4))) + (fSlow72 * fTemp27)));
+			output11[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp5)):(fSlow3 * (fRec0[0] * fTemp5))) + (fSlow73 * fTemp27)));
+			output12[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp12)):(fSlow3 * (fRec0[0] * fTemp12))) + (fSlow74 * fTemp27)));
+			output13[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp6)):(fSlow3 * (fRec0[0] * fTemp6))) + (fSlow75 * fTemp27)));
+			output14[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp13)):(fSlow3 * (fRec0[0] * fTemp13))) + (fSlow76 * fTemp27)));
+			output15[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp7)):(fSlow3 * (fRec0[0] * fTemp7))) + (fSlow77 * fTemp27)));
+			output16[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp8)):(fSlow3 * (fRec0[0] * fTemp8))) + (fSlow79 * fTemp27)));
+			output17[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp14)):(fSlow3 * (fRec0[0] * fTemp14))) + (fSlow80 * fTemp27)));
+			output18[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp9)):(fSlow3 * (fRec0[0] * fTemp9))) + (fSlow81 * fTemp27)));
+			output19[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp16)):(fSlow3 * (fRec0[0] * fTemp16))) + (fSlow82 * fTemp27)));
+			output20[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp26)):(fSlow3 * (fRec0[0] * fTemp26))) + (fSlow83 * fTemp27)));
+			output21[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp17)):(fSlow3 * (fRec0[0] * fTemp17))) + (fSlow84 * fTemp27)));
+			output22[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp10)):(fSlow3 * (fRec0[0] * fTemp10))) + (fSlow85 * fTemp27)));
+			output23[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp15)):(fSlow3 * (fRec0[0] * fTemp15))) + (fSlow86 * fTemp27)));
+			output24[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp11)):(fSlow3 * (fRec0[0] * fTemp11))) + (fSlow87 * fTemp27)));
 			fRec0[1] = fRec0[0];
 			fRec1[1] = fRec1[0];
 			fRec2[1] = fRec2[0];
@@ -1280,7 +1248,7 @@ static std::string normalizeClassName(const std::string& name);
 
 void initState(const std::string& name, int sampleRate)
 {
-    g_unitName = strdup(name.c_str());
+    g_unitName = STRDUP(name.c_str());
 
     mydsp* dsp = new FAUSTCLASS;
     ControlCounter* cc = new ControlCounter;
@@ -1312,7 +1280,7 @@ std::string fileNameToUnitName(const std::string& fileName)
 
 // Globals
 
-static InterfaceTable *ft;
+static InterfaceTable* ft;
 
 // The SuperCollider UGen class name generated here must match
 // that generated by faust2sc:
@@ -1335,9 +1303,9 @@ static std::string normalizeClassName(const std::string& name)
 extern "C"
 {
 #ifdef SC_API_EXPORT
-    int api_version(void);
+    FAUST_EXPORT int api_version(void);
 #endif
-    void load(InterfaceTable*);
+    FAUST_EXPORT void load(InterfaceTable*);
     void Faust_next(Faust*, int);
     void Faust_next_copy(Faust*, int);
     void Faust_next_clear(Faust*, int);
@@ -1363,9 +1331,9 @@ inline static void copyBuffer(float* dst, int n, float* src)
 inline static void Faust_updateControls(Faust* unit)
 {
     Control* controls = unit->mControls;
-    int numControls   = unit->mNumControls;
-    int curControl    = unit->mDSP->getNumInputs();
-    for (int i=0; i < numControls; ++i) {
+    size_t numControls = unit->mNumControls;
+    int curControl = unit->mDSP->getNumInputs();
+    for (int i = 0; i < numControls; ++i) {
         float value = IN0(curControl);
         (controls++)->update(value);
         curControl++;
@@ -1461,7 +1429,7 @@ void Faust_Ctor(Faust* unit)  // module constructor
                     Print("Faust[%s]: RT memory allocation failed, try increasing the real-time memory size in the server options\n", g_unitName);
                     goto end;
                 }
-                for (int i=0; i < unit->getNumAudioInputs(); ++i) {
+                for (int i = 0; i < unit->getNumAudioInputs(); ++i) {
                     // Initialize interpolator.
                     unit->mInBufValue[i] = IN0(i);
                     // Aquire buffer memory.
@@ -1521,19 +1489,20 @@ FAUST_EXPORT void load(InterfaceTable* inTable)
     ft = inTable;
 
     MetaData meta;
-    mydsp tmp_dsp;
-    tmp_dsp.metadata(&meta);
-
+    mydsp* tmp_dsp = new FAUSTCLASS;
+    tmp_dsp->metadata(&meta);
+    delete tmp_dsp;
+ 
     std::string name = meta["name"];
 
     if (name.empty()) {
         name = fileNameToUnitName(__FILE__);
     }
-
+  
     name = normalizeClassName(name);
 
 #if !defined(NDEBUG) & defined(SC_API_EXPORT)
-    Print("Faust: supercollider.cpp: sc_api_version = %d\n",sc_api_version);
+    Print("Faust: supercollider.cpp: sc_api_version = %d\n", sc_api_version);
 #endif
 
     if (name.empty()) {
@@ -1544,10 +1513,10 @@ FAUST_EXPORT void load(InterfaceTable* inTable)
         return;
     }
 
-    if (strncmp(name.c_str(),SC_FAUST_PREFIX,strlen(SC_FAUST_PREFIX))!=0) {
+    if (strncmp(name.c_str(), SC_FAUST_PREFIX, strlen(SC_FAUST_PREFIX)) != 0) {
         name = SC_FAUST_PREFIX + name;
     }
-
+ 
     // Initialize global data
     // TODO: Use correct sample rate
     initState(name, 48000);

@@ -4,7 +4,7 @@ copyright: "(c) Pierre Lecomte 2016"
 license: "GPL"
 name: "HOARotator3"
 version: "1.0"
-Code generated with Faust 2.1.3 (http://faust.grame.fr)
+Code generated with Faust 2.2.0 (http://faust.grame.fr)
 ------------------------------------------------------------ */
 
 #ifndef  __mydsp_H__
@@ -823,10 +823,10 @@ class mydsp : public dsp {
 		
 	}
 	
-		virtual void init(int samplingFreq) {
-			classInit(samplingFreq);
-			instanceInit(samplingFreq);
-		}
+	virtual void init(int samplingFreq) {
+		classInit(samplingFreq);
+		instanceInit(samplingFreq);
+	}
 	virtual void instanceInit(int samplingFreq) {
 		instanceConstants(samplingFreq);
 		instanceResetUserInterface();

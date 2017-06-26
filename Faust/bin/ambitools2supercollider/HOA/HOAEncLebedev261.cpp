@@ -4,16 +4,11 @@ copyright: "(c) Pierre Lecomte 2014"
 license: "GPL"
 name: "HOAEncLebedev261"
 version: "1.0"
-Code generated with Faust 2.0.a55 (http://faust.grame.fr)
+Code generated with Faust 2.2.0 (http://faust.grame.fr)
 ------------------------------------------------------------ */
 
 #ifndef  __mydsp_H__
 #define  __mydsp_H__
-
-// If other than 'faust2sc --prefix Faust' is used, sed this as well:
-#if !defined(SC_FAUST_PREFIX)
-# define SC_FAUST_PREFIX "Faust"
-#endif
 
 //-------------------------------------------------------------------
 // FAUST architecture file for SuperCollider.
@@ -35,52 +30,38 @@ Code generated with Faust 2.0.a55 (http://faust.grame.fr)
 // 02111-1307 USA
 //-------------------------------------------------------------------
 
+// If other than 'faust2sc --prefix Faust' is used, sed this as well:
+#if !defined(SC_FAUST_PREFIX)
+#define SC_FAUST_PREFIX "Faust"
+#endif
+
 #include <map>
 #include <string>
 #include <string.h>
 #include <SC_PlugIn.h>
 
 /************************************************************************
-    IMPORTANT NOTE : this file contains two clearly delimited sections :
-    the ARCHITECTURE section (in two parts) and the USER section. Each section
-    is governed by its own copyright and license. Please check individually
-    each section for license and copyright information.
-*************************************************************************/
-
-/*******************BEGIN ARCHITECTURE SECTION (part 1/2)****************/
-
-/************************************************************************
-    FAUST Architecture File
-    Copyright (C) 2003-2011 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 3 of
-    the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; If not, see <http://www.gnu.org/licenses/>.
-
-    EXCEPTION : As a special exception, you may create a larger work
-    that contains this FAUST architecture section and distribute
-    that work under terms of your choice, so long as this FAUST
-    architecture section is not modified.
-
- ************************************************************************
- ************************************************************************/
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
  
-/******************************************************************************
-*******************************************************************************
-
-								FAUST DSP
-
-*******************************************************************************
-*******************************************************************************/
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
+ ************************************************************************/
 
 #ifndef __dsp__
 #define __dsp__
@@ -93,6 +74,19 @@ Code generated with Faust 2.0.a55 (http://faust.grame.fr)
 
 class UI;
 struct Meta;
+
+/**
+ * DSP memory manager.
+ */
+
+struct dsp_memory_manager {
+    
+    virtual ~dsp_memory_manager() {}
+    
+    virtual void* allocate(size_t size) = 0;
+    virtual void destroy(void* ptr) = 0;
+    
+};
 
 /**
 * Signal processor definition.
@@ -112,16 +106,16 @@ class dsp {
         virtual int getNumOutputs() = 0;
     
         /**
-         * Trigger the UI* parameter with instance specific calls
+         * Trigger the ui_interface parameter with instance specific calls
          * to 'addBtton', 'addVerticalSlider'... in order to build the UI.
          *
-         * @param ui_interface - the UI* user interface builder
+         * @param ui_interface - the user interface builder
          */
         virtual void buildUserInterface(UI* ui_interface) = 0;
     
         /* Returns the sample rate currently used by the instance */
         virtual int getSampleRate() = 0;
-
+    
         /** Global init, calls the following methods :
          * - static class 'classInit' : static table initialisation
          * - 'instanceInit' : constants and instance table initialisation
@@ -132,13 +126,13 @@ class dsp {
 
         /** Init instance state
          *
-         * @param samplingRate - the sampling rate in Herz
+         * @param samplingRate - the sampling rate in Hertz
          */
         virtual void instanceInit(int samplingRate) = 0;
 
         /** Init instance constant state
          *
-         * @param samplingRate - the sampling rate in Herz
+         * @param samplingRate - the sampling rate in Hertz
          */
         virtual void instanceConstants(int samplingRate) = 0;
     
@@ -166,19 +160,19 @@ class dsp {
          * DSP instance computation, to be called with sucessive in/out audio buffers.
          *
          * @param count - the nomber of frames to compute
-         * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, doucbe or quad)
-         * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, doucbe or quad)
+         * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
+         * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          *
          */
         virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) = 0;
     
         /**
-         * DSP instance computation : alternative method to be used by subclasses.
+         * DSP instance computation: alternative method to be used by subclasses.
          *
          * @param date_usec - the timestamp in microsec given by audio driver.
          * @param count - the nomber of frames to compute
-         * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, doucbe or quad)
-         * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, doucbe or quad)
+         * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
+         * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          *
          */
         virtual void compute(double date_usec, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { compute(count, inputs, outputs); }
@@ -211,13 +205,14 @@ class decorator_dsp : public dsp {
         virtual void instanceClear() { fDSP->instanceClear(); }
         virtual decorator_dsp* clone() { return new decorator_dsp(fDSP->clone()); }
         virtual void metadata(Meta* m) { return fDSP->metadata(m); }
+        // Beware: subclasses usually have to overload the two 'compute' methods
         virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(count, inputs, outputs); }
         virtual void compute(double date_usec, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(date_usec, count, inputs, outputs); }
     
 };
 
 /**
- * DSP factory class
+ * DSP factory class.
  */
 
 class dsp_factory {
@@ -225,7 +220,7 @@ class dsp_factory {
     protected:
     
         // So that to force sub-classes to use deleteDSPFactory(dsp_factory* factory);
-        ~dsp_factory() {}
+        virtual ~dsp_factory() {}
     
     public:
     
@@ -233,6 +228,9 @@ class dsp_factory {
         virtual std::string getSHAKey() = 0;
         virtual std::string getDSPCode() = 0;
         virtual dsp* createDSPInstance() = 0;
+    
+        virtual void setMemoryManager(dsp_memory_manager* manager) = 0;
+        virtual dsp_memory_manager* getMemoryManager() = 0;
     
 };
 
@@ -254,31 +252,28 @@ class dsp_factory {
 
 #endif
 /************************************************************************
-    FAUST Architecture File
-    Copyright (C) 2003-2016 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 3 of
-    the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; If not, see <http://www.gnu.org/licenses/>.
-
-    EXCEPTION : As a special exception, you may create a larger work
-    that contains this FAUST architecture section and distribute
-    that work under terms of your choice, so long as this FAUST
-    architecture section is not modified.
-
-
- ************************************************************************
- ************************************************************************/
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
  
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
+ ************************************************************************/
+
 #ifndef FAUST_UI_H
 #define FAUST_UI_H
 
@@ -287,9 +282,10 @@ class dsp_factory {
 #endif
 
 /*******************************************************************************
- * UI : Faust User Interface
- * This abstract class contains only the method that the faust compiler can
- * generate to describe a DSP interface.
+ * UI : Faust DSP User Interface
+ * User Interface as expected by the buildUserInterface() method of a DSP.
+ * This abstract class contains only the method that the Faust compiler can
+ * generate to describe a DSP user interface.
  ******************************************************************************/
 
 class UI
@@ -326,69 +322,28 @@ class UI
         virtual void declare(FAUSTFLOAT*, const char*, const char*) {}
 };
 
-//----------------------------------------------------------------
-//  Generic decorator
-//----------------------------------------------------------------
-
-class DecoratorUI : public UI
-{
-    protected:
-    
-        UI* fUI;
-
-    public:
-    
-        DecoratorUI(UI* ui = 0):fUI(ui)
-        {}
-
-        virtual ~DecoratorUI() { delete fUI; }
-
-        // -- widget's layouts
-        virtual void openTabBox(const char* label)          { fUI->openTabBox(label); }
-        virtual void openHorizontalBox(const char* label)   { fUI->openHorizontalBox(label); }
-        virtual void openVerticalBox(const char* label)     { fUI->openVerticalBox(label); }
-        virtual void closeBox()                             { fUI->closeBox(); }
-
-        // -- active widgets
-        virtual void addButton(const char* label, FAUSTFLOAT* zone)         { fUI->addButton(label, zone); }
-        virtual void addCheckButton(const char* label, FAUSTFLOAT* zone)    { fUI->addCheckButton(label, zone); }
-        virtual void addVerticalSlider(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step)
-            { fUI->addVerticalSlider(label, zone, init, min, max, step); }
-        virtual void addHorizontalSlider(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step) 	
-            { fUI->addHorizontalSlider(label, zone, init, min, max, step); }
-        virtual void addNumEntry(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step) 			
-            { fUI->addNumEntry(label, zone, init, min, max, step); }
-
-        // -- passive widgets	
-        virtual void addHorizontalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) 
-            { fUI->addHorizontalBargraph(label, zone, min, max); }
-        virtual void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max)
-            { fUI->addVerticalBargraph(label, zone, min, max); }
-
-        virtual void declare(FAUSTFLOAT* zone, const char* key, const char* val) { fUI->declare(zone, key, val); }
-
-};
-
 #endif
 /************************************************************************
- ************************************************************************
-    FAUST Architecture File
-	Copyright (C) 2003-2011 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3 of
-	the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-	along with this program; If not, see <http://www.gnu.org/licenses/>.
-
- ************************************************************************
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
  ************************************************************************/
  
 #ifndef __misc__
@@ -400,26 +355,28 @@ class DecoratorUI : public UI
 #include <stdlib.h>
 
 /************************************************************************
- ************************************************************************
-    FAUST Architecture File
-	Copyright (C) 2003-2011 GRAME, Centre National de Creation Musicale
-    ---------------------------------------------------------------------
-    This Architecture section is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3 of
-	the License, or (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-	along with this program; If not, see <http://www.gnu.org/licenses/>.
-
- ************************************************************************
- ************************************************************************/
+ FAUST Architecture File
+ Copyright (C) 2003-2017 GRAME, Centre National de Creation Musicale
+ ---------------------------------------------------------------------
+ This Architecture section is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 3 of
+ the License, or (at your option) any later version.
  
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; If not, see <http://www.gnu.org/licenses/>.
+ 
+ EXCEPTION : As a special exception, you may create a larger work
+ that contains this FAUST architecture section and distribute
+ that work under terms of your choice, so long as this FAUST
+ architecture section is not modified.
+ ************************************************************************/
+
 #ifndef __meta__
 #define __meta__
 
@@ -475,9 +432,15 @@ inline const char* lopts(char* argv[], const char* name, const char* def)
 using namespace std;
 
 #if defined(__GNUC__) && __GNUC__ >= 4
-# define FAUST_EXPORT __attribute__((visibility("default")))
+    #define FAUST_EXPORT __attribute__((visibility("default")))
 #else
-# define FAUST_EXPORT  SC_API_EXPORT
+    #define FAUST_EXPORT  SC_API_EXPORT
+#endif
+
+#ifdef WIN32
+    #define STRDUP _strdup
+#else
+    #define STRDUP strdup
 #endif
 
 //----------------------------------------------------------------------------
@@ -640,6 +603,9 @@ private:
 
 #include <math.h>
 
+double pow(double dummy0, double dummy1);
+double fabs(double dummy0);
+double log10(double dummy0);
 
 #ifndef FAUSTCLASS 
 #define FAUSTCLASS mydsp
@@ -650,68 +616,68 @@ class mydsp : public dsp {
  private:
 	
 	int fSamplingFreq;
-	float fRec1[2];
-	float fRec2[2];
-	float fRec3[2];
-	float fRec4[2];
-	float fRec5[2];
-	float fRec6[2];
-	float fRec7[2];
-	float fRec8[2];
-	float fRec9[2];
-	float fRec10[2];
-	float fRec11[2];
-	float fRec12[2];
-	float fRec13[2];
-	float fRec14[2];
-	float fRec15[2];
-	float fRec16[2];
-	float fRec17[2];
-	float fRec18[2];
-	float fRec19[2];
-	float fRec20[2];
-	float fRec21[2];
-	float fRec22[2];
-	float fRec23[2];
-	float fRec24[2];
-	float fRec25[2];
-	float fRec26[2];
-	float fRec27[2];
-	float fRec0[2];
-	float fRec28[2];
-	float fRec29[2];
-	float fRec30[2];
-	float fConst0;
-	FAUSTFLOAT fVbargraph0;
-	FAUSTFLOAT fVbargraph1;
-	FAUSTFLOAT fVbargraph2;
-	FAUSTFLOAT fVbargraph3;
-	FAUSTFLOAT fVbargraph4;
-	FAUSTFLOAT fVbargraph5;
-	FAUSTFLOAT fVbargraph6;
-	FAUSTFLOAT fVbargraph7;
-	FAUSTFLOAT fVbargraph8;
-	FAUSTFLOAT fVbargraph9;
-	FAUSTFLOAT fVbargraph10;
-	FAUSTFLOAT fVbargraph11;
-	FAUSTFLOAT fVbargraph12;
-	FAUSTFLOAT fVbargraph13;
-	FAUSTFLOAT fVbargraph14;
-	FAUSTFLOAT fVbargraph15;
-	FAUSTFLOAT fVbargraph16;
-	FAUSTFLOAT fVbargraph17;
-	FAUSTFLOAT fVbargraph18;
-	FAUSTFLOAT fVbargraph19;
-	FAUSTFLOAT fVbargraph20;
-	FAUSTFLOAT fVbargraph21;
-	FAUSTFLOAT fVbargraph22;
-	FAUSTFLOAT fVbargraph23;
-	FAUSTFLOAT fVbargraph24;
-	FAUSTFLOAT fVbargraph25;
+	double fConst0;
 	FAUSTFLOAT fHslider0;
+	double fRec1[2];
+	double fRec2[2];
+	FAUSTFLOAT fVbargraph0;
+	double fRec3[2];
+	FAUSTFLOAT fVbargraph1;
+	double fRec4[2];
+	FAUSTFLOAT fVbargraph2;
+	double fRec5[2];
+	FAUSTFLOAT fVbargraph3;
+	double fRec6[2];
+	FAUSTFLOAT fVbargraph4;
+	double fRec7[2];
+	FAUSTFLOAT fVbargraph5;
+	double fRec8[2];
+	FAUSTFLOAT fVbargraph6;
+	double fRec9[2];
+	FAUSTFLOAT fVbargraph7;
+	double fRec10[2];
+	FAUSTFLOAT fVbargraph8;
+	double fRec11[2];
+	FAUSTFLOAT fVbargraph9;
+	double fRec12[2];
+	FAUSTFLOAT fVbargraph10;
+	double fRec13[2];
+	FAUSTFLOAT fVbargraph11;
+	double fRec14[2];
+	FAUSTFLOAT fVbargraph12;
+	double fRec15[2];
+	FAUSTFLOAT fVbargraph13;
+	double fRec16[2];
+	FAUSTFLOAT fVbargraph14;
+	double fRec17[2];
+	FAUSTFLOAT fVbargraph15;
+	double fRec18[2];
+	FAUSTFLOAT fVbargraph16;
+	double fRec19[2];
+	FAUSTFLOAT fVbargraph17;
+	double fRec20[2];
+	FAUSTFLOAT fVbargraph18;
+	double fRec21[2];
+	FAUSTFLOAT fVbargraph19;
+	double fRec22[2];
+	FAUSTFLOAT fVbargraph20;
+	double fRec23[2];
+	FAUSTFLOAT fVbargraph21;
+	double fRec24[2];
+	FAUSTFLOAT fVbargraph22;
+	double fRec25[2];
+	FAUSTFLOAT fVbargraph23;
+	double fRec26[2];
+	FAUSTFLOAT fVbargraph24;
+	double fRec27[2];
+	FAUSTFLOAT fVbargraph25;
+	double fRec0[2];
 	FAUSTFLOAT fVbargraph26;
+	double fRec28[2];
 	FAUSTFLOAT fVbargraph27;
+	double fRec29[2];
 	FAUSTFLOAT fVbargraph28;
+	double fRec30[2];
 	FAUSTFLOAT fVbargraph29;
 	
  public:
@@ -907,138 +873,138 @@ class mydsp : public dsp {
 	
 	virtual void instanceConstants(int samplingFreq) {
 		fSamplingFreq = samplingFreq;
-		fConst0 = (80.0f / min(192000.0f, max(1.0f, float(fSamplingFreq))));
+		fConst0 = (80.0 / min(192000.0, max(1000.0, double(fSamplingFreq))));
 		
 	}
 	
 	virtual void instanceResetUserInterface() {
-		fHslider0 = FAUSTFLOAT(0.0f);
+		fHslider0 = FAUSTFLOAT(0.0);
 		
 	}
 	
 	virtual void instanceClear() {
-		for (int i0 = 0; (i0 < 2); i0 = (i0 + 1)) {
-			fRec1[i0] = 0.0f;
+		for (int l0 = 0; (l0 < 2); l0 = (l0 + 1)) {
+			fRec1[l0] = 0.0;
 			
 		}
-		for (int i1 = 0; (i1 < 2); i1 = (i1 + 1)) {
-			fRec2[i1] = 0.0f;
+		for (int l1 = 0; (l1 < 2); l1 = (l1 + 1)) {
+			fRec2[l1] = 0.0;
 			
 		}
-		for (int i2 = 0; (i2 < 2); i2 = (i2 + 1)) {
-			fRec3[i2] = 0.0f;
+		for (int l2 = 0; (l2 < 2); l2 = (l2 + 1)) {
+			fRec3[l2] = 0.0;
 			
 		}
-		for (int i3 = 0; (i3 < 2); i3 = (i3 + 1)) {
-			fRec4[i3] = 0.0f;
+		for (int l3 = 0; (l3 < 2); l3 = (l3 + 1)) {
+			fRec4[l3] = 0.0;
 			
 		}
-		for (int i4 = 0; (i4 < 2); i4 = (i4 + 1)) {
-			fRec5[i4] = 0.0f;
+		for (int l4 = 0; (l4 < 2); l4 = (l4 + 1)) {
+			fRec5[l4] = 0.0;
 			
 		}
-		for (int i5 = 0; (i5 < 2); i5 = (i5 + 1)) {
-			fRec6[i5] = 0.0f;
+		for (int l5 = 0; (l5 < 2); l5 = (l5 + 1)) {
+			fRec6[l5] = 0.0;
 			
 		}
-		for (int i6 = 0; (i6 < 2); i6 = (i6 + 1)) {
-			fRec7[i6] = 0.0f;
+		for (int l6 = 0; (l6 < 2); l6 = (l6 + 1)) {
+			fRec7[l6] = 0.0;
 			
 		}
-		for (int i7 = 0; (i7 < 2); i7 = (i7 + 1)) {
-			fRec8[i7] = 0.0f;
+		for (int l7 = 0; (l7 < 2); l7 = (l7 + 1)) {
+			fRec8[l7] = 0.0;
 			
 		}
-		for (int i8 = 0; (i8 < 2); i8 = (i8 + 1)) {
-			fRec9[i8] = 0.0f;
+		for (int l8 = 0; (l8 < 2); l8 = (l8 + 1)) {
+			fRec9[l8] = 0.0;
 			
 		}
-		for (int i9 = 0; (i9 < 2); i9 = (i9 + 1)) {
-			fRec10[i9] = 0.0f;
+		for (int l9 = 0; (l9 < 2); l9 = (l9 + 1)) {
+			fRec10[l9] = 0.0;
 			
 		}
-		for (int i10 = 0; (i10 < 2); i10 = (i10 + 1)) {
-			fRec11[i10] = 0.0f;
+		for (int l10 = 0; (l10 < 2); l10 = (l10 + 1)) {
+			fRec11[l10] = 0.0;
 			
 		}
-		for (int i11 = 0; (i11 < 2); i11 = (i11 + 1)) {
-			fRec12[i11] = 0.0f;
+		for (int l11 = 0; (l11 < 2); l11 = (l11 + 1)) {
+			fRec12[l11] = 0.0;
 			
 		}
-		for (int i12 = 0; (i12 < 2); i12 = (i12 + 1)) {
-			fRec13[i12] = 0.0f;
+		for (int l12 = 0; (l12 < 2); l12 = (l12 + 1)) {
+			fRec13[l12] = 0.0;
 			
 		}
-		for (int i13 = 0; (i13 < 2); i13 = (i13 + 1)) {
-			fRec14[i13] = 0.0f;
+		for (int l13 = 0; (l13 < 2); l13 = (l13 + 1)) {
+			fRec14[l13] = 0.0;
 			
 		}
-		for (int i14 = 0; (i14 < 2); i14 = (i14 + 1)) {
-			fRec15[i14] = 0.0f;
+		for (int l14 = 0; (l14 < 2); l14 = (l14 + 1)) {
+			fRec15[l14] = 0.0;
 			
 		}
-		for (int i15 = 0; (i15 < 2); i15 = (i15 + 1)) {
-			fRec16[i15] = 0.0f;
+		for (int l15 = 0; (l15 < 2); l15 = (l15 + 1)) {
+			fRec16[l15] = 0.0;
 			
 		}
-		for (int i16 = 0; (i16 < 2); i16 = (i16 + 1)) {
-			fRec17[i16] = 0.0f;
+		for (int l16 = 0; (l16 < 2); l16 = (l16 + 1)) {
+			fRec17[l16] = 0.0;
 			
 		}
-		for (int i17 = 0; (i17 < 2); i17 = (i17 + 1)) {
-			fRec18[i17] = 0.0f;
+		for (int l17 = 0; (l17 < 2); l17 = (l17 + 1)) {
+			fRec18[l17] = 0.0;
 			
 		}
-		for (int i18 = 0; (i18 < 2); i18 = (i18 + 1)) {
-			fRec19[i18] = 0.0f;
+		for (int l18 = 0; (l18 < 2); l18 = (l18 + 1)) {
+			fRec19[l18] = 0.0;
 			
 		}
-		for (int i19 = 0; (i19 < 2); i19 = (i19 + 1)) {
-			fRec20[i19] = 0.0f;
+		for (int l19 = 0; (l19 < 2); l19 = (l19 + 1)) {
+			fRec20[l19] = 0.0;
 			
 		}
-		for (int i20 = 0; (i20 < 2); i20 = (i20 + 1)) {
-			fRec21[i20] = 0.0f;
+		for (int l20 = 0; (l20 < 2); l20 = (l20 + 1)) {
+			fRec21[l20] = 0.0;
 			
 		}
-		for (int i21 = 0; (i21 < 2); i21 = (i21 + 1)) {
-			fRec22[i21] = 0.0f;
+		for (int l21 = 0; (l21 < 2); l21 = (l21 + 1)) {
+			fRec22[l21] = 0.0;
 			
 		}
-		for (int i22 = 0; (i22 < 2); i22 = (i22 + 1)) {
-			fRec23[i22] = 0.0f;
+		for (int l22 = 0; (l22 < 2); l22 = (l22 + 1)) {
+			fRec23[l22] = 0.0;
 			
 		}
-		for (int i23 = 0; (i23 < 2); i23 = (i23 + 1)) {
-			fRec24[i23] = 0.0f;
+		for (int l23 = 0; (l23 < 2); l23 = (l23 + 1)) {
+			fRec24[l23] = 0.0;
 			
 		}
-		for (int i24 = 0; (i24 < 2); i24 = (i24 + 1)) {
-			fRec25[i24] = 0.0f;
+		for (int l24 = 0; (l24 < 2); l24 = (l24 + 1)) {
+			fRec25[l24] = 0.0;
 			
 		}
-		for (int i25 = 0; (i25 < 2); i25 = (i25 + 1)) {
-			fRec26[i25] = 0.0f;
+		for (int l25 = 0; (l25 < 2); l25 = (l25 + 1)) {
+			fRec26[l25] = 0.0;
 			
 		}
-		for (int i26 = 0; (i26 < 2); i26 = (i26 + 1)) {
-			fRec27[i26] = 0.0f;
+		for (int l26 = 0; (l26 < 2); l26 = (l26 + 1)) {
+			fRec27[l26] = 0.0;
 			
 		}
-		for (int i27 = 0; (i27 < 2); i27 = (i27 + 1)) {
-			fRec0[i27] = 0.0f;
+		for (int l27 = 0; (l27 < 2); l27 = (l27 + 1)) {
+			fRec0[l27] = 0.0;
 			
 		}
-		for (int i28 = 0; (i28 < 2); i28 = (i28 + 1)) {
-			fRec28[i28] = 0.0f;
+		for (int l28 = 0; (l28 < 2); l28 = (l28 + 1)) {
+			fRec28[l28] = 0.0;
 			
 		}
-		for (int i29 = 0; (i29 < 2); i29 = (i29 + 1)) {
-			fRec29[i29] = 0.0f;
+		for (int l29 = 0; (l29 < 2); l29 = (l29 + 1)) {
+			fRec29[l29] = 0.0;
 			
 		}
-		for (int i30 = 0; (i30 < 2); i30 = (i30 + 1)) {
-			fRec30[i30] = 0.0f;
+		for (int l30 = 0; (l30 < 2); l30 = (l30 + 1)) {
+			fRec30[l30] = 0.0;
 			
 		}
 		
@@ -1063,112 +1029,112 @@ class mydsp : public dsp {
 	}
 	
 	virtual void buildUserInterface(UI* ui_interface) {
-		ui_interface->openVerticalBox("0x00");
+		ui_interface->openVerticalBox("HOAEncLebedev261");
 		ui_interface->declare(0, "0", "");
 		ui_interface->openHorizontalBox("Inputs");
 		ui_interface->openVerticalBox("1");
-		ui_interface->declare(&fVbargraph0, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e369f0", &fVbargraph0, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph4, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2df56e0", &fVbargraph4, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("2");
-		ui_interface->declare(&fVbargraph1, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e3b620", &fVbargraph1, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph5, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2dfa230", &fVbargraph5, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("3");
-		ui_interface->declare(&fVbargraph2, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e40430", &fVbargraph2, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph3, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2df0b90", &fVbargraph3, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("4");
-		ui_interface->declare(&fVbargraph3, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e45320", &fVbargraph3, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph2, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2dec040", &fVbargraph2, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("5");
-		ui_interface->declare(&fVbargraph4, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e4a2f0", &fVbargraph4, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph1, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2de74f0", &fVbargraph1, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("6");
-		ui_interface->declare(&fVbargraph5, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e4f3a0", &fVbargraph5, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph0, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2de28c0", &fVbargraph0, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("7");
-		ui_interface->declare(&fVbargraph6, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e548e0", &fVbargraph6, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph16, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e32110", &fVbargraph16, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("8");
-		ui_interface->declare(&fVbargraph7, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e59970", &fVbargraph7, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph17, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e371b0", &fVbargraph17, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("9");
-		ui_interface->declare(&fVbargraph8, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e5ecc0", &fVbargraph8, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph15, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e2d080", &fVbargraph15, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("10");
-		ui_interface->declare(&fVbargraph9, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e640f0", &fVbargraph9, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph14, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e27ff0", &fVbargraph14, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("11");
-		ui_interface->declare(&fVbargraph10, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e69810", &fVbargraph10, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph13, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e22f60", &fVbargraph13, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("12");
-		ui_interface->declare(&fVbargraph11, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e6ee00", &fVbargraph11, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph12, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e1ded0", &fVbargraph12, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("13");
-		ui_interface->declare(&fVbargraph12, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e744d0", &fVbargraph12, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph11, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e18e40", &fVbargraph11, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("14");
-		ui_interface->declare(&fVbargraph13, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e79c80", &fVbargraph13, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph10, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e13db0", &fVbargraph10, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("15");
-		ui_interface->declare(&fVbargraph14, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e7f510", &fVbargraph14, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph9, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e0ed20", &fVbargraph9, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("16");
-		ui_interface->declare(&fVbargraph15, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e84e80", &fVbargraph15, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph8, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e09c90", &fVbargraph8, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("17");
-		ui_interface->declare(&fVbargraph16, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e8a8d0", &fVbargraph16, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph7, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e04c00", &fVbargraph7, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("18");
-		ui_interface->declare(&fVbargraph17, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e90400", &fVbargraph17, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph6, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2dffb70", &fVbargraph6, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("19");
-		ui_interface->declare(&fVbargraph18, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e965a0", &fVbargraph18, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph24, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e601c0", &fVbargraph24, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("20");
-		ui_interface->declare(&fVbargraph19, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2e9c0b0", &fVbargraph19, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph25, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e65cd0", &fVbargraph25, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("21");
-		ui_interface->declare(&fVbargraph20, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2ea1e80", &fVbargraph20, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph23, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e5a6b0", &fVbargraph23, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("22");
-		ui_interface->declare(&fVbargraph21, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2ea7d30", &fVbargraph21, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph22, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e54ba0", &fVbargraph22, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("23");
-		ui_interface->declare(&fVbargraph22, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2eaded0", &fVbargraph22, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph21, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e4f090", &fVbargraph21, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("24");
-		ui_interface->declare(&fVbargraph23, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2eb3f40", &fVbargraph23, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph20, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e49580", &fVbargraph20, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("25");
-		ui_interface->declare(&fVbargraph24, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2eba090", &fVbargraph24, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph19, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e43a70", &fVbargraph19, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("26");
-		ui_interface->declare(&fVbargraph25, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2ec02c0", &fVbargraph25, -70.0f, 6.0f);
+		ui_interface->declare(&fVbargraph18, "unit", "dB");
+		ui_interface->addVerticalBargraph("0x2e3df60", &fVbargraph18, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->closeBox();
 		ui_interface->declare(0, "1", "");
@@ -1176,27 +1142,27 @@ class mydsp : public dsp {
 		ui_interface->openHorizontalBox("0");
 		ui_interface->openVerticalBox("0");
 		ui_interface->declare(&fVbargraph26, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2ec9ac0", &fVbargraph26, -70.0f, 6.0f);
+		ui_interface->addVerticalBargraph("0x2e6c090", &fVbargraph26, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->closeBox();
 		ui_interface->openHorizontalBox("1");
 		ui_interface->openVerticalBox("1");
 		ui_interface->declare(&fVbargraph27, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2ed3550", &fVbargraph27, -70.0f, 6.0f);
+		ui_interface->addVerticalBargraph("0x2e752e0", &fVbargraph27, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("2");
 		ui_interface->declare(&fVbargraph28, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2ed9fd0", &fVbargraph28, -70.0f, 6.0f);
+		ui_interface->addVerticalBargraph("0x2e7bd60", &fVbargraph28, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->openVerticalBox("3");
 		ui_interface->declare(&fVbargraph29, "unit", "dB");
-		ui_interface->addVerticalBargraph("0x2ee3520", &fVbargraph29, -70.0f, 6.0f);
+		ui_interface->addVerticalBargraph("0x2e85a30", &fVbargraph29, -70.0, 6.0);
 		ui_interface->closeBox();
 		ui_interface->closeBox();
 		ui_interface->declare(&fHslider0, "1", "");
 		ui_interface->declare(&fHslider0, "style", "knob");
 		ui_interface->declare(&fHslider0, "unit", "dB");
-		ui_interface->addHorizontalSlider("Gain", &fHslider0, 0.0f, -10.0f, 50.0f, 0.100000001f);
+		ui_interface->addHorizontalSlider("Gain", &fHslider0, 0.0, -10.0, 50.0, 0.10000000000000001);
 		ui_interface->closeBox();
 		ui_interface->closeBox();
 		
@@ -1233,109 +1199,105 @@ class mydsp : public dsp {
 		FAUSTFLOAT* output1 = outputs[1];
 		FAUSTFLOAT* output2 = outputs[2];
 		FAUSTFLOAT* output3 = outputs[3];
-		float fSlow0 = (0.00100000005f * powf(10.0f, (0.0500000007f * float(fHslider0))));
+		double fSlow0 = (0.0010000000000000009 * pow(10.0, (0.050000000000000003 * double(fHslider0))));
 		for (int i = 0; (i < count); i = (i + 1)) {
-			float fTemp0 = float(input0[i]);
-			fRec1[0] = max((fRec1[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp0))))));
-			fVbargraph0 = FAUSTFLOAT(fRec1[0]);
-			float fTemp1 = float(input1[i]);
-			fRec2[0] = max((fRec2[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp1))))));
-			fVbargraph1 = FAUSTFLOAT(fRec2[0]);
-			float fTemp2 = float(input2[i]);
-			fRec3[0] = max((fRec3[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp2))))));
-			fVbargraph2 = FAUSTFLOAT(fRec3[0]);
-			float fTemp3 = float(input3[i]);
-			fRec4[0] = max((fRec4[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp3))))));
-			fVbargraph3 = FAUSTFLOAT(fRec4[0]);
-			float fTemp4 = float(input4[i]);
-			fRec5[0] = max((fRec5[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp4))))));
-			fVbargraph4 = FAUSTFLOAT(fRec5[0]);
-			float fTemp5 = float(input5[i]);
-			fRec6[0] = max((fRec6[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp5))))));
-			fVbargraph5 = FAUSTFLOAT(fRec6[0]);
-			float fTemp6 = float(input6[i]);
-			fRec7[0] = max((fRec7[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp6))))));
-			fVbargraph6 = FAUSTFLOAT(fRec7[0]);
-			float fTemp7 = float(input7[i]);
-			fRec8[0] = max((fRec8[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp7))))));
-			fVbargraph7 = FAUSTFLOAT(fRec8[0]);
-			float fTemp8 = float(input8[i]);
-			fRec9[0] = max((fRec9[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp8))))));
-			fVbargraph8 = FAUSTFLOAT(fRec9[0]);
-			float fTemp9 = float(input9[i]);
-			fRec10[0] = max((fRec10[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp9))))));
-			fVbargraph9 = FAUSTFLOAT(fRec10[0]);
-			float fTemp10 = (((fTemp6 + fTemp7) + fTemp8) + fTemp9);
-			float fTemp11 = float(input10[i]);
-			fRec11[0] = max((fRec11[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp11))))));
-			fVbargraph10 = FAUSTFLOAT(fRec11[0]);
-			float fTemp12 = float(input11[i]);
-			fRec12[0] = max((fRec12[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp12))))));
-			fVbargraph11 = FAUSTFLOAT(fRec12[0]);
-			float fTemp13 = float(input12[i]);
-			fRec13[0] = max((fRec13[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp13))))));
-			fVbargraph12 = FAUSTFLOAT(fRec13[0]);
-			float fTemp14 = float(input13[i]);
-			fRec14[0] = max((fRec14[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp14))))));
-			fVbargraph13 = FAUSTFLOAT(fRec14[0]);
-			float fTemp15 = float(input14[i]);
-			fRec15[0] = max((fRec15[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp15))))));
-			fVbargraph14 = FAUSTFLOAT(fRec15[0]);
-			float fTemp16 = float(input15[i]);
-			fRec16[0] = max((fRec16[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp16))))));
-			fVbargraph15 = FAUSTFLOAT(fRec16[0]);
-			float fTemp17 = float(input16[i]);
-			fRec17[0] = max((fRec17[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp17))))));
-			fVbargraph16 = FAUSTFLOAT(fRec17[0]);
-			float fTemp18 = float(input17[i]);
-			fRec18[0] = max((fRec18[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp18))))));
-			fVbargraph17 = FAUSTFLOAT(fRec18[0]);
-			float fTemp19 = float(input18[i]);
-			fRec19[0] = max((fRec19[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp19))))));
-			fVbargraph18 = FAUSTFLOAT(fRec19[0]);
-			float fTemp20 = float(input19[i]);
-			fRec20[0] = max((fRec20[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp20))))));
-			fVbargraph19 = FAUSTFLOAT(fRec20[0]);
-			float fTemp21 = float(input20[i]);
-			fRec21[0] = max((fRec21[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp21))))));
-			fVbargraph20 = FAUSTFLOAT(fRec21[0]);
-			float fTemp22 = float(input21[i]);
-			fRec22[0] = max((fRec22[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp22))))));
-			fVbargraph21 = FAUSTFLOAT(fRec22[0]);
-			float fTemp23 = (((fTemp19 + fTemp20) + fTemp21) + fTemp22);
-			float fTemp24 = float(input22[i]);
-			fRec23[0] = max((fRec23[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp24))))));
-			fVbargraph22 = FAUSTFLOAT(fRec23[0]);
-			float fTemp25 = float(input23[i]);
-			fRec24[0] = max((fRec24[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp25))))));
-			fVbargraph23 = FAUSTFLOAT(fRec24[0]);
-			float fTemp26 = float(input24[i]);
-			fRec25[0] = max((fRec25[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp26))))));
-			fVbargraph24 = FAUSTFLOAT(fRec25[0]);
-			float fTemp27 = float(input25[i]);
-			fRec26[0] = max((fRec26[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp27))))));
-			fVbargraph25 = FAUSTFLOAT(fRec26[0]);
-			fRec27[0] = (fSlow0 + (0.999000013f * fRec27[1]));
-			float fTemp28 = ((((0.0476190485f * (((((fTemp0 + fTemp1) + fTemp2) + fTemp3) + fTemp4) + fTemp5)) + (0.0380952395f * ((((((((fTemp10 + fTemp11) + fTemp12) + fTemp13) + fTemp14) + fTemp15) + fTemp16) + fTemp17) + fTemp18))) + (0.032142859f * ((((fTemp23 + fTemp24) + fTemp25) + fTemp26) + fTemp27))) * fRec27[0]);
-			fRec0[0] = max((fRec0[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp28))))));
+			fRec1[0] = (fSlow0 + (0.999 * fRec1[1]));
+			double fTemp0 = double(input5[i]);
+			fRec2[0] = max((fRec2[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp0))))));
+			fVbargraph0 = FAUSTFLOAT(fRec2[0]);
+			double fTemp1 = double(input4[i]);
+			fRec3[0] = max((fRec3[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp1))))));
+			fVbargraph1 = FAUSTFLOAT(fRec3[0]);
+			double fTemp2 = double(input3[i]);
+			fRec4[0] = max((fRec4[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp2))))));
+			fVbargraph2 = FAUSTFLOAT(fRec4[0]);
+			double fTemp3 = double(input2[i]);
+			fRec5[0] = max((fRec5[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp3))))));
+			fVbargraph3 = FAUSTFLOAT(fRec5[0]);
+			double fTemp4 = double(input0[i]);
+			fRec6[0] = max((fRec6[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp4))))));
+			fVbargraph4 = FAUSTFLOAT(fRec6[0]);
+			double fTemp5 = double(input1[i]);
+			fRec7[0] = max((fRec7[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp5))))));
+			fVbargraph5 = FAUSTFLOAT(fRec7[0]);
+			double fTemp6 = double(input17[i]);
+			fRec8[0] = max((fRec8[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp6))))));
+			fVbargraph6 = FAUSTFLOAT(fRec8[0]);
+			double fTemp7 = double(input16[i]);
+			fRec9[0] = max((fRec9[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp7))))));
+			fVbargraph7 = FAUSTFLOAT(fRec9[0]);
+			double fTemp8 = double(input15[i]);
+			fRec10[0] = max((fRec10[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp8))))));
+			fVbargraph8 = FAUSTFLOAT(fRec10[0]);
+			double fTemp9 = double(input14[i]);
+			fRec11[0] = max((fRec11[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp9))))));
+			fVbargraph9 = FAUSTFLOAT(fRec11[0]);
+			double fTemp10 = double(input13[i]);
+			fRec12[0] = max((fRec12[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp10))))));
+			fVbargraph10 = FAUSTFLOAT(fRec12[0]);
+			double fTemp11 = double(input12[i]);
+			fRec13[0] = max((fRec13[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp11))))));
+			fVbargraph11 = FAUSTFLOAT(fRec13[0]);
+			double fTemp12 = double(input11[i]);
+			fRec14[0] = max((fRec14[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp12))))));
+			fVbargraph12 = FAUSTFLOAT(fRec14[0]);
+			double fTemp13 = double(input10[i]);
+			fRec15[0] = max((fRec15[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp13))))));
+			fVbargraph13 = FAUSTFLOAT(fRec15[0]);
+			double fTemp14 = double(input9[i]);
+			fRec16[0] = max((fRec16[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp14))))));
+			fVbargraph14 = FAUSTFLOAT(fRec16[0]);
+			double fTemp15 = double(input8[i]);
+			fRec17[0] = max((fRec17[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp15))))));
+			fVbargraph15 = FAUSTFLOAT(fRec17[0]);
+			double fTemp16 = double(input6[i]);
+			fRec18[0] = max((fRec18[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp16))))));
+			fVbargraph16 = FAUSTFLOAT(fRec18[0]);
+			double fTemp17 = double(input7[i]);
+			fRec19[0] = max((fRec19[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp17))))));
+			fVbargraph17 = FAUSTFLOAT(fRec19[0]);
+			double fTemp18 = (fTemp14 + (fTemp15 + (fTemp16 + fTemp17)));
+			double fTemp19 = double(input25[i]);
+			fRec20[0] = max((fRec20[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp19))))));
+			fVbargraph18 = FAUSTFLOAT(fRec20[0]);
+			double fTemp20 = double(input24[i]);
+			fRec21[0] = max((fRec21[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp20))))));
+			fVbargraph19 = FAUSTFLOAT(fRec21[0]);
+			double fTemp21 = double(input23[i]);
+			fRec22[0] = max((fRec22[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp21))))));
+			fVbargraph20 = FAUSTFLOAT(fRec22[0]);
+			double fTemp22 = double(input22[i]);
+			fRec23[0] = max((fRec23[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp22))))));
+			fVbargraph21 = FAUSTFLOAT(fRec23[0]);
+			double fTemp23 = double(input21[i]);
+			fRec24[0] = max((fRec24[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp23))))));
+			fVbargraph22 = FAUSTFLOAT(fRec24[0]);
+			double fTemp24 = double(input20[i]);
+			fRec25[0] = max((fRec25[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp24))))));
+			fVbargraph23 = FAUSTFLOAT(fRec25[0]);
+			double fTemp25 = double(input18[i]);
+			fRec26[0] = max((fRec26[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp25))))));
+			fVbargraph24 = FAUSTFLOAT(fRec26[0]);
+			double fTemp26 = double(input19[i]);
+			fRec27[0] = max((fRec27[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp26))))));
+			fVbargraph25 = FAUSTFLOAT(fRec27[0]);
+			double fTemp27 = (fTemp23 + (fTemp24 + (fTemp25 + fTemp26)));
+			double fTemp28 = (fRec1[0] * (((0.047619047619047623 * (fTemp0 + (fTemp1 + (fTemp2 + (fTemp3 + (fTemp4 + fTemp5)))))) + (0.038095238095238099 * (fTemp6 + (fTemp7 + (fTemp8 + (fTemp9 + (fTemp10 + (fTemp11 + (fTemp12 + (fTemp13 + fTemp18)))))))))) + (0.03214285714285714 * (fTemp19 + (fTemp20 + (fTemp21 + (fTemp22 + fTemp27)))))));
+			fRec0[0] = max((fRec0[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp28))))));
 			fVbargraph26 = FAUSTFLOAT(fRec0[0]);
 			output0[i] = FAUSTFLOAT(fTemp28);
-			float fTemp29 = (fTemp20 + fTemp25);
-			float fTemp30 = (fTemp21 + fTemp26);
-			float fTemp31 = (fTemp19 + fTemp24);
-			float fTemp32 = (fTemp22 + fTemp27);
-			float fTemp33 = (fRec27[0] * (((0.032142859f * fTemp29) + ((0.0466569476f * (fTemp11 - fTemp13)) + ((0.0824786127f * (fTemp2 - fTemp4)) + ((5.71382825e-18f * (fTemp8 + fTemp17)) + (1.01007165e-17f * fTemp3))))) - ((0.032142859f * (fTemp30 - fTemp31)) + ((0.032142859f * fTemp32) + (0.0466569476f * ((fTemp18 + (fTemp9 + fTemp14)) - (fTemp16 + (fTemp7 + fTemp12))))))));
-			fRec28[0] = max((fRec28[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp33))))));
+			double fTemp29 = (fRec1[0] * ((((5.7138281391308437e-18 * (fTemp15 + fTemp7)) + (((1.0100716559284827e-17 * fTemp2) + (0.082478609884232251 * (fTemp3 - fTemp1))) + (0.046656947481584346 * (fTemp13 - fTemp11)))) + (0.032142857142857133 * (fTemp26 + fTemp21))) - (((0.046656947481584353 * (fTemp6 - (fTemp8 - (fTemp10 - (fTemp12 + (fTemp17 - fTemp14)))))) + (0.032142857142857126 * (fTemp20 - (fTemp22 + (fTemp25 - fTemp24))))) + (0.03214285714285714 * (fTemp23 + fTemp19)))));
+			fRec28[0] = max((fRec28[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp29))))));
 			fVbargraph27 = FAUSTFLOAT(fRec28[0]);
-			output1[i] = FAUSTFLOAT(fTemp33);
-			float fTemp34 = (fRec27[0] * ((0.0824786127f * (fTemp0 - fTemp5)) - ((0.0466569476f * ((fTemp18 + (fTemp17 + (fTemp15 + fTemp16))) - fTemp10)) + (0.032142859f * ((fTemp27 + (fTemp26 + (fTemp24 + fTemp25))) - fTemp23)))));
-			fRec29[0] = max((fRec29[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp34))))));
+			output1[i] = FAUSTFLOAT(fTemp29);
+			double fTemp30 = (fRec1[0] * ((0.082478609884232251 * (fTemp4 - fTemp0)) - ((0.046656947481584346 * (fTemp6 + (fTemp7 + (fTemp8 + (fTemp9 - fTemp18))))) + (0.03214285714285714 * (fTemp19 + (fTemp20 + (fTemp21 + (fTemp22 - fTemp27))))))));
+			fRec29[0] = max((fRec29[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp30))))));
 			fVbargraph28 = FAUSTFLOAT(fRec29[0]);
-			output2[i] = FAUSTFLOAT(fTemp34);
-			float fTemp35 = (fRec27[0] * ((((0.032142859f * fTemp31) + ((0.0824786127f * (fTemp1 - fTemp3)) + ((5.05035826e-18f * (fTemp5 + (fTemp0 + fTemp2))) + ((2.85691412e-18f * (fTemp7 + fTemp16)) + (0.0466569476f * fTemp14))))) + (0.032142859f * (fTemp32 - fTemp29))) - ((0.0466569476f * ((fTemp17 + (fTemp8 + fTemp13)) - (fTemp15 + (fTemp6 + fTemp11)))) + ((0.032142859f * fTemp30) + (((1.51510752e-17f * fTemp4) + (0.0466569476f * fTemp12)) + (8.57074258e-18f * (fTemp9 + fTemp18)))))));
-			fRec30[0] = max((fRec30[1] - fConst0), min(6.0f, (20.0f * log10f(max(0.000316227757f, fabsf(fTemp35))))));
+			output2[i] = FAUSTFLOAT(fTemp30);
+			double fTemp31 = (fRec1[0] * (((((2.8569140695654219e-18 * (fTemp17 + fTemp8)) + ((5.0503582796424135e-18 * (fTemp0 + (fTemp4 + fTemp3))) + ((0.082478609884232251 * (fTemp5 - fTemp2)) + (0.046656947481584339 * fTemp10)))) + (0.032142857142857133 * (fTemp25 + fTemp22))) + (0.032142857142857126 * (fTemp19 - (fTemp21 + (fTemp26 - fTemp23))))) - ((((0.046656947481584353 * (fTemp7 - (fTemp9 - (fTemp11 - (fTemp13 + (fTemp16 - fTemp15)))))) + ((1.5151074838927241e-17 * fTemp1) + (0.046656947481584346 * fTemp12))) + (8.570742208696266e-18 * (fTemp14 + fTemp6))) + (0.03214285714285714 * (fTemp24 + fTemp20)))));
+			fRec30[0] = max((fRec30[1] - fConst0), min(6.0, (20.0 * log10(max(0.00031622776601683794, fabs(fTemp31))))));
 			fVbargraph29 = FAUSTFLOAT(fRec30[0]);
-			output3[i] = FAUSTFLOAT(fTemp35);
+			output3[i] = FAUSTFLOAT(fTemp31);
 			fRec1[1] = fRec1[0];
 			fRec2[1] = fRec2[0];
 			fRec3[1] = fRec3[0];
@@ -1417,7 +1379,7 @@ static std::string normalizeClassName(const std::string& name);
 
 void initState(const std::string& name, int sampleRate)
 {
-    g_unitName = strdup(name.c_str());
+    g_unitName = STRDUP(name.c_str());
 
     mydsp* dsp = new FAUSTCLASS;
     ControlCounter* cc = new ControlCounter;
@@ -1449,7 +1411,7 @@ std::string fileNameToUnitName(const std::string& fileName)
 
 // Globals
 
-static InterfaceTable *ft;
+static InterfaceTable* ft;
 
 // The SuperCollider UGen class name generated here must match
 // that generated by faust2sc:
@@ -1472,9 +1434,9 @@ static std::string normalizeClassName(const std::string& name)
 extern "C"
 {
 #ifdef SC_API_EXPORT
-    int api_version(void);
+    FAUST_EXPORT int api_version(void);
 #endif
-    void load(InterfaceTable*);
+    FAUST_EXPORT void load(InterfaceTable*);
     void Faust_next(Faust*, int);
     void Faust_next_copy(Faust*, int);
     void Faust_next_clear(Faust*, int);
@@ -1500,9 +1462,9 @@ inline static void copyBuffer(float* dst, int n, float* src)
 inline static void Faust_updateControls(Faust* unit)
 {
     Control* controls = unit->mControls;
-    int numControls   = unit->mNumControls;
-    int curControl    = unit->mDSP->getNumInputs();
-    for (int i=0; i < numControls; ++i) {
+    size_t numControls = unit->mNumControls;
+    int curControl = unit->mDSP->getNumInputs();
+    for (int i = 0; i < numControls; ++i) {
         float value = IN0(curControl);
         (controls++)->update(value);
         curControl++;
@@ -1598,7 +1560,7 @@ void Faust_Ctor(Faust* unit)  // module constructor
                     Print("Faust[%s]: RT memory allocation failed, try increasing the real-time memory size in the server options\n", g_unitName);
                     goto end;
                 }
-                for (int i=0; i < unit->getNumAudioInputs(); ++i) {
+                for (int i = 0; i < unit->getNumAudioInputs(); ++i) {
                     // Initialize interpolator.
                     unit->mInBufValue[i] = IN0(i);
                     // Aquire buffer memory.
@@ -1658,19 +1620,20 @@ FAUST_EXPORT void load(InterfaceTable* inTable)
     ft = inTable;
 
     MetaData meta;
-    mydsp tmp_dsp;
-    tmp_dsp.metadata(&meta);
-
+    mydsp* tmp_dsp = new FAUSTCLASS;
+    tmp_dsp->metadata(&meta);
+    delete tmp_dsp;
+ 
     std::string name = meta["name"];
 
     if (name.empty()) {
         name = fileNameToUnitName(__FILE__);
     }
-
+  
     name = normalizeClassName(name);
 
 #if !defined(NDEBUG) & defined(SC_API_EXPORT)
-    Print("Faust: supercollider.cpp: sc_api_version = %d\n",sc_api_version);
+    Print("Faust: supercollider.cpp: sc_api_version = %d\n", sc_api_version);
 #endif
 
     if (name.empty()) {
@@ -1681,10 +1644,10 @@ FAUST_EXPORT void load(InterfaceTable* inTable)
         return;
     }
 
-    if (strncmp(name.c_str(),SC_FAUST_PREFIX,strlen(SC_FAUST_PREFIX))!=0) {
+    if (strncmp(name.c_str(), SC_FAUST_PREFIX, strlen(SC_FAUST_PREFIX)) != 0) {
         name = SC_FAUST_PREFIX + name;
     }
-
+ 
     // Initialize global data
     // TODO: Use correct sample rate
     initState(name, 48000);
