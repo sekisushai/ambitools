@@ -1,15 +1,14 @@
-/* ------------------------------------------------------------
-author: "Pierre Lecomte"
-copyright: "(c) Pierre Lecomte 2015"
-license: "GPL"
-name: "HOAAzimuthRotator1"
-version: "1.0"
-Code generated with Faust 2.0.a55 (http://faust.grame.fr)
------------------------------------------------------------- */
+//----------------------------------------------------------
+// name: "HOAAzimuthRotator1"
+// version: "1.0"
+// author: "Pierre Lecomte"
+// license: "GPL"
+// copyright: "(c) Pierre Lecomte 2015"
+//
+// Code generated with Faust 0.9.96 (http://faust.grame.fr)
+//----------------------------------------------------------
 
-#ifndef  __mydsp_H__
-#define  __mydsp_H__
-
+/* link with  */
 // If other than 'faust2sc --prefix Faust' is used, sed this as well:
 #if !defined(SC_FAUST_PREFIX)
 # define SC_FAUST_PREFIX "Faust"
@@ -85,8 +84,6 @@ Code generated with Faust 2.0.a55 (http://faust.grame.fr)
 #ifndef __dsp__
 #define __dsp__
 
-#include <string>
-
 #ifndef FAUSTFLOAT
 #define FAUSTFLOAT float
 #endif
@@ -121,21 +118,21 @@ class dsp {
     
         /* Returns the sample rate currently used by the instance */
         virtual int getSampleRate() = 0;
-
-        /** Global init, calls the following methods :
-         * - static class 'classInit' : static table initialisation
-         * - 'instanceInit' : constants and instance table initialisation
+    
+        /** Global init, calls the following methods:
+         * - static class 'classInit': static table initialisation
+         * - 'instanceInit': constants and instance table initialisation
          *
          * @param samplingRate - the sampling rate in Herz
          */
         virtual void init(int samplingRate) = 0;
-
+    
         /** Init instance state
          *
          * @param samplingRate - the sampling rate in Herz
          */
         virtual void instanceInit(int samplingRate) = 0;
-
+    
         /** Init instance constant state
          *
          * @param samplingRate - the sampling rate in Herz
@@ -147,8 +144,8 @@ class dsp {
     
         /* Init instance state (delay lines...) */
         virtual void instanceClear() = 0;
- 
-        /**
+    
+        /**  
          * Return a clone of the instance.
          *
          * @return a copy of the instance on success, otherwise a null pointer.
@@ -166,19 +163,19 @@ class dsp {
          * DSP instance computation, to be called with sucessive in/out audio buffers.
          *
          * @param count - the nomber of frames to compute
-         * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, doucbe or quad)
-         * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, doucbe or quad)
+         * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
+         * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          *
          */
         virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) = 0;
     
         /**
-         * DSP instance computation : alternative method to be used by subclasses.
+         * DSP instance computation: alternative method to be used by subclasses.
          *
          * @param date_usec - the timestamp in microsec given by audio driver.
          * @param count - the nomber of frames to compute
-         * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, doucbe or quad)
-         * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, doucbe or quad)
+         * @param inputs - the input audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
+         * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (eiher float, double or quad)
          *
          */
         virtual void compute(double date_usec, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { compute(count, inputs, outputs); }
@@ -211,29 +208,10 @@ class decorator_dsp : public dsp {
         virtual void instanceClear() { fDSP->instanceClear(); }
         virtual decorator_dsp* clone() { return new decorator_dsp(fDSP->clone()); }
         virtual void metadata(Meta* m) { return fDSP->metadata(m); }
+        // Beware: subclasses usually have to overload the two 'compute' methods
         virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(count, inputs, outputs); }
         virtual void compute(double date_usec, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { fDSP->compute(date_usec, count, inputs, outputs); }
-    
-};
-
-/**
- * DSP factory class
- */
-
-class dsp_factory {
-    
-    protected:
-    
-        // So that to force sub-classes to use deleteDSPFactory(dsp_factory* factory);
-        ~dsp_factory() {}
-    
-    public:
-    
-        virtual std::string getName() = 0;
-        virtual std::string getSHAKey() = 0;
-        virtual std::string getDSPCode() = 0;
-        virtual dsp* createDSPInstance() = 0;
-    
+       
 };
 
 /**
@@ -367,6 +345,40 @@ class DecoratorUI : public UI
 
         virtual void declare(FAUSTFLOAT* zone, const char* key, const char* val) { fUI->declare(zone, key, val); }
 
+};
+
+//----------------------------------------------------------------
+//  BaseUI with empty methods
+//----------------------------------------------------------------
+
+class BaseUI : public UI
+{
+    
+    public:
+        
+        // -- widget's layouts
+        
+        virtual void openTabBox(const char* label) {};
+        virtual void openHorizontalBox(const char* label) {}
+        virtual void openVerticalBox(const char* label) {}
+        virtual void closeBox() {}
+        
+        // -- active widgets
+        
+        virtual void addButton(const char* label, FAUSTFLOAT* zone) = 0;
+        virtual void addCheckButton(const char* label, FAUSTFLOAT* zone) = 0;
+        virtual void addVerticalSlider(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step) {}
+        virtual void addHorizontalSlider(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step) {}
+        virtual void addNumEntry(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step) {}
+        
+        // -- passive widgets
+        
+        virtual void addHorizontalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) {}
+        virtual void addVerticalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT min, FAUSTFLOAT max) {}
+        
+        // -- metadata declarations
+        
+        virtual void declare(FAUSTFLOAT*, const char*, const char*) {}
 };
 
 #endif
@@ -639,125 +651,48 @@ private:
 #endif  
 
 
-double cos(double dummy0);
-double sin(double dummy0);
-
 #ifndef FAUSTCLASS 
 #define FAUSTCLASS mydsp
 #endif
 
 class mydsp : public dsp {
-	
- private:
-	
+  private:
+	FAUSTFLOAT 	fslider0;
 	int fSamplingFreq;
-	FAUSTFLOAT fHslider0;
-	
- public:
-	
-	void metadata(Meta* m) { 
+
+  public:
+	virtual void metadata(Meta* m) { 
+		m->declare("name", "HOAAzimuthRotator1");
+		m->declare("version", "1.0");
 		m->declare("author", "Pierre Lecomte");
-		m->declare("basics.lib/name", "Faust Basic Element Library");
-		m->declare("basics.lib/version", "0.0");
+		m->declare("license", "GPL");
 		m->declare("copyright", "(c) Pierre Lecomte 2015");
-		m->declare("lib/ymn.lib/author", "Pierre Lecomte");
-		m->declare("lib/ymn.lib/copyright", "(c) Pierre Lecomte 2016");
-		m->declare("lib/ymn.lib/license", "GPL");
 		m->declare("lib/ymn.lib/name", "Spherical Harmonics library");
 		m->declare("lib/ymn.lib/version", "1.0");
-		m->declare("license", "GPL");
+		m->declare("lib/ymn.lib/author", "Pierre Lecomte");
+		m->declare("lib/ymn.lib/license", "GPL");
+		m->declare("lib/ymn.lib/copyright", "(c) Pierre Lecomte 2016");
+		m->declare("maths.lib/name", "Faust Math Library");
+		m->declare("maths.lib/version", "2.0");
 		m->declare("maths.lib/author", "GRAME");
 		m->declare("maths.lib/copyright", "GRAME");
 		m->declare("maths.lib/license", "LGPL with exception");
-		m->declare("maths.lib/name", "Faust Math Library");
-		m->declare("maths.lib/version", "2.0");
-		m->declare("name", "HOAAzimuthRotator1");
-		m->declare("version", "1.0");
+		m->declare("basics.lib/name", "Faust Basic Element Library");
+		m->declare("basics.lib/version", "0.0");
 	}
 
-	virtual int getNumInputs() {
-		return 4;
-		
-	}
-	virtual int getNumOutputs() {
-		return 4;
-		
-	}
-	virtual int getInputRate(int channel) {
-		int rate;
-		switch (channel) {
-			case 0: {
-				rate = 1;
-				break;
-			}
-			case 1: {
-				rate = 1;
-				break;
-			}
-			case 2: {
-				rate = 1;
-				break;
-			}
-			case 3: {
-				rate = 1;
-				break;
-			}
-			default: {
-				rate = -1;
-				break;
-			}
-			
-		}
-		return rate;
-		
-	}
-	virtual int getOutputRate(int channel) {
-		int rate;
-		switch (channel) {
-			case 0: {
-				rate = 1;
-				break;
-			}
-			case 1: {
-				rate = 1;
-				break;
-			}
-			case 2: {
-				rate = 1;
-				break;
-			}
-			case 3: {
-				rate = 1;
-				break;
-			}
-			default: {
-				rate = -1;
-				break;
-			}
-			
-		}
-		return rate;
-		
-	}
-	
+	virtual int getNumInputs() { return 4; }
+	virtual int getNumOutputs() { return 4; }
 	static void classInit(int samplingFreq) {
-		
 	}
-	
 	virtual void instanceConstants(int samplingFreq) {
 		fSamplingFreq = samplingFreq;
-		
 	}
-	
 	virtual void instanceResetUserInterface() {
-		fHslider0 = FAUSTFLOAT(0.0);
-		
+		fslider0 = 0.0;
 	}
-	
 	virtual void instanceClear() {
-		
 	}
-	
 	virtual void init(int samplingFreq) {
 		classInit(samplingFreq);
 		instanceInit(samplingFreq);
@@ -767,52 +702,44 @@ class mydsp : public dsp {
 		instanceResetUserInterface();
 		instanceClear();
 	}
-	
 	virtual mydsp* clone() {
 		return new mydsp();
 	}
-	
 	virtual int getSampleRate() {
 		return fSamplingFreq;
 	}
-	
 	virtual void buildUserInterface(UI* ui_interface) {
 		ui_interface->openVerticalBox("0x00");
-		ui_interface->declare(&fHslider0, "osc", "/azimuth 0 360");
-		ui_interface->addHorizontalSlider("Azimuth", &fHslider0, 0.0, -3.1415926535897931, 3.1415926535897931, 0.01);
+		ui_interface->declare(&fslider0, "osc", "/azimuth 0 360");
+		ui_interface->addHorizontalSlider("Azimuth", &fslider0, 0.0, -3.141592653589793, 3.141592653589793, 0.01);
 		ui_interface->closeBox();
-		
 	}
-	
-	virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) {
-		FAUSTFLOAT* input0 = inputs[0];
-		FAUSTFLOAT* input1 = inputs[1];
-		FAUSTFLOAT* input2 = inputs[2];
-		FAUSTFLOAT* input3 = inputs[3];
-		FAUSTFLOAT* output0 = outputs[0];
-		FAUSTFLOAT* output1 = outputs[1];
-		FAUSTFLOAT* output2 = outputs[2];
-		FAUSTFLOAT* output3 = outputs[3];
-		double fSlow0 = double(fHslider0);
-		double fSlow1 = cos(fSlow0);
-		double fSlow2 = sin(fSlow0);
-		double fSlow3 = (0.0 - fSlow0);
-		double fSlow4 = sin(fSlow3);
-		double fSlow5 = cos(fSlow3);
-		for (int i = 0; (i < count); i = (i + 1)) {
-			output0[i] = FAUSTFLOAT(double(input0[i]));
-			double fTemp0 = double(input1[i]);
-			double fTemp1 = double(input3[i]);
-			output1[i] = FAUSTFLOAT(((fSlow1 * fTemp0) + (fSlow2 * fTemp1)));
-			output2[i] = FAUSTFLOAT(double(input2[i]));
-			output3[i] = FAUSTFLOAT(((fSlow4 * fTemp0) + (fSlow5 * fTemp1)));
-			
+	virtual void compute (int count, FAUSTFLOAT** input, FAUSTFLOAT** output) {
+		double 	fSlow0 = double(fslider0);
+		double 	fSlow1 = sin(fSlow0);
+		double 	fSlow2 = cos(fSlow0);
+		double 	fSlow3 = (0 - fSlow0);
+		double 	fSlow4 = cos(fSlow3);
+		double 	fSlow5 = sin(fSlow3);
+		FAUSTFLOAT* input0 = input[0];
+		FAUSTFLOAT* input1 = input[1];
+		FAUSTFLOAT* input2 = input[2];
+		FAUSTFLOAT* input3 = input[3];
+		FAUSTFLOAT* output0 = output[0];
+		FAUSTFLOAT* output1 = output[1];
+		FAUSTFLOAT* output2 = output[2];
+		FAUSTFLOAT* output3 = output[3];
+		for (int i=0; i<count; i++) {
+			output0[i] = (FAUSTFLOAT)(double)input0[i];
+			double fTemp0 = (double)input3[i];
+			double fTemp1 = (double)input1[i];
+			output1[i] = (FAUSTFLOAT)((fSlow2 * fTemp1) + (fSlow1 * fTemp0));
+			output2[i] = (FAUSTFLOAT)(double)input2[i];
+			output3[i] = (FAUSTFLOAT)((fSlow5 * fTemp1) + (fSlow4 * fTemp0));
 		}
-		
 	}
-
-	
 };
+
 
 
 //----------------------------------------------------------------------------
@@ -1109,7 +1036,7 @@ FAUST_EXPORT void load(InterfaceTable* inTable)
     name = normalizeClassName(name);
 
 #if !defined(NDEBUG) & defined(SC_API_EXPORT)
-    Print("Faust: supercollider.cpp: sc_api_version = %d\n",sc_api_version);
+    Print("Faust: supercollider.cpp: sc_api_version = %d\n", sc_api_version);
 #endif
 
     if (name.empty()) {
@@ -1143,5 +1070,3 @@ FAUST_EXPORT void load(InterfaceTable* inTable)
 }
 
 // EOF
-
-#endif
