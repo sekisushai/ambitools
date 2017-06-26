@@ -22,7 +22,7 @@ pitch   =   hslider("Pitch[osc:/picth 0 360]", 0, 0, 360, 0.01)*ma.PI/180; // Sl
 roll    =   hslider("Roll[osc:/roll 0 360]", 0, 0, 360, 0.01)*ma.PI/180; // Slider with roll rotation angle
 
 // Maximum required order
-M	=	5;
+M	=	4;
 
 ins =   (M+1)^2;
 
@@ -43,12 +43,21 @@ rot(1,m,n)      =   0; // other cases for 1st order.
 
 
 // Recurrence computation for higher-orders
-denom(m,n2)     =   ba.if(abs(n2)<m,(m+n2)*(m-n2),2*m*(2*m-1));
+//denom(m,n2)     =   ba.if(abs(n2)<m,(m+n2)*(m-n2),2*m*(2*m-1));
+denom(m,n2)     =   case{
+                    (1)  => (m+n2)*(m-n2);
+                    (0)  => 2*m*(2*m-1);
+                    }(abs(n2)<m);
+
+
+
 u(m,n1,n2)      =   sqrt((m+n1)*(m-n1)/denom(m,n2));
 v(m,n1,n2)      =   1/2*sqrt((1+(n1==0))*(m+abs(n1)-1)*(m+abs(n1))/denom(m,n2))*(1-2*(n1==0));
 w(m,n1,n2)      =   -1/2*sqrt((m-abs(n1)-1)*(m-abs(n1))/denom(m,n2))*(1-(n1==0));
 
-U(m,n1,n2)      =   ba.if(n1==0,P(0,m,0,n2),P(0,m,n1,n2));
+//U(m,n1,n2)      =   ba.if(n1==0,P(0,m,0,n2),P(0,m,n1,n2));
+U(m,0,n2)       =   P(0,m,0,n2);
+U(m,n1,n2)      =   P(0,m,n1,n2);
 
 V(m,n1,n2)      =   case{
                     (1,0,0)     =>P(1,m,1,n2)+P(-1,m,-1,n2);
@@ -72,12 +81,24 @@ P(i,m,mu,n2)    =   case{
 rot(m,n1,n2)    =   u(m,n1,n2)*U(m,n1,n2)+v(m,n1,n2)*V(m,n1,n2)+w(m,n1,n2)*W(m,n1,n2);
 
 // Main-matrix row			
+//row(M,i)	=	par(m,M+1,
+//			  par(j,2*m+1,term 
+//			    with{term = ba.if((i >= m^2) & (i< (m+1)^2),rot(m,int(i-m^2)-m,j-m),0);}
+//			    )
+//			    );
 row(M,i)	=	par(m,M+1,
 			  par(j,2*m+1,term 
-			    with{term = ba.if((i >= m^2) & (i< (m+1)^2),rot(m,int(i-m^2)-m,j-m),0);}
-			    )
+			    with{
+                                term = 
+                                case{
+                                    (0) => 0;
+                                    (1) => rot(m,int(i-m^2)-m,j-m);
+                                    }((i >= m^2) & (i< (m+1)^2));
+                                }
+                             )
 			    );
-
+			    
+			    
 // Matrix multiplication
 // n = number of inputs
 // m = number of outputs
