@@ -14,9 +14,9 @@ declare copyright   "(c) Pierre Lecomte 2014";
 // [1] P. Lecomte, P.-A. Gauthier, C. Langrenne, A. Garcia, and A. Berry, “On the use of a Lebedev grid for Ambisonics,” in Audio Engineering Society Convention 139, 2015.
 
 import("stdfaust.lib");
-import("lib/lebedev.lib");
-import("lib/ymn.lib");
-import("lib/gui.lib");
+import("lebedev.lib");
+import("ymn.lib");
+import("gui.lib");
 
 // Maximum order M=1 for 6-node Lebedev grid [1].
 M	=	1;

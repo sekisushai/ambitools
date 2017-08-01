@@ -13,8 +13,8 @@ declare copyright   "(c) Pierre Lecomte 2015";
 // Outputs: 1
 
 import("stdfaust.lib");
-import("lib/ymn.lib");
-import("lib/gui.lib");
+import("ymn.lib");
+import("gui.lib");
 
 // Maximum order of original HOA scene.
 M	=	3;

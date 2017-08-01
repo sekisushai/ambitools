@@ -5,7 +5,7 @@ declare license     "GPL";
 declare copyright   "(c) Pierre Lecomte 2016";
 
 import("stdfaust.lib");
-import("lib/ymn.lib");
+import("ymn.lib");
 
 // Description: This tool rotates the HOA scene around the x-axis (roll angle), y-axis (pitch angle), and z-axis (yaw angle). Driven with OSC from head-tracking, (for example with andOSC application for Android with andOSC.pd patch provided with ambitools), this tool can compensate the head rotations. See [2] for the matrix definition. Implentation according to [1] with corrections.
 
@@ -105,5 +105,6 @@ row(M,i)	=	par(m,M+1,
 matrix(n,m) = par(i,n,_) <: par(i,m,buswg(row(M,i)):>_);
 
 process = matrix(ins,ins);
+//process=rot(2,1,1);
 
 

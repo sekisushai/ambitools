@@ -14,10 +14,10 @@ declare copyright   "(c) Pierre Lecomte 2014";
 // Outputs: 50
 
 import("stdfaust.lib");
-import("lib/nfc.lib");
-import("lib/ymn.lib");
-import("lib/lebedev.lib");
-import("lib/gui.lib");
+import("nfc.lib");
+import("ymn.lib");
+import("lebedev.lib");
+import("gui.lib");
 
 // maximum order for Ambisonics components
 M	=	5;

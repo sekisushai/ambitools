@@ -15,10 +15,10 @@ declare copyright   "(c) Pierre Lecomte 2014";
 // Outputs: 26
 
 import("stdfaust.lib");
-import("lib/ymn.lib");
-import("lib/nfc.lib");
-import("lib/lebedev.lib");
-import("lib/gui.lib");
+import("ymn.lib");
+import("nfc.lib");
+import("lebedev.lib");
+import("gui.lib");
 
 // Maximum order 3 to have no aliasing in the sweet spot.
 M	=	1;

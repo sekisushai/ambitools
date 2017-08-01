@@ -1,4 +1,4 @@
-declare name        "NFC-HOA with 26 nodes Lebedev grid up to order 3";
+declare name        "NFC-HOA with 06 nodes Lebedev grid up to order 1";
 declare version     "1.0";
 declare author      "Pierre Lecomte";
 declare license     "GPL";
@@ -14,18 +14,18 @@ declare copyright   "(c) Pierre Lecomte 2014";
 // Outputs: 26
 
 import("stdfaust.lib");
-import("lib/nfc.lib");
-import("lib/ymn.lib");
-import("lib/lebedev.lib");
-import("lib/gui.lib");
+import("nfc.lib");
+import("ymn.lib");
+import("lebedev.lib");
+import("gui.lib");
 
 // maximum order for Ambisonics components
-M	=	3;
+M	=	1;
 // number of inputs (number of sources to encode)
 N	=	1;
 
 ins	=	N;
-outs	=	26;
+outs	=	6;
 
 g(i)	=	hslider("[%i+1][osc:/gain_%i -20 20][style:knob]Gain %2i",0,-30,20,0.1): ba.db2linear : si.smooth(0.999); // gain
 r(i)	=	hslider("[%i+2][osc:/radius_%i 0.5 50][style:knob]Radius %2i", 2, 0.5, 50, 0.01); // radius
@@ -41,7 +41,7 @@ r2	=	nentry("[~]Speaker Radius", 1.07, 0.5, 10, 0.01); // louspeaker radius
 // For plane wave, gain multiplication by 4*PI*r2; for spherical wave, gain multiplication by (4*PI*r2)/(4*PI*r(i)) [2].
 selecteur(i)	=	_*(g(i))<:(*(spherical(i)),*(1-spherical(i)))<:(*(r2/r(i))<:par(m,M+1,nf(m,r(i),r2))),(*(r2)<:par(m,M+1,nfc(m,r2))):>par(m,M+1,*(2*m+1)):mute;
 
-signal(source,speaker)	=	hgroup("",selecteur(source):par(m,M+1,_*(LegendreP(m,gamma))):>_*(weight3(speaker)))
+signal(source,speaker)	=	hgroup("",selecteur(source):par(m,M+1,_*(LegendreP(m,gamma))):>_*(weight1(speaker)))
 			with {
 			gamma=angle(t(source),d(source),azimuth(speaker),elevation(speaker));
 			};

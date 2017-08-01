@@ -5,7 +5,7 @@ declare license     "GPL";
 declare copyright   "(c) Pierre Lecomte 2016"; 
 
 import("stdfaust.lib");
-import("lib/gui.lib");
+import("gui.lib");
 
 //Description : this tool converts HOA signals defined with a convention 1 to HOA signals defined with convention 2. Proposed conventions are ACN N3D, ACN SN3D, FuMa. For ACN to FuMa, the ordering change is as in [1]
 //[1] https://en.wikipedia.org/wiki/Ambisonic_data_exchange_formats

@@ -1,4 +1,4 @@
-declare name        "NF-HOA encoder for %N sources to order M";
+declare name        "NF-HOA encoder for N sources to order M";
 declare version     "1.0";
 declare author      "Pierre Lecomte";
 declare license     "GPL";
@@ -13,9 +13,9 @@ declare copyright   "(c) Pierre Lecomte 2014";
 // Outputs: (M+1)^2
 
 import("stdfaust.lib");
-import("lib/nfc.lib");
-import("lib/ymn.lib");
-import("lib/gui.lib");
+import("nfc.lib");
+import("ymn.lib");
+import("gui.lib");
 
 // maximum order for Ambisonics components
 M	=	5;
@@ -33,4 +33,4 @@ r2(i)	=	nentry("[~]Speaker Radius %2i", 1.07, 0.5, 10, 0.01); // louspeaker radi
 
 selecteur(i)	=	hgroup("Source %2i",_*(g(i))<:(*(spherical(i)),*(1-spherical(i)))<:(*(r2(i)/r(i))<:par(m,M+1,nf(m,r(i),r2(i))<:par(i,2*m+1,_))),(_<:si.bus((M+1)^2)):>yvec((M+1)^2,t(i),d(i)));
 
-process	=	hgroup("",vgroup("Parameters",par(i,N,_<:selecteur(i))):>si.bus((M+1)^2):vgroup("[~]Outputs",par(i,M+1,metermute(i))));
+process	=	hgroup("",vgroup("Parameters",par(i,N,_<:selecteur(i))):>si.bus((M+1)^2):hgroup("[~]Outputs",par(i,M+1,metermute(i))));

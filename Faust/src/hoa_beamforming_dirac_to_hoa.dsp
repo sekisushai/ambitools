@@ -13,10 +13,10 @@ declare copyright   "(c) Pierre Lecomte 2016";
 // Outputs: (M1+1)^2
 
 import("stdfaust.lib");
-import("lib/lebedev.lib");
-import("lib/ymn.lib");
-import("lib/nfc.lib");
-import("lib/gui.lib");
+import("lebedev.lib");
+import("ymn.lib");
+import("nfc.lib");
+import("gui.lib");
 
 // Order of the input HOA scene.
 M	=	5;

@@ -16,9 +16,9 @@ declare copyright   "(c) Pierre Lecomte 2016";
 // CAUTION : this code could take long time to compile for higher order M. It is normal in regards of the size of the matrix involved ((M+1)^2*(M+1)^2*(M1+1)^2).
 
 import("stdfaust.lib");
-import("lib/ymn.lib");
-import("lib/cijk.lib");
-import("lib/gui.lib");
+import("ymn.lib");
+import("cijk.lib");
+import("gui.lib");
 
 // Maximum order of original HOA scene
 M	=	3;

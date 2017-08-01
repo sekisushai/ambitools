@@ -13,7 +13,7 @@ declare copyright   "(c) Pierre Lecomte 2015";
 // Outputs: (M+1)^2
 
 import("stdfaust.lib");
-import("lib/ymn.lib");
+import("ymn.lib");
 
 // Maximum required order
 M	=	5; 

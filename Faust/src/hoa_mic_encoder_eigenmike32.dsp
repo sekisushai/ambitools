@@ -16,9 +16,9 @@ declare copyright   "(c) Pierre Lecomte 2015";
 // [3] P. Lecomte, P.-A. Gauthier, C. Langrenne, A. Garcia, and A. Berry, “On the use of a Lebedev grid for Ambisonics,” in Audio Engineering Society Convention 139, 2015.
 
 import("stdfaust.lib");
-import("lib/eigenmike32.lib");
-import("lib/ymn.lib");
-import("lib/gui.lib");
+import("eigenmike32.lib");
+import("ymn.lib");
+import("gui.lib");
 
 // Maximum order M=4 for eigenmike32 [2].
 M	=	4; 
