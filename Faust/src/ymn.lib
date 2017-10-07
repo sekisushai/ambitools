@@ -16,6 +16,7 @@ declare copyright   "(c) Pierre Lecomte 2017";
 // [5] https://en.wikipedia.org/wiki/Associated_Legendre_polynomials
 // [6] https://en.wikipedia.org/wiki/Gamma_function
 // [7] Arfken, G. (1985). Mathematical Methods for Physicists (3rd ed.). New York: Academic press. p.548
+// [8] https://en.wikipedia.org/wiki/Chebyshev_polynomials
 
 import("stdfaust.lib");
 
@@ -47,6 +48,15 @@ alegendre(m,n,x) =  case{
                 (0,0,0) => 1/(m-n)*((2*m-1)*x*alegendre(m-1,n,x)-(m-1+n)*alegendre(m-2,n,x));
                 }(n==m,n==(m-1),m==0);
                 
+                
+// CHEBYSHEV POLYNOMIALS 2ND KIND
+chebyshev2(n,x) = case{
+                (0) => 1;
+                (1) => 2*x;
+                (n) => 2*x*chebyshev2(n-1,x) - chebyshev2(n-2,x);
+                }(n);
+                
+
 // N3D NORM
 n3d(m,n) =  sqrt((2*m+1)*factorial(m-abs(n))/factorial(m+abs(n)))*
             case{
@@ -57,8 +67,10 @@ n3d(m,n) =  sqrt((2*m+1)*factorial(m-abs(n))/factorial(m+abs(n)))*
 // SPHERICAL HARMONIC         
 ymn(m,n,t,d) = n3d(m,n)*alegendre(m,abs(n),sin(d))*
             case{
-            (1) => sin(abs(n)*t);
-            (0) => cos(abs(n)*t);
+            //(1) => sin(abs(n)*t);
+            (1) => chebyshev2(abs(n)-1,cos(t))*sin(t); // [8];
+            //(0) => cos(abs(n)*t);
+            (0) => ma.chebychev(abs(n),cos(t)); // [8]
             }(n<0);
 
 // DEFINITION WITH 1 SUBSCRIPT ACN
