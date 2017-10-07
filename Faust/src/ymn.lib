@@ -1,5 +1,5 @@
 declare name        "Spherical Harmonics library";
-declare version     "1.0";
+declare version     "2.0";
 declare author      "Pierre Lecomte";
 declare license     "GPL";
 declare copyright   "(c) Pierre Lecomte 2017"; 
@@ -14,19 +14,23 @@ declare copyright   "(c) Pierre Lecomte 2017";
 // [3] Lecomte, P., Gauthier, P.-A., Langrenne, C., Garcia, A., & Berry, A. (2015). On the use of a Lebedev grid for Ambisonics. In Audio Engineering Society Convention 139. New York.
 // [4] http://ambisonics.ch/standards/channels/
 // [5] https://en.wikipedia.org/wiki/Associated_Legendre_polynomials
+// [6] https://en.wikipedia.org/wiki/Gamma_function
+// [7] Arfken, G. (1985). Mathematical Methods for Physicists (3rd ed.). New York: Academic press. p.548
 
-// FACTORIAL
-factorial = case{
-                (0) => 1;
-                (n) => n*factorial(n-1);
-                };
+import("stdfaust.lib");
 
-// DOUBLE FACTORIAL
-factorial2 = case{
-                (0) => 1;
-                (1) => 1;
-                (n) => n*factorial2(n-2);
-                };
+// FACTORIAL [6]
+factorial(n) = ma.gamma(n+1);
+
+
+// DOUBLE FACTORIAL [7]
+factorial2(n) = 2^(n/2 + 1/4*(1 - cos(n*ma.PI)))*ma.PI^(1/4*(-1 + cos(n*ma.PI)))*ma.gamma(1+n/2);
+
+//factorial2 = case{
+//                (0) => 1;
+//                (1) => 1;
+//                (n) => n*factorial2(n-2);
+//                };
 
 // LEGENDRE POLYNOMIALS
 legendre(m,x) = case{
@@ -44,7 +48,8 @@ alegendre(m,n,x) =  case{
                 }(n==m,n==(m-1),m==0);
                 
 // N3D NORM
-n3d(m,n) =  sqrt((2*m+1)*factorial(m-abs(n))/factorial(m+abs(n)))*case{
+n3d(m,n) =  sqrt((2*m+1)*factorial(m-abs(n))/factorial(m+abs(n)))*
+            case{
             (0) => 1;
             (n) => sqrt(2);
             }(n);
