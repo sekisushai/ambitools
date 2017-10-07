@@ -87,3 +87,14 @@ yvec(i,t,d) = par(j,i,_*yacn(j,t,d));
 
 // GAMMA ANGLE BETWEEN VIRTUAL SOURCE (T1,D1) AND SPEAKER (T2,D2)
 angle(t1,d1,t2,d2) = cos(d1)*cos(d2)*cos(t1-t2)+sin(d1)*sin(d2);
+
+// BUS WITH GAIN
+buswg(c) = R(c) with {
+  R((c,cl)) = R(c),R(cl);
+  R(1)      = _;
+  //R(0)      = !;
+  R(0)      = !:0; // if you need to preserve the number of outputs
+  R(float(0)) = R(0);
+  R(float(1)) = R(1);
+  R(c)      = *(c);
+};
