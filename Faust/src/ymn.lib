@@ -1,13 +1,14 @@
 declare name        "Spherical Harmonics library";
-declare version     "1.0";
+declare version     "2.0";
 declare author      "Pierre Lecomte";
 declare license     "GPL";
 declare copyright   "(c) Pierre Lecomte 2016"; 
 
-// Description: Library of N3D spherical harmonics [1] up to order 5 + extra manipulation functions.
+// Description: Library of N3D spherical harmonics [1] up to order 6 + extra manipulation functions.
 // ACN numbering [2], i.e ACN=m^2+n+sigma*1 when spherical harmonics with 3 subscripts, ACN=m^2+n when 2 subscripts are used
 // Spherical coordinates as in [3]
 // Definition according to [4]
+// Version 2.0: cartesian definitions of spherical harmonics
 
 // References: 
 // [1] Daniel, J. (2000). Représentation de champs acoustiques, application à la transmission et à la reproduction de scènes sonores complexes dans un contexte multimédia. Université Paris 6, Paris, France.
@@ -20,29 +21,41 @@ import("stdfaust.lib");
 // ORDER 0
 n3d(0,0) = 1;
 
-Legendre(0,0,d) = 1;
+// Legendre(0,0,d) = 1;
 
 LegendreP(0,x) = 1;
+
+ymncart(0,0,x,y,z) = 1;
 
 // ORDER 1
 n3d(1,1) = sqrt(3);
   n3d(1,0) = sqrt(3);
 
-Legendre(1,1,d) = cos(d);
-  Legendre(1,0,d)= sin(d);
+// Legendre(1,1,d) = cos(d);
+//   Legendre(1,0,d)= sin(d);
 
 LegendreP(1,x) = x;
+
+ymncart(1,-1,x,y,z) = y;
+    ymncart(1,0,x,y,z) = z;
+ymncart(1,1,x,y,z) = x;
 
 // ORDER 2
 n3d(2,2) = sqrt(15)/2;
   n3d(2,1) = sqrt(15)/2;
     n3d(2,0) = sqrt(5)/2;
     
-Legendre(2,2,d) = cos(d)^2;
-  Legendre(2,1,d) = sin(2*d);
-   Legendre(2,0,d) = 3*sin(d)^2-1;
+// Legendre(2,2,d) = cos(d)^2;
+//   Legendre(2,1,d) = sin(2*d);
+//    Legendre(2,0,d) = 3*sin(d)^2-1;
 
 LegendreP(2,x) = (1/2)*(-1 + 3*x^2);
+
+ymncart(2,-2,x,y,z) = 2*x*y;
+    ymncart(2,-1,x,y,z) = 2*y*z;
+        ymncart(2,0,x,y,z) = 3*z^2 -1;
+    ymncart(2,1,x,y,z) = 2*x*z;
+ymncart(2,2,x,y,z) = x^2-y^2;
 
 // ORDER 3
 n3d(3,3) = sqrt(35/8);
@@ -50,12 +63,20 @@ n3d(3,3) = sqrt(35/8);
     n3d(3,1) = sqrt(21/8);
       n3d(3,0) = sqrt(7)/2;
       
-Legendre(3,3,d) = cos(d)^3;
-  Legendre(3,2,d) = sin(d)*cos(d)^2;
-    Legendre(3,1,d) = cos(d)*(5*sin(d)^2-1);
-      Legendre(3,0,d) = sin(d)*(5*sin(d)^2-3);
+// Legendre(3,3,d) = cos(d)^3;
+//   Legendre(3,2,d) = sin(d)*cos(d)^2;
+//     Legendre(3,1,d) = cos(d)*(5*sin(d)^2-1);
+//       Legendre(3,0,d) = sin(d)*(5*sin(d)^2-3);
       
 LegendreP(3,x) = (1/2)*(-3*x + 5*x^3);
+
+ymncart(3,-3,x,y,z) = y*(3*x^2-y^2);
+    ymncart(3,-2,x,y,z) = 2*z*x*y;
+        ymncart(3,-1,x,y,z) = y*(5*z^2-1);
+            ymncart(3,0,x,y,z) = z*(5*z^2-3);
+        ymncart(3,1,x,y,z) = x*(5*z^2-1);
+    ymncart(3,2,x,y,z) = z*(x^2-y^2);
+ymncart(3,3,x,y,z) = x*(x^2-3*y^2);
 
 // ORDER 4
 n3d(4,4) = (3/8)*sqrt(35);
@@ -64,13 +85,24 @@ n3d(4,4) = (3/8)*sqrt(35);
       n3d(4,1) = (3/4)*sqrt(5/2);
 	n3d(4,0) = (3/8);
 
-Legendre(4,4,d) = cos(d)^4;
-  Legendre(4,3,d) = sin(d)*cos(d)^3;
-    Legendre(4,2,d) = (7*sin(d)^2-1)*cos(d)^2;
-      Legendre(4,1,d) = sin(2*d)*(7*sin(d)^2 -3);
-	Legendre(4,0,d) = 35*sin(d)^4-30*sin(d)^2+3;
+// Legendre(4,4,d) = cos(d)^4;
+//   Legendre(4,3,d) = sin(d)*cos(d)^3;
+//     Legendre(4,2,d) = (7*sin(d)^2-1)*cos(d)^2;
+//       Legendre(4,1,d) = sin(2*d)*(7*sin(d)^2 -3);
+// 	Legendre(4,0,d) = 35*sin(d)^4-30*sin(d)^2+3;
 
 LegendreP(4,x) = (1/8)*(3-30*x^2+35*x^4);
+
+ymncart(4,-4,x,y,z) = 4*x*y*(x^2-y^2);
+    ymncart(4,-3,x,y,z) = (3*x^2-y^2)*y*z;
+        ymncart(4,-2,x,y,z) = 2*x*y*(7*z^2-1);
+            ymncart(4,-1,x,y,z) = 2*y*z*(7*z^2-3);
+                ymncart(4,0,x,y,z) = 35*z^4-30*z^2+3;
+            ymncart(4,1,x,y,z) = 2*x*z*(7*z^2-3);
+        ymncart(4,2,x,y,z) = (x^2-y^2)*(7*z^2-1);
+    ymncart(4,3,x,y,z) = (x^2-3*y^2)*x*z;
+ymncart(4,4,x,y,z) = x^4-6*x^2*y^2+y^4;
+
 
 // ORDER 5
 n3d(5,5) = (3/8)*sqrt(77/2);
@@ -80,14 +112,27 @@ n3d(5,5) = (3/8)*sqrt(77/2);
 	n3d(5,1) = sqrt(165)/8;
 	  n3d(5,0) = sqrt(11)/8;
 
-Legendre(5,5,d) = cos(d)^5;
-  Legendre(5,4,d) = sin(d)*cos(d)^4;
-    Legendre(5,3,d) = (9*sin(d)^2-1)*cos(d)^3;
-      Legendre(5,2,d) = sin(d)*(3*sin(d)^2-1)*cos(d)^2;
-	Legendre(5,1,d) = (21*sin(d)^4 - 14*sin(d)^2 + 1)*cos(d);
-	  Legendre(5,0,d) = 63*sin(d)^5 - 70*sin(d)^3 + 15*sin(d);
+// Legendre(5,5,d) = cos(d)^5;
+//   Legendre(5,4,d) = sin(d)*cos(d)^4;
+//     Legendre(5,3,d) = (9*sin(d)^2-1)*cos(d)^3;
+//       Legendre(5,2,d) = sin(d)*(3*sin(d)^2-1)*cos(d)^2;
+// 	Legendre(5,1,d) = (21*sin(d)^4 - 14*sin(d)^2 + 1)*cos(d);
+// 	  Legendre(5,0,d) = 63*sin(d)^5 - 70*sin(d)^3 + 15*sin(d);
       
 LegendreP(5,x)=(1/8)*(15*x-70*x^3+63*x^5);
+
+ymncart(5,-5,x,y,z) = y*(5*x^4-10*x^2*y^2+y^4);
+    ymncart(5,-4,x,y,z) = 4*x*y*z*(x^2-y^2);
+        ymncart(5,-3,x,y,z) = y*(y^4-2*x^2*y^2-3*x^4-8*y^2*z^2+24*x^2*z^2);
+            ymncart(5,-2,x,y,z) = 2*x*y*z*(2*z^2-x^2-y^2);
+                ymncart(5,-1,x,y,z) = y*(x^4+2*x^2*y^2+y^4-12*x^2*z^2-12*y^2*z^2+8*z^4);
+                    ymncart(5,0,x,y,z) = z*(63*z^4-70*z^2+15);
+                ymncart(5,1,x,y,z) = x*(x^4+2*x^2*y^2+y^4-12*x^2*z^2-12*y^2*z^2+8*z^4);
+            ymncart(5,2,x,y,z) = z*(2*x^2*z^2-2*y^2*z^2-x^4+y^4);
+        ymncart(5,3,x,y,z) = x*(2*x^2*y^2+8*x^2*z^2-24*y^2*z^2-x^4+3*y^4);
+    ymncart(5,4,x,y,z) = z*(x^4-6*x^2*y^2+y^4);
+ymncart(5,5,x,y,z) = x*(x^4-10*x^2*y^2+5*y^4);
+
 
 // ORDER 6
 n3d(6,6) = (1/16)*sqrt(3003/2);
@@ -98,24 +143,47 @@ n3d(6,6) = (1/16)*sqrt(3003/2);
 	  n3d(6,1) = (1/16)*sqrt(273);
 	    n3d(6,0) = sqrt(13)/16;
 
-Legendre(6,6,d) = cos(d)^6;
-  Legendre(6,5,d)	= sin(d)*cos(d)^5;
-    Legendre(6,4,d) = (11*sin(d)^2 -1)*cos(d)^4;
-      Legendre(6,3,d) = sin(d)*(11*sin(d)^2-3)*cos(d)^3;
-	Legendre(6,2,d) = (33*sin(d)^4 - 18*sin(d)^2 +1)*cos(d)^2;
-	  Legendre(6,1,d) = sin(2*d)*(33*sin(d)^4 - 30*sin(d)^2 +5);
-	    Legendre(6,0,d) = 231*sin(d)^6 - 315*sin(d)^4 + 105*sin(d)^2 - 5;
+// Legendre(6,6,d) = cos(d)^6;
+//   Legendre(6,5,d)	= sin(d)*cos(d)^5;
+//     Legendre(6,4,d) = (11*sin(d)^2 -1)*cos(d)^4;
+//       Legendre(6,3,d) = sin(d)*(11*sin(d)^2-3)*cos(d)^3;
+// 	Legendre(6,2,d) = (33*sin(d)^4 - 18*sin(d)^2 +1)*cos(d)^2;
+// 	  Legendre(6,1,d) = sin(2*d)*(33*sin(d)^4 - 30*sin(d)^2 +5);
+// 	    Legendre(6,0,d) = 231*sin(d)^6 - 315*sin(d)^4 + 105*sin(d)^2 - 5;
+
+ymncart(6,-6,x,y,z) = 2*x*y*(3*x^4 - 10*x^2*y^2 + 3*y^4);
+    ymncart(6,-5,x,y,z) = y*z*(5*x^4-10*x^2*y^2+y^4);
+        ymncart(6,-4,x,y,z) = 4*x*y*(-1*x^4 + y^4 + 10*x^2*z^2 - 10*y^2*z^2);
+            ymncart(6,-3,x,y,z) = y*z*(-9*x^4+3*y^4-6*x^2*y^2 + 24*x^2*z^2 - 8*y^2*z^2);
+                ymncart(6,-2,x,y,z) = 2*x*y*(x^4+y^4+16*z^4+2*x^2*y^2 - 16*x^2*z^2 - 16*y^2*z^2);
+                    ymncart(6,-1,x,y,z) = 2*y*z*(5*x^4+5*y^4+8*z^4+10*x^2*y^2-20*x^2*z^2-20*y^2*z^2);
+                        ymncart(6,0,x,y,z) = 231*z^6-315*z^4+105*z^2-5;
+                    ymncart(6,1,x,y,z) = 2*x*z*(5*x^4+5*y^4+8*z^4+10*x^2*y^2-20*x^2*z^2-20*y^2*z^2);
+                ymncart(6,2,x,y,z) = x^6-1*y^6+x^4*y^2-1*x^2*y^4-16*x^4*z^2+16*x^2*z^4+16*y^4*z^2-16*y^2*z^4;
+            ymncart(6,3,x,y,z) = x*z*(-3*x^4+6*x^2*y^2+8*x^2*z^2-24*y^2*z^2+9*y^4);
+        ymncart(6,4,x,y,z) = -1*x^6+5*x^4*y^2+10*x^4*z^2+5*x^2*y^4+10*y^4*z^2-y^6-60*x^2*y^2*z^2;
+    ymncart(6,5,x,y,z) = x*z*(x^4-10*x^2*y^2+5*y^4);
+ymncart(6,6,x,y,z) = x^6-15*x^4*y^2+15*x^2*y^4-y^6;
 
 LegendreP(6,x)=(1/16)*(-5+105*x^2-315*x^4+231*x^6);
 
+
 // DEFINITION WITH 2 SUBSCRIPTS (m,n)
-ymn(m,0,t,d)=n3d(m,0)*Legendre(m,0,d); // first case if n=0,
-ymn(m,n,t,d)=n3d(m,abs(n))*Legendre(m,abs(n),d)*
-		(
-		cos(abs(n)*t)*(abs(n)/n==1) 
-		+
-		sin(abs(n)*t)*(abs(n)/n==-1)
-		);
+ymn(m,n,t,d) = n3d(m,abs(n))*ymncart(m,n,x,y,z) with
+            {   x = cos(t)*cos(d);
+                y = sin(t)*cos(d);
+                z = sin(d);
+            };
+
+// DEFINITION WITH 2 SUBSCRIPTS (m,n)
+// ymn(m,0,t,d)=n3d(m,0)*Legendre(m,0,d); // first case if n=0,
+// 
+// 
+// ymn(m,n,t,d)=   case{
+//                 (1)     => n3d(m,abs(n))*Legendre(m,abs(n),d)*cos(abs(n)*t);
+//                 (-1)    => n3d(m,abs(n))*Legendre(m,abs(n),d)*sin(abs(n)*t);
+//                 }(abs(n)/n);
+
 
 // DEFINITION WITH 1 SUBSCRIPT ACN
 acn(m,n)=m^2+m+n;
