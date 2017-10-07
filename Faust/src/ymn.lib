@@ -44,7 +44,7 @@ alegendre(m,n,x) =  case{
                 }(n==m,n==(m-1),m==0);
                 
 // N3D NORM
-n3d(m,n) =  case{
+n3d(m,n) =  sqrt((2*m+1)*factorial(m-abs(n))/factorial(m+abs(n)))*case{
             (0) => 1;
             (n) => sqrt(2);
             }(n);
