@@ -41,7 +41,7 @@ r2	=	nentry("[~]Speaker Radius", 1.07, 0.5, 10, 0.01); // louspeaker radius
 // For plane wave, gain multiplication by 4*PI*r2; for spherical wave, gain multiplication by (4*PI*r2)/(4*PI*r(i)) [2].
 selecteur(i)	=	_*(g(i))<:(*(spherical(i)),*(1-spherical(i)))<:(*(r2/r(i))<:par(m,M+1,nf(m,r(i),r2))),(*(r2)<:par(m,M+1,nfc(m,r2))):>par(m,M+1,*(2*m+1)):mute;
 
-signal(source,speaker)	=	hgroup("",selecteur(source):par(m,M+1,_*(legendrep(m,gamma))):>_*(weight3(speaker)))
+signal(source,speaker)	=	hgroup("",selecteur(source):par(m,M+1,_*(legendre(m,gamma))):>_*(weight3(speaker)))
 			with {
 			gamma=angle(t(source),d(source),azimuth(speaker),elevation(speaker));
 			};
