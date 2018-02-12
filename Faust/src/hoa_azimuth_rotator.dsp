@@ -16,7 +16,7 @@ import("stdfaust.lib");
 import("ymn.lib");
 
 // Maximum required order
-M	=	5; 
+M	=	10; 
 
 ins=(M+1)^2; // Number of inputs (= number of outputs).
 

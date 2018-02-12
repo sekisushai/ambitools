@@ -17,7 +17,7 @@ import("gui.lib");
 // Output ACN: 0    2   3   1   6   8   4   5   7   15  13  11  9   10  12  14
 
 // Maximum required order (M = 3 for FuMa).
-M	=	5;
+M	=	3;
 
 // Number of inputs
 ins     =       (M+1)^2;

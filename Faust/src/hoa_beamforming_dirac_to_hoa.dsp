@@ -19,7 +19,7 @@ import("nfc.lib");
 import("gui.lib");
 
 // Order of the input HOA scene.
-M	=	5;
+M	=	10;
 // Order of the ouptut HOA scene. For the moment, as to be equal to M because of the Bypass..
 M1	=	M;
 

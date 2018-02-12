@@ -18,7 +18,7 @@ ud=checkbox("up-down");
 lr=checkbox("left-right");
 fb=checkbox("front-back");
 
-M	=	5;
+M	=	10;
 
 //up-down switching: all spherical harmonics with order and degree as m+n odd
 updown = par(m,M+1,par(i,2*m+1,term
