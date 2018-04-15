@@ -52,11 +52,11 @@ compteurhaut2	=	ba.countup(duree*ma.SR,trig)/(duree*ma.SR);
 compteurbas2	=	ba.countdown(duree*ma.SR,1-trig)/(duree*ma.SR);
 
 // Bypass with manual crossfade
-focus = vslider("[2]Focus", 0, 0, 1, 0.0001);
+focus = vslider("[8]Focus", 0, 0, 1, 0.0001);
 sufoc = 1 - focus;
 
 // swith between the 2 crossfade options
-switch	      =	 checkbox("Timer/Manual");
+switch	      =	 checkbox("[7]Timer/Manual");
 crossfade1(s) =  _<:select2(s,_<:select2(trig,*(vol*compteurbas1),*(vol*compteurhaut1)),_*(vol*focus));    
 crossfade2(s) =  _<:select2(s,_<:select2(trig,*(compteurhaut2),*(compteurbas2)),_*(sufoc));
 	

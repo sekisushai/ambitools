@@ -1219,9 +1219,6 @@ class mydsp : public dsp {
 	
 	virtual void buildUserInterface(UI* ui_interface) {
 		ui_interface->openHorizontalBox("Parameters");
-		ui_interface->addCheckButton("Timer/Manual", &fCheckbox0);
-		ui_interface->declare(&fVslider0, "2", "");
-		ui_interface->addVerticalSlider("Focus", &fVslider0, 0.0, 0.0, 1.0, 0.0001);
 		ui_interface->declare(0, "2", "");
 		ui_interface->openVerticalBox("On/Off");
 		ui_interface->addCheckButton("On", &fCheckbox1);
@@ -1236,6 +1233,10 @@ class mydsp : public dsp {
 		ui_interface->addVerticalSlider("Azimuth", &fVslider2, 0.0, -3.1415926535897931, 3.1415926535897931, 0.10000000000000001);
 		ui_interface->declare(&fVslider1, "6", "");
 		ui_interface->addVerticalSlider("Elevation", &fVslider1, 0.0, -1.5707963267948966, 1.5707963267948966, 0.10000000000000001);
+		ui_interface->declare(&fCheckbox0, "7", "");
+		ui_interface->addCheckButton("Timer/Manual", &fCheckbox0);
+		ui_interface->declare(&fVslider0, "8", "");
+		ui_interface->addVerticalSlider("Focus", &fVslider0, 0.0, 0.0, 1.0, 0.0001);
 		ui_interface->closeBox();
 		
 	}
