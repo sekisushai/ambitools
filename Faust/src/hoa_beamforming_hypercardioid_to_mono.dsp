@@ -14,6 +14,7 @@ declare copyright   "(c) Pierre Lecomte 2015";
 
 import("stdfaust.lib");
 import("ymn.lib");
+import("cijk.lib");
 import("gui.lib");
 
 // Maximum order of original HOA scene.
@@ -25,7 +26,9 @@ vol	=	vslider("[2]Output Gain", 0, -10, 10, 0.1) : ba.db2linear : si.smooth(0.99
 t	=	vslider("[3]Azimuth", 0, 0, 360, 0.1)*ma.PI/180;
 d	=	vslider("[4]Elevation", 0, -90, 90, 0.1)*ma.PI/180;
 
-order	=	int(vslider("[1]Order",1,1,M,1));
+order(s)	=	hslider("Order[style:knob]",0,0,M,0.0001)<:select2(s,int,_); // Order of the beampattern used for filtering, order=0 is a bypass.
+crossfade(i,x) = par(j,i,_*(1-abs(x-j):max(0))):>_; // linear crossfade between order.
+step = checkbox("Int/Float");
 
 norm(m)	=	1/sqrt(2*m+1);
 
@@ -50,4 +53,4 @@ g(beam,m)	=	hypercoeff(beam,m)*norm(m);
 
 gvec(beam,M)	=	par(m,M+1,par(n,2*m+1,_*g(beam,m)));
 
-process		=	hgroup("Inputs",par(i,M+1,metermute(i)):yvec((M+1)^2,t,d)<:par(m,M,gvec(m+1,M):>_*vol):ba.selectn(M,order-1)):hgroup("Output",hmeter);
+process		=	hgroup("Inputs",par(i,M+1,metermute(i)):yvec((M+1)^2,t,d)<:par(m,M,gvec(m+1,M):>_*vol):crossfade(M,order(step)-1)):hgroup("Output",hmeter);

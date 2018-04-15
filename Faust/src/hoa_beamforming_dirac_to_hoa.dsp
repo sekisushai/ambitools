@@ -43,7 +43,7 @@ delta0	=	vslider("[6]Elevation", 0, -90, 90, 0.1)*ma.PI/180;
 // Output gain
 vol	=	vslider("[4]Gain[unit:dB]", 0, -20, 20, 0.1) : ba.db2linear : si.smooth(0.999);
 
-// Bypass with crossfader
+// Bypass with timed crossfader
 trig	=	vgroup("[2]On/Off",checkbox("On"));
 duree	=	nentry("[3]Crossfade[unit:s]",1,0.1,10,0.1);
 compteurhaut1	=	ba.countup(duree*ma.SR,1-trig)/(duree*ma.SR);
@@ -51,14 +51,23 @@ compteurbas1	=	ba.countdown(duree*ma.SR,trig)/(duree*ma.SR);
 compteurhaut2	=	ba.countup(duree*ma.SR,trig)/(duree*ma.SR);
 compteurbas2	=	ba.countdown(duree*ma.SR,1-trig)/(duree*ma.SR);
 
+// Bypass with manual crossfade
+focus = vslider("[2]Focus", 0, 0, 1, 0.0001);
+sufoc = 1 - focus;
+
+// swith between the 2 crossfade options
+switch	      =	 checkbox("Timer/Manual");
+crossfade1(s) =  _<:select2(s,_<:select2(trig,*(vol*compteurbas1),*(vol*compteurhaut1)),_*(vol*focus));    
+crossfade2(s) =  _<:select2(s,_<:select2(trig,*(compteurhaut2),*(compteurbas2)),_*(sufoc));
+	
 // ALTERNATIVE VERSION to duplicate first component (pressure), i.e. for demo without ambisonics decoding playback
 // updownsig1=par(i,36,_<:select2(trig,*(vol*compteurbas1),*(vol*compteurhaut1))):ytot(theta0,delta0):>_<:ytot(theta0,delta0):((_<:(_,_)),bus(35));
 // updownsig2=par(i,36,_<:select2(trig,*(compteurhaut2),*(compteurbas2))):((_<:(_,_)),bus(35));
 // selecteur=hgroup("Parameters",vgroup("[1]Inputs",bus(36):(hgroup("0-3",meterm(0),meterm(1),meterm(2),meterm(3)),hgroup("4-5",meterm(4),meterm(5))))<:((updownsig2),(updownsig1)):>bus(37));
 // process=selecteur:(_,vgroup("Outputs",(hgroup("0-3",meterm(0),meterm(1),meterm(2),meterm(3)),hgroup("4-5",meterm(4),meterm(5)))));
 
-updownsig1	=	par(i,ins,_<:select2(trig,*(vol*compteurbas1),*(vol*compteurhaut1))):yvec(ins,theta0,delta0):>_*(1/(4*ma.PI))<:yvec(outs,theta0,delta0):si.bus(outs);
-updownsig2	=	par(i,ins,_<:select2(trig,*(compteurhaut2),*(compteurbas2))):si.bus(outs);
+updownsig1	=	par(i,ins,crossfade1(switch)):yvec(ins,theta0,delta0):>_*(1/(4*ma.PI))<:yvec(outs,theta0,delta0):si.bus(outs);
+updownsig2	=	par(i,ins,crossfade2(switch)):si.bus(outs);
 selecteur	=	hgroup("Parameters",hgroup("[1]Inputs",insvumeter)<:((updownsig2),(updownsig1)):>si.bus(outs));
 
 matrix(n,m)	=	par(i,m,buswg(row(i)):>_);
