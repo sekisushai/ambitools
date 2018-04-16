@@ -4,7 +4,7 @@ copyright: "(c) Pierre Lecomte 2016"
 license: "GPL"
 name: "HOABeamDirac2HOA1"
 version: "1.0"
-Code generated with Faust 2.5.21 (https://faust.grame.fr)
+Code generated with Faust 2.5.23 (https://faust.grame.fr)
 Compilation options: cpp, -double -ftz 0
 ------------------------------------------------------------ */
 
@@ -637,17 +637,19 @@ class mydsp : public dsp {
  private:
 	
 	FAUSTFLOAT fCheckbox0;
+	FAUSTFLOAT fCheckbox1;
 	int fSamplingFreq;
 	double fConst0;
 	double fConst1;
 	FAUSTFLOAT fEntry0;
 	double fRec0[2];
 	double fRec1[2];
+	FAUSTFLOAT fVslider0;
 	double fConst2;
 	double fConst3;
-	FAUSTFLOAT fVslider0;
 	FAUSTFLOAT fVslider1;
 	FAUSTFLOAT fVslider2;
+	FAUSTFLOAT fVslider3;
 	double fRec2[2];
 	double fRec3[2];
 	double fRec4[2];
@@ -660,6 +662,7 @@ class mydsp : public dsp {
 		m->declare("basics.lib/name", "Faust Basic Element Library");
 		m->declare("basics.lib/version", "0.0");
 		m->declare("copyright", "(c) Pierre Lecomte 2016");
+		m->declare("filename", "HOABeamDirac2HOA1");
 		m->declare("gui.lib/author", "Pierre Lecomte");
 		m->declare("gui.lib/copyright", "(c) Pierre Lecomte 2016");
 		m->declare("gui.lib/license", "GPL");
@@ -773,10 +776,12 @@ class mydsp : public dsp {
 	
 	virtual void instanceResetUserInterface() {
 		fCheckbox0 = FAUSTFLOAT(0.0);
+		fCheckbox1 = FAUSTFLOAT(0.0);
 		fEntry0 = FAUSTFLOAT(1.0);
 		fVslider0 = FAUSTFLOAT(0.0);
 		fVslider1 = FAUSTFLOAT(0.0);
 		fVslider2 = FAUSTFLOAT(0.0);
+		fVslider3 = FAUSTFLOAT(0.0);
 		
 	}
 	
@@ -826,18 +831,22 @@ class mydsp : public dsp {
 		ui_interface->openHorizontalBox("Parameters");
 		ui_interface->declare(0, "2", "");
 		ui_interface->openVerticalBox("On/Off");
-		ui_interface->addCheckButton("On", &fCheckbox0);
+		ui_interface->addCheckButton("On", &fCheckbox1);
 		ui_interface->closeBox();
 		ui_interface->declare(&fEntry0, "3", "");
 		ui_interface->declare(&fEntry0, "unit", "s");
 		ui_interface->addNumEntry("Crossfade", &fEntry0, 1.0, 0.10000000000000001, 10.0, 0.10000000000000001);
-		ui_interface->declare(&fVslider2, "4", "");
-		ui_interface->declare(&fVslider2, "unit", "dB");
-		ui_interface->addVerticalSlider("Gain", &fVslider2, 0.0, -20.0, 20.0, 0.10000000000000001);
-		ui_interface->declare(&fVslider1, "5", "");
-		ui_interface->addVerticalSlider("Azimuth", &fVslider1, 0.0, -3.1415926535897931, 3.1415926535897931, 0.10000000000000001);
-		ui_interface->declare(&fVslider0, "6", "");
-		ui_interface->addVerticalSlider("Elevation", &fVslider0, 0.0, -1.5707963267948966, 1.5707963267948966, 0.10000000000000001);
+		ui_interface->declare(&fVslider3, "4", "");
+		ui_interface->declare(&fVslider3, "unit", "dB");
+		ui_interface->addVerticalSlider("Gain", &fVslider3, 0.0, -20.0, 20.0, 0.10000000000000001);
+		ui_interface->declare(&fVslider2, "5", "");
+		ui_interface->addVerticalSlider("Azimuth", &fVslider2, 0.0, -3.1415926535897931, 3.1415926535897931, 0.10000000000000001);
+		ui_interface->declare(&fVslider1, "6", "");
+		ui_interface->addVerticalSlider("Elevation", &fVslider1, 0.0, -1.5707963267948966, 1.5707963267948966, 0.10000000000000001);
+		ui_interface->declare(&fCheckbox0, "7", "");
+		ui_interface->addCheckButton("Timer/Manual", &fCheckbox0);
+		ui_interface->declare(&fVslider0, "8", "");
+		ui_interface->addVerticalSlider("Focus", &fVslider0, 0.0, 0.0, 1.0, 0.0001);
 		ui_interface->closeBox();
 		
 	}
@@ -851,41 +860,44 @@ class mydsp : public dsp {
 		FAUSTFLOAT* output1 = outputs[1];
 		FAUSTFLOAT* output2 = outputs[2];
 		FAUSTFLOAT* output3 = outputs[3];
-		double fSlow0 = double(fCheckbox0);
-		int iSlow1 = int(fSlow0);
-		double fSlow2 = double(fEntry0);
-		double fSlow3 = (fConst1 / fSlow2);
-		int iSlow4 = (fSlow0 > 0.0);
-		double fSlow5 = (fConst0 * fSlow2);
-		int iSlow6 = ((1.0 - fSlow0) > 0.0);
-		double fSlow7 = sin(double(fVslider0));
-		double fSlow8 = pow((1.0 - mydsp_faustpower2_f(fSlow7)), 0.5);
-		double fSlow9 = (fConst3 * fSlow8);
-		double fSlow10 = double(fVslider1);
-		double fSlow11 = sin(fSlow10);
-		double fSlow12 = (0.0010000000000000009 * pow(10.0, (0.050000000000000003 * double(fVslider2))));
-		double fSlow13 = cos(fSlow10);
-		double fSlow14 = (1.7320508075688772 * fSlow7);
-		double fSlow15 = (fConst4 * (fSlow8 * fSlow11));
-		double fSlow16 = (0.13783222385544802 * fSlow7);
-		double fSlow17 = (fConst4 * (fSlow13 * fSlow8));
+		int iSlow0 = int(double(fCheckbox0));
+		double fSlow1 = double(fCheckbox1);
+		int iSlow2 = int(fSlow1);
+		double fSlow3 = double(fEntry0);
+		double fSlow4 = (fConst1 / fSlow3);
+		int iSlow5 = (fSlow1 > 0.0);
+		double fSlow6 = (fConst0 * fSlow3);
+		int iSlow7 = ((1.0 - fSlow1) > 0.0);
+		double fSlow8 = double(fVslider0);
+		double fSlow9 = (1.0 - fSlow8);
+		double fSlow10 = sin(double(fVslider1));
+		double fSlow11 = pow((1.0 - mydsp_faustpower2_f(fSlow10)), 0.5);
+		double fSlow12 = (fConst3 * fSlow11);
+		double fSlow13 = double(fVslider2);
+		double fSlow14 = sin(fSlow13);
+		double fSlow15 = (0.0010000000000000009 * pow(10.0, (0.050000000000000003 * double(fVslider3))));
+		double fSlow16 = cos(fSlow13);
+		double fSlow17 = (1.7320508075688772 * fSlow10);
+		double fSlow18 = (fConst4 * (fSlow11 * fSlow14));
+		double fSlow19 = (0.13783222385544802 * fSlow10);
+		double fSlow20 = (fConst4 * (fSlow16 * fSlow11));
 		for (int i = 0; (i < count); i = (i + 1)) {
-			fRec0[0] = (iSlow4?0.0:min(fSlow5, (fRec0[1] + 1.0)));
+			fRec0[0] = (iSlow5?0.0:min(fSlow6, (fRec0[1] + 1.0)));
 			double fTemp0 = double(input0[i]);
-			fRec1[0] = (iSlow6?fSlow5:max(0.0, (fRec1[1] + -1.0)));
-			fRec2[0] = (fSlow12 + (0.999 * fRec2[1]));
-			fRec3[0] = (iSlow4?fSlow5:max(0.0, (fRec3[1] + -1.0)));
+			fRec1[0] = (iSlow7?fSlow6:max(0.0, (fRec1[1] + -1.0)));
+			fRec2[0] = (fSlow15 + (0.999 * fRec2[1]));
+			fRec3[0] = (iSlow5?fSlow6:max(0.0, (fRec3[1] + -1.0)));
 			double fTemp1 = (fRec2[0] * fRec3[0]);
 			double fTemp2 = double(input1[i]);
-			fRec4[0] = (iSlow6?0.0:min(fSlow5, (fRec4[1] + 1.0)));
+			fRec4[0] = (iSlow7?0.0:min(fSlow6, (fRec4[1] + 1.0)));
 			double fTemp3 = (fRec2[0] * fRec4[0]);
 			double fTemp4 = double(input3[i]);
 			double fTemp5 = double(input2[i]);
-			double fTemp6 = ((fSlow9 * ((fSlow11 * (iSlow1?(fSlow3 * (fTemp3 * fTemp2)):(fSlow3 * (fTemp1 * fTemp2)))) + (fSlow13 * (iSlow1?(fSlow3 * (fTemp3 * fTemp4)):(fSlow3 * (fTemp1 * fTemp4)))))) + ((iSlow1?(fSlow3 * (fTemp3 * fTemp0)):(fSlow3 * (fTemp1 * fTemp0))) + (fSlow14 * (iSlow1?(fSlow3 * (fTemp3 * fTemp5)):(fSlow3 * (fTemp1 * fTemp5))))));
-			output0[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp0)):(fSlow3 * (fRec0[0] * fTemp0))) + (0.079577471545947673 * fTemp6)));
-			output1[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp2)):(fSlow3 * (fRec0[0] * fTemp2))) + (fSlow15 * fTemp6)));
-			output2[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp5)):(fSlow3 * (fRec0[0] * fTemp5))) + (fSlow16 * fTemp6)));
-			output3[i] = FAUSTFLOAT(((iSlow1?(fSlow3 * (fRec1[0] * fTemp4)):(fSlow3 * (fRec0[0] * fTemp4))) + (fSlow17 * fTemp6)));
+			double fTemp6 = ((fSlow12 * ((fSlow14 * (iSlow0?(fSlow8 * (fRec2[0] * fTemp2)):(iSlow2?(fSlow4 * (fTemp3 * fTemp2)):(fSlow4 * (fTemp1 * fTemp2))))) + (fSlow16 * (iSlow0?(fSlow8 * (fRec2[0] * fTemp4)):(iSlow2?(fSlow4 * (fTemp3 * fTemp4)):(fSlow4 * (fTemp1 * fTemp4))))))) + ((iSlow0?(fSlow8 * (fRec2[0] * fTemp0)):(iSlow2?(fSlow4 * (fTemp3 * fTemp0)):(fSlow4 * (fTemp1 * fTemp0)))) + (fSlow17 * (iSlow0?(fSlow8 * (fRec2[0] * fTemp5)):(iSlow2?(fSlow4 * (fTemp3 * fTemp5)):(fSlow4 * (fTemp1 * fTemp5)))))));
+			output0[i] = FAUSTFLOAT(((iSlow0?(fSlow9 * fTemp0):(iSlow2?(fSlow4 * (fRec1[0] * fTemp0)):(fSlow4 * (fRec0[0] * fTemp0)))) + (0.079577471545947673 * fTemp6)));
+			output1[i] = FAUSTFLOAT(((iSlow0?(fSlow9 * fTemp2):(iSlow2?(fSlow4 * (fRec1[0] * fTemp2)):(fSlow4 * (fRec0[0] * fTemp2)))) + (fSlow18 * fTemp6)));
+			output2[i] = FAUSTFLOAT(((iSlow0?(fSlow9 * fTemp5):(iSlow2?(fSlow4 * (fRec1[0] * fTemp5)):(fSlow4 * (fRec0[0] * fTemp5)))) + (fSlow19 * fTemp6)));
+			output3[i] = FAUSTFLOAT(((iSlow0?(fSlow9 * fTemp4):(iSlow2?(fSlow4 * (fRec1[0] * fTemp4)):(fSlow4 * (fRec0[0] * fTemp4)))) + (fSlow20 * fTemp6)));
 			fRec0[1] = fRec0[0];
 			fRec1[1] = fRec1[0];
 			fRec2[1] = fRec2[0];

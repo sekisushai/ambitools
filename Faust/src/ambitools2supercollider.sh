@@ -161,8 +161,8 @@ mkdir -p "$outdir/sc/Classes" # create the outdir folder for supercollider
                            sed "1s/.*/declare name     \"$name$suffix\";/" $output > $output2
                            sed "s/metermute/meterm/g" $output2 > $output # Replace the meter with mute toggle
                            sed "s/*ma.PI\/180//g" $output > $output2 # Replace degree with radians
-                           sed 's@0, *360@-1*ma.PI, ma.PI@g' $output2 > $output # Replace azimuth 0, 360 to -PI PI
-                           sed 's@-90, *90@-1*ma.PI/2, ma.PI/2@g' $output > $output2 # Replace azimuth -90 90 to -PI/2 PI/2
+                           sed 's@0, *360@-1*ma.PI, ma.PI@g' $output2 > $output # Replace azimuth 0 360 to -PI PI
+                           sed 's@-90, *90@-1*ma.PI/2, ma.PI/2@g' $output > $output2 # Replace elevation -90 90 to -PI/2 PI/2
                            mv  $output2 $output
                            
                            faust2supercollider -ks -noprefix -double -t 0 -time $output # Compilation with -ks (keep source) flag : keep the .cpp sources

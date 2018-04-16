@@ -41,7 +41,9 @@ outsvumeteroff = par(i,outs,_);
 t	=	hslider("Azimuth[style:knob]", 0, 0, 360, 0.1)*ma.PI/180;
 d	=	hslider("Elevation[style:knob]", 0, -90, 90, 0.1)*ma.PI/180;
 
-order	=	int(hslider("Order[style:knob]",0,0,M1,1)); // Order of the beampattern used for filtering, order=0 is a bypass.
+order(s)	=	hslider("Order[style:knob]",0,0,M1,0.0001)<:select2(s,int,_); // Order of the beampattern used for filtering, order=0 is a bypass.
+crossfade(i,x) = par(j,i,_*(1-abs(x-j):max(0))):>_; // linear crossfade between order.
+step = checkbox("Int/Float");
 
 norm(m)	=	1/sqrt(2*m+1);
 
@@ -81,6 +83,6 @@ matrix(beam,in,out)	=	par(i,in,_)<: par(i,out,buswg(row(beam,i)):>_);
 
 //process=bus(ins)<:par(i,M1+1,par(j,ins,_*(i==order))):bus(ins),par(i,M1,matrix(i+1,ins,outs)):>bus(outs);
 process	=	si.bus(ins):hgroup("[1]Inputs",insvumeter)
-		<:hgroup("[3]Parameters",par(i,M1+1,matrix(i,ins,outs)):ro.interleave(int(outs),int(M1+1)):par(i,outs,ba.selectn(M1+1,order)))
+		<:hgroup("[3]Parameters",par(i,M1+1,matrix(i,ins,outs)):ro.interleave(int(outs),int(M1+1)):par(i,outs,crossfade(M1+1,order(step))))
 		:hgroup("[2]Outputs",outsvumeter);
 
