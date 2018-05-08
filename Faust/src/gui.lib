@@ -28,3 +28,12 @@ idmute(x,delta) =  vgroup("%2a",_*(1-checkbox("Mute")):vmeter) with{
 a = x+1+delta;};
 
 metermute(m) = par(i,2*m+1,hgroup("%m",_*(1-checkbox("Mute")):idmute(i,m*m-1)));
+
+// VU-Meters
+vumeter(0,m)    =   par(i,m,_); // no vu-meter
+vumeter(1,m)    =   par(i,m,id(i,0)); // vu meter for m inputs with id
+
+// VU-Meters Ambisonic domain
+vumeter(2,M)    =   par(i,M+1,meterm(i)); // vu-meters up to Ambisonic order M, no mute toggle
+vumeter(3,M)    =   par(i,M+1,metermute(i)); // vu-meters up to Ambisonic order M, no mute toggle
+vumeter(4,M)    =   par(i,(M+1)^2,_); // no vu-meters up to Ambisonic order M
